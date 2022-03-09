@@ -1,0 +1,16 @@
+module sixteen_bit_add_1 (
+    input a[16], //16 bit input to be added 1
+    output s[16]
+  ) {
+
+  full_adder fulladder[16];
+  always {
+    fulladder.a = a;
+    fulladder.b[0] = 1;
+    fulladder.b[15:1] = 0;
+    fulladder.cin[0] = 0;
+    fulladder.cin[15:1] = fulladder.cout[14:0];
+    s = fulladder.s;
+    
+  }
+}
