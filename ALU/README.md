@@ -4,7 +4,7 @@ template:
 - Input:
 - Output:
 - Implementation: 
-- Test case:
+- Test cases:
  
 ## Basic Functions
 to be filled
@@ -16,8 +16,9 @@ to be filled
 - Input: `a[16]` (16 bit input to be negated using 2's complement)
 - Output: `n[16]` (16 bit negated value)
 - Implementation: Making use of `~` to change all 0 to 1 and vice versa, then use `sixteen_bit_add_1` mudule to add 1.
-- Test case
-> input:  `a[16]=1010 1011 1111 1000` ; output: `n[16]=0101 0100 0000 1000`  *possible error: try remove add 1*
+- Test cases: 
+> 1. input:  `a[16]=1010 1011 1111 1000` ; output: `n[16]=0101 0100 0000 1000`  *possible error: try remove add 1*  
+> 2. input:  `a[16]=0110 0101 1001 0111` ; output: `n[16]=1001 1010 0110 1001`
 ### Division
 - Module name:'sixteen_bit_division'
 - Input: `a[16]` (16 bit input divident), `b[16]`(16 bit divisor), `clk`(system clock), `rst`
