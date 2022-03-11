@@ -1,16 +1,16 @@
-module subloop_div (
-    input clk,              // 100MHz clock
+module sixteen_bit_division (
+    input clk, // 100MHz clock, sequential circuit
     input rst,  
-    input a[16],
-    input b[16],
+    input a[16], //divident
+    input b[16], //divisor
     output q[16], //quotient
     output r[16], //remainder
-    output ex //divi_by_0
+    output ex //divided_by_0
     
   ) {
 
-  dff rb[16](#INIT(0), .clk(clk), .rst(rst));//divisor 
   dff ra[16](#INIT(0), .clk(clk), .rst(rst)); //divident
+  dff rb[16](#INIT(0), .clk(clk), .rst(rst));//divisor 
   dff rc[16](#INIT(0), .clk(clk), .rst(rst)); //quotient counter
   dff re[16](#INIT(0), .clk(clk), .rst(rst)); //remainder counter
 
