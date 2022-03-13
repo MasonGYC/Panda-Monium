@@ -1,4 +1,4 @@
-module alu_boolean (
+module bool2 (
     input a[16],// 16-bit input
     input b[16],//16-bit input
     input alufn[4],//4-bit alufn OPCODE
