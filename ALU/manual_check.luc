@@ -1,0 +1,47 @@
+module manual_check (
+    input clk,  // clock
+    input rst,  // reset
+    input io_dip[16],
+    input io_button,
+    output out[16]
+  ) {
+
+  dff register_a[16](#INIT(0), .clk(clk), .rst(rst));
+  dff register_b[16](#INIT(0), .clk(clk), .rst(rst));
+  dff register_alu[16](#INIT(0), .clk(clk), .rst(rst));
+  dff store[16](#INIT(0), .clk(clk), .rst(rst));
+  alu test_alu;
+  fsm alu_checker(.clk(clk), .rst(rst)) = {S0, S1, S2, S3};
+  
+  always {
+    case (alu_checker.q){
+      alu_checker.S0:
+        register_a.d = io_dip;
+        if (io_button){
+          alu_checker.d = alu_checker.S1;
+        }
+      
+      alu_checker.S1:
+        register_b.d = io_dip;
+        if (io_button){
+          alu_checker.d = alu_checker.S2;
+        }
+        
+      alu_checker.S2:
+        register_alu.d = io_dip;
+        if (io_button){
+          alu_checker.d = alu_checker.S3;
+        }
+        
+      alu_checker.S3:
+        test_alu.a = register_a.q;
+        test_alu.b = register_b.q;
+        test_alu.alufn = register_alu.q[3:0];
+        store.d = alu.out;
+        if (io_button){
+          alu_checker.d = alu_checker.S0;
+        }
+      }
+    out = store.q;
+  }
+}
