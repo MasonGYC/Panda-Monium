@@ -1,0 +1,19 @@
+module shifter (
+    input a[16], //16-bit input
+    input b[4], //16-bit input
+    input alufn[2], //2-bit alufn OPCODE 
+    output shift[16] //16-bit output
+  ) {
+
+  always { //machine behaviour 
+    case (alufn[1:0]){  //different case as shown below(as alufn)
+    
+    // Shift Operations:
+      b00: shift = a << b; // logical shift left(SHL)
+      b01: shift = a >> b; // logical shift right(SHA)
+      b11: shift = $signed(a) >>> b; // arithmetic shift right (SRA)
+      default: shift = a;
+       
+      }
+  }
+} 
