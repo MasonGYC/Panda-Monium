@@ -21,7 +21,7 @@ template:
 - Module name:'shifter'
 - Input: `a[16]` (16 bit first input), `b[4]`(4 bit second input), `alufn[[2]`(2 bit alufn OPCODE)
 - Output `shift[16]`(16 bit output)
-- Implementation: Do Logical Shift left (SHL),	Logical Shift right (SHR) and Arithmetic Shift right (SRA)	depending on defferent alufn
+- Implementation: Do Logical Shift left (SHL),	Logical Shift right (SHR) and Arithmetic Shift right (SRA)	depending on different alufn
 - Test cases:
 > 1. input: `a[16]=1010 1011 1111 1000` , `b[4]=0101`, `alufn[2]=00`; output: `shift=0111 1111 0000 0000`
 > 2. input: `a[16]=1010 1011 1111 1000` , `b[4]=0001`, `alufn[2]=01`; output: `shift=0101 0101 1111 1100`
