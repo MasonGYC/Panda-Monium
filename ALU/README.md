@@ -28,6 +28,15 @@ to be filled
 > 1. input:  `a[16]=1010 1011 1111 1000` , `b[16]=0101 0100 0000 1000` ; output: `q=0x0002`, `r=0000 0011 1110 1000` , `ex=0x0000`; ps:a=44024,b=21512  
 > 2. input:  `a[16]=1010 1011 1111 1000` , `b[16]=0000 0000 0000 0000` ; output: `q=0x0000`, `r=0x0000` , `ex=0x0001'; ps:a=44024,b=0
 
+### Boolean
+- Module name:'boo2'
+- Input: `a[16]` (16 bit first input), `b[16]`(16 bit second input), `alufn[[4]`(4 bit alufn OPCODE)
+- Output `alu[16]`(16 bit output)
+- Implementation: determine and output the result of boolean expression depending on the input alufn opcode. If the input alufn opcode is invalid, output is 16b0.
+- Test cases:
+> 1. input: `a[16]=1010 1011 1111 1000` , `b[16]=0101 0100 0000 1000`, `alufn[4]=1110`; output: `alu=1111 1111 1111 1000`
+> 2. input: `a[16]=1010 1011 1111 1000` , `b[16]=0000 0000 0000 0000`, `alufn[4]=1111`; output: `alu=0101 0100 0000 0111`
+
 
 ### ALUFN OPCODE:
 |Operation|ALUFN[5:0]|
