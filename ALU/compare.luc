@@ -2,17 +2,21 @@ module compare (
     input z,
     input v,
     input n,
-    input alufn_signal[6],
+    input alufn[6],
     output out[16] 
   ) {
   
-  always {
+  always {                           // Checking for LSB
     out = 16b0;
-    case (alufn_signal) {
-      default: out[0] = 0;
-      b110011: out[0] = z;
-      b110101: out[0] = n ^ v;
-      b110111: out[0] = z | (n ^ v);
+    case (alufn) {                   // ALUFN[2:1] are used to compare control unit
+      b110011:                       // CMPEQ
+              out[0] = z;
+      b110101:                       // CMPLT
+              out[0] = n ^ v;
+      b110111:                       // CMPLE
+              out[0] = z | (n ^ v);
+      default: 
+              out[0] = 0;
     }
   }
 }
