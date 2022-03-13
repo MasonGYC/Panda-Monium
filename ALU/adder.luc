@@ -1,30 +1,27 @@
 module adder (
-// Note: a & b are 8-bit inputs. ALUFN is a 6-bit input
-// z, v, n are all 1-bit outputs.
-    input a[16], // 16 bit input
-    input b[16], // 16 bit input
-    input alufn_signal[6], // 6 bit ALUFN
-    output out[16], // 16 bit output
-    output z[1],
-    output v[1],
-    output n[1]
+    input a[16],             // 16-bit signed input
+    input b[16],             // 16-bit signed input
+    input alufn[6],          // 6-bit ALUFN OPCODE
+    output out[16],          // 16-bit output
+    output z[1],             // 1-bit output for zero condition
+    output v[1],             // 1-bit output for overflow condition
+    output n[1]              // 1-bit output for MSB of output (positive/negative)
   ) {
-  // The signal out is write only and cannot be read.
-  // Hence, a signal s is used as a temp variable for the output.
-  sig s[16]; 
   
-  always {
-    s = b0000000000000000; 
+  sig s[16];                 // intermediary connector
+  
+  always {                   // behaviour of machine
+    s = 16b0;                // setting s to have value of value of 2 but with 16-bits 
 
     
-    case(alufn_signal[0]){
-      0: s = a+b;
-      1: s = a-b;
-      default: s = b0000000000000000;
+    case(alufn[0]){          // multiplexer
+      0: s = a+b;            // ADD (S = A+B); OPCODE = 000000
+      1: s = a-b;            // SUB [S = A+(-B)] ; OPCODE = 000001
+      default: s = 16b0;
   }
-    n = s[15];
-    v = (a[15] & (b[15] ^ alufn_signal[0]) & !s[15]) | (!a[15] & !(b[15] ^ alufn_signal[0]) & s[15]); 
-    z = ~|s;
-    out = s;
+    n = s[15];                                                                            // checking for MSB (positive/negative)
+    v = (a[15] & (b[15] ^ alufn[0]) & !s[15]) | (!a[15] & !(b[15] ^ alufn[0]) & s[15]);   // computing overflow
+    z = (s == 16b0);                                                                      // checking for zero condition
+    out = s;                                                                              // output as s
   }
 }
