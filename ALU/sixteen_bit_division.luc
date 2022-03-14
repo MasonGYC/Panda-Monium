@@ -22,12 +22,12 @@ module sixteen_bit_division (
       r = r_rem.q;
 
     //init ra value
-    if (ra.q == 0 & r_quo.q == 0){
+    if (ra.q == 16b0 & r_quo.q == 16b0){
         ra.d = a;
       }
 
     //exception
-    if (b == 0){
+    if (b == 16b0){
       r_ex.d = 1;
     }
     

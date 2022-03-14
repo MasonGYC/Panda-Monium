@@ -3,14 +3,13 @@ module sixteen_bit_add_1 (
     output s[16]
   ) {
 
-  full_adder fulladder[16];
+  full_adder adder[16];
   always {
-    fulladder.a = a;
-    fulladder.b[0] = 1;
-    fulladder.b[15:1] = 0;
-    fulladder.cin[0] = 0;
-    fulladder.cin[15:1] = fulladder.cout[14:0];
-    s = fulladder.s;
+    adder.a = a;
+    adder.b[0] = 1;
+    adder.b[15:1] = 15b0;
+    adder.alufn[6] = 6b0; //+
+    s = adder.s;
     
   }
 }
