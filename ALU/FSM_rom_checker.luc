@@ -1,0 +1,116 @@
+module FSM_rom_checker (
+    input clk,  // clock
+    input rst,  // reset
+    output seg[8],
+    input iodip,
+    output out_true[16],
+    output out_calc[16]
+  ) {
+  counter slowclock(#SIZE(1),#DIV(26),.clk(clk),.rst(rst));
+  fsm fsm_t(.clk(slowclock.value),.rst(rst))={START, 
+                                              S0,S1,S2, // addition test cases
+                                              S3,S4,S5,S6, // subtraction test cases
+                                              S7, // multiplier test case
+                                              S8,S9,S10,S11, // and or xor a test cases
+                                              S12,S13,S14,S15,S16,S17, // comparator ==, < , <= test cases
+                                              S18,S19,S20 // shifter SHL, SHR, SRA test cases
+                                              };
+  rom r;
+  alu aluUnit;
+  sig address[5];
+  sig computed[16];
+  sig a[16];
+  sig b[16];
+  sig alufn[6];
+  sig zvn[3];
+  sig o[16];
+  always {
+      address=5b0;
+      r.address=address;
+      a=r.outA;
+      b=r.outB;
+      o=r.out;
+      zvn=r.outZVN;
+      alufn=r.alufn;
+      aluUnit.a=a;
+      aluUnit.b=b;
+      aluUnit.alufn=alufn;
+      computed=aluUnit.out;
+      out_calc=computed;
+      out_true=o;
+    case(fsm_t.q){ // TODO: fsm logic when handling the test cases, to compare the alu output with the rom output denoted by variable r
+      fsm_t.S0:
+      r.address=5b0;
+      fsm_t.d=fsm_t.S1;
+      fsm_t.S1:
+      r.address=5b1;
+      fsm_t.d=fsm_t.S2;
+      fsm_t.S2:
+      r.address=5b10;
+      fsm_t.d=fsm_t.S3;              
+      fsm_t.S3:
+      r.address=5b11;
+      fsm_t.d=fsm_t.S4;
+      fsm_t.S4:
+      r.address=5b100;
+      fsm_t.d=fsm_t.S5;
+      fsm_t.S5:
+      r.address=5b101;
+      fsm_t.d=fsm_t.S6;
+      fsm_t.S6:
+      r.address=5b110;
+      fsm_t.d=fsm_t.S7;
+      fsm_t.S7:
+      r.address=5b111;
+      fsm_t.d=fsm_t.S8;
+      fsm_t.S8:
+      r.address=5b1000;
+      fsm_t.d=fsm_t.S9;
+      fsm_t.S9:
+      r.address=5b1001;
+      fsm_t.d=fsm_t.S10;
+      fsm_t.S10:
+      r.address=5b1010;
+      fsm_t.d=fsm_t.S11;
+      fsm_t.S11:
+      r.address=5b1011;
+      fsm_t.d=fsm_t.S12;
+      fsm_t.S12:
+      r.address=5b1100;
+      fsm_t.d=fsm_t.S13;
+      fsm_t.S13:
+      r.address=5b1101;
+      fsm_t.d=fsm_t.S14;
+      fsm_t.S14:
+      r.address=5b1110;
+      fsm_t.d=fsm_t.S15;
+      fsm_t.S15:
+      r.address=5b1111;
+      fsm_t.d=fsm_t.S16;
+      fsm_t.S16:
+      r.address=5b10000;
+      fsm_t.d=fsm_t.S17;
+      fsm_t.S17:
+      r.address=5b10001;
+      fsm_t.d=fsm_t.S18;
+      fsm_t.S18:
+      r.address=5b10010;
+      fsm_t.d=fsm_t.S19;
+      fsm_t.S19:
+      r.address=5b10011;
+      fsm_t.d=fsm_t.S20;
+      fsm_t.S20:
+      r.address=5b10100;
+      fsm_t.d=fsm_t.S0;
+      }
+    if (iodip==1){
+      o[0] = ~o[0];
+      }
+    if(o==computed){
+      seg=b11111001;
+      }
+    else {
+      seg=b11000000;
+      }
+  }
+}
