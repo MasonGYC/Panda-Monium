@@ -11,61 +11,69 @@ module sixteen_bit_division (
 
   dff ra[16](#INIT(0), .clk(clk), .rst(rst)); //divident
   dff rb[16](#INIT(0), .clk(clk), .rst(rst));//divisor 
-  dff rc[16](#INIT(0), .clk(clk), .rst(rst)); //quotient counter
-  dff re[16](#INIT(0), .clk(clk), .rst(rst)); //remainder counter
+  dff r_quo[16](#INIT(0), .clk(clk), .rst(rst)); //quotient counter
+  dff r_rem[16](#INIT(0), .clk(clk), .rst(rst)); //remainder counter
+  dff r_ex[1](#INIT(0), .clk(clk), .rst(rst)); // exception if divided by 0
 
   always {
       rb.d = b;
-      ex = rb.q;    
-      q = rc.q;
-      r = re.q;
+      ex = r_ex.q;    
+      q = r_quo.q;
+      r = r_rem.q;
+
     //init ra value
-    if (ra.q == 0 & rc.q == 0){
+    if (ra.q == 0 & r_quo.q == 0){
         ra.d = a;
       }
+
+    //exception
+    if (b == 0){
+      r_ex.d = 1;
+    }
     
+    //detect positive/negative and do different operation
     case (b[15]){
       0:
         case(a[15]){
-            0://P/P
+            0:// P/P
              if (ra.q<rb.q){
-                r = ra.q; //remainder 
-                q =rc.q; //quotient
+                r_rem.d = ra.q; //remainder 
+                q = r_quo.q; //quotient
                 }
              else{
                 ra.d=ra.q-rb.q;
-                rc.d = rc.q +1;
+                r_quo.d = r_quo.q +1;
                 }
-            1://N/P
-            if (ra.q>rb.q){
-                r = ra.q; //remainder 
-                q =rc.q; //quotient
+            1:// N/P
+            if ((~ra.q)<rb.q){
+                r_rem.d = ra.q; //remainder 
+                q =r_quo.q; //quotient
                 }
              else{
                 ra.d=ra.q+rb.q;
-                rc.d = rc.q +1;
+                r_quo.d = r_quo.q - 1;
                 }
             
         }
       1:
         case(a[15]){
-            0://P/N
-             if (ra.q<~rb.q){
-                r = ra.q; //remainder 
-                q =rc.q; //quotient
+            0:// P/N
+             if (ra.q<(~rb.q)){
+                r_rem.d = ra.q; //remainder 
+                q =r_quo.q; //quotient
                 }
              else{
                 ra.d=ra.q+rb.q;
-                rc.d = rc.q +1;
+                r_quo.d = r_quo.q -1;
                 }
-            1://N/N
+            1:// N/N
             if (ra.q>rb.q){
-                r = ra.q; //remainder 
-                q =rc.q; //quotient
+                r_rem.d = ra.q; //remainder 
+                q =r_quo.q; //quotient
                 }
              else{
                 ra.d=ra.q-rb.q;
-                rc.d = rc.q +1;
+                r_quo.d = r_quo.q +1;
                 }
             
         }
