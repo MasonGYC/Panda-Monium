@@ -16,6 +16,16 @@ template:
 - Test cases:
 > 1. input: `a[16]=1010 1011 1111 1000` , `b[16]=0101 0100 0000 1000`, `alufn[4]=1110`; output: `alu=1111 1111 1111 1000`
 > 2. input: `a[16]=1010 1011 1111 1000` , `b[16]=0000 0000 0000 0000`, `alufn[4]=1111`; output: `alu=0101 0100 0000 0111`
+|Operation|ALUFN[3:0]|
+|-------|--------|
+| AND | 1000 |
+| NOR | 1111 |
+| NAND | 0001 |
+| OR | 1110 |
+| XOR | 0110 |
+| “A" | 1010 |
+| XNOR | 0111 |
+| invert of msb | 0100 |
 
 ### Shifter
 - Module name:'shifter'
