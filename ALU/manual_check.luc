@@ -3,7 +3,8 @@ module manual_check (
     input rst,  // reset
     input io_dip[16],
     input io_button,
-    output out[16]
+    output out[16],
+    output ex //exception
   ) {
 
   dff register_a[16](#INIT(0), .clk(clk), .rst(rst));
@@ -14,10 +15,13 @@ module manual_check (
   fsm alu_checker(.clk(clk), .rst(rst)) = {S0, S1, S2, S3};
   
   always {
+  
     out = store.q;
     test_alu.a = register_a.q;
     test_alu.b = register_b.q;
     test_alu.alufn = register_alu.q;
+    ex = test_alu.ex;
+    
     case (alu_checker.q){
       alu_checker.S0:
         register_a.d = io_dip;
