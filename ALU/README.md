@@ -67,10 +67,10 @@ template:
 > 1. input:  `a[16]=1010 1011 1111 1000` ; output: `n[16]=0101 0100 0000 1000`  *possible error: try remove add 1*  
 > 2. input:  `a[16]=0110 0101 1001 0111` ; output: `n[16]=1001 1010 0110 1001`
 ### Division
-- Module name:'sixteen_bit_division'
-- Input: `a[16]` (16 bit input divident), `b[16]`(16 bit divisor), `clk`(system clock), `rst`
-- Output `q[16]`(16 bit quotient), `r[16]`(16 bit remainder), `ex`(1 bit exception, `1` if divided by 0, `0` else) 
-- Implementation: Using the method of repeated subtraction, according to the sign of the divident and divisor, using muxes, registers, and condition to output different values. *The reason for choosing repeated subtraction method is that it can be implemented under all conditions without bit number restriction, as shift and restore remainder methods require.* 
+- Module name:'division'
+- Input: `a[16]` (16 bit input divident), `b[16]`(16 bit divisor)
+- Output `q[16]`(16 bit quotient), `r[16]`(16 bit remainder)
+- Implementation: Using built-in / to calculate quotient, and subtract the product to get remainder. If b =0, then both q and r will be 0.
 - Test cases:
 > 1. input:  `a[16]=1010 1011 1111 1000` , `b[16]=0101 0100 0000 1000` ; output: `q=0x0002`, `r=0000 0011 1110 1000` , `ex=0x0000`; ps:a=44024,b=21512  
 > 2. input:  `a[16]=1010 1011 1111 1000` , `b[16]=0000 0000 0000 0000` ; output: `q=0x0000`, `r=0x0000` , `ex=0x0001'; ps:a=44024,b=0
