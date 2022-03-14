@@ -11,13 +11,13 @@ module adder (
   sig s[16];                 // intermediary connector
   
   always {                   // behaviour of machine
-    s = 16b0;                // setting s to have value of value of 2 but with 16-bits 
+    s = 16b0;                // setting s to have value of value of 0 but with 16-bits 
 
     
     case(alufn[0]){          // multiplexer
       0: s = a+b;            // ADD (S = A+B); OPCODE = 000000
       1: s = a-b;            // SUB [S = A+(-B)] ; OPCODE = 000001
-      default: s = 16b0;
+      
   }
     n = s[15];                                                                            // checking for MSB (positive/negative)
     v = (a[15] & (b[15] ^ alufn[0]) & !s[15]) | (!a[15] & !(b[15] ^ alufn[0]) & s[15]);   // computing overflow
