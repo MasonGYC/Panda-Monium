@@ -17,7 +17,7 @@ module bool2 (
       b1111: alu = ~(a | b); // Additional: NOR
       b0111: alu = ~(a ^ b); // Additional: XNOR
       b0100: alu = c{~a[15], a[14:0]}; // invert MSB
-      b1011: alu = c{0, a[14:0]}; //011011
+
       default: alu = 16b0;  // if all case not satisfied, do default
       
       }
