@@ -5,7 +5,8 @@ module alu (
     output out[16],
     output z,
     output v,
-    output n
+    output n,
+    output ex //exception if any
   ) 
 
 {
@@ -18,6 +19,10 @@ module alu (
   divison div;
   sixteen_bit_2s_complement com;
   always {
+  
+    //exception
+    ex = 0;
+    
     // ADD&SUB
     adder.a = a;
     adder.b = b;
@@ -75,9 +80,11 @@ module alu (
     }
     else if (alufn==b000011){
       out = div.q;
+      ex = div.ex;
       }
     else if (alufn==b000100){
       out = div.r;
+      ex = div.ex;
       }
     else if (alufn==b000101){
        out = com.n;
