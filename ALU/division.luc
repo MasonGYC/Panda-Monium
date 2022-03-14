@@ -1,0 +1,12 @@
+module divison (
+    output q[16],
+    output r[16],
+    input a[16],
+    input b[16]
+  ) {
+
+  always {
+    q = a/b;
+    r = a - b*(a/b);
+  }
+}
