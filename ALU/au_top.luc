@@ -46,7 +46,7 @@ module au_top (
     io_led[2][4:0] = io_button[4:0];
     buttoncond.in = io_button[4:0];
     buttondetector.in = buttoncond.out;
-    checker.io_button = buttondetector.out[0];
+    checker.io_button = buttondetector.out[4];
     
     //input
     checker.io_dip[7:0] = io_dip[0];
