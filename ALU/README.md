@@ -17,12 +17,22 @@ template:
 > 1. input: `a[16]=1010 1011 1111 1000` , `b[16]=0001 0100 0000 1000` , `alufn[6]=000000`; output: `s_out=1100 0000 0000 0000`
 > 2. input: `a[16]=1010 1011 1111 1000` , `b[16]=0001 0100 0000 1000` , `alufn[6]=000001`; output: `s_out=1001 0111 1111 0000`
 
+### Compare
+- Module name: 'compare'
+- Input: `z[1]` (1 bit input), `v[1]` (1 bit input), `n[1]` (1 bit input), `alufn[6]` (6 bit alufn OPCODE)
+- Output: `out[1]` (1 bit output)
+- Implementation: Determining the least significant bit (0 or 1) depending on the ALUFN OPCODE and the Z, V and N outputs of the adder/subtractor unit.
+- Test Cases: 
+> 1. input: `z[1]=1`, `v[1]=0` , `n[1]=0` , `alufn[6]=110011`; output = `out=1`
+> 2. input: `z[1]=0`, `v[1]=1` , `n[1]=0` , `alufn[6]=110101`; output = `out=1`
+> 3. input: `z[1]=0`, `v[1]=0` , `n[1]=0` , `alufn[6]=110111`; output = `out=0`
+
 ### Boolean
 - Module name:'bool2'
 - Input: `a[16]` (16 bit first input), `b[16]`(16 bit second input), `alufn[4]`(4 bit alufn OPCODE)
 - Output `alu[16]`(16 bit output)
 - Implementation: Determine and output the result of boolean expression depending on the input alufn opcode. If the input alufn opcode is invalid, output is 16b0.
-- Test cases:
+- Test Cases:
 > 1. input: `a[16]=1010 1011 1111 1000` , `b[16]=0101 0100 0000 1000`, `alufn[4]=1110`; output: `alu=1111 1111 1111 1000`
 > 2. input: `a[16]=1010 1011 1111 1000` , `b[16]=0000 0000 0000 0000`, `alufn[4]=1111`; output: `alu=0101 0100 0000 0111`
 -
