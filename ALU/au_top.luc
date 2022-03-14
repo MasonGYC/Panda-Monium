@@ -55,4 +55,5 @@ module au_top (
     //result output
     io_led[0] = checker.out[7:0]; 
     io_led[1] = checker.out[15:8];
+    io_led[2][0] = checker.ex;
     }
