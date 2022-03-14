@@ -1,4 +1,4 @@
-module adder (
+module adder2 (
     input a[16],             // 16-bit signed input
     input b[16],             // 16-bit signed input
     input alufn[6],          // 6-bit ALUFN OPCODE
