@@ -1,0 +1,67 @@
+module alu (
+    input alufn[6],
+    input a[16],
+    input b[16],
+    output out[16],
+    output z,
+    output v,
+    output n
+  ) 
+
+{
+  adder2 adder;
+  adder2 compare_adder;
+  bool2 boolean;
+  shifter shift;
+  compare comparator;
+  multiply mul;
+  always {
+    out = 16b0;
+    // ADD&SUB
+    adder.a = a;
+    adder.b = b;
+    adder.alufn = alufn;
+    z = adder.z;
+    v = adder.v;
+    n = adder.n;
+    
+    // BOOLEAN
+    boolean.a = a;
+    boolean.b = b;
+    boolean.alufn = alufn[3:0];
+    
+    // SHIFT
+    shift.a = a;
+    shift.b = b[3:0];
+    shift.alufn = alufn[1:0];
+
+    // COMPARE
+    compare_adder.a = a;
+    compare_adder.b = b;
+    compare_adder.alufn = b000001;
+    comparator.z = compare_adder.z;
+    comparator.v = compare_adder.v;
+    comparator.n = compare_adder.n;
+    comparator.alufn = alufn;
+    
+    // MUL
+    mul.a = a;
+    mul.b = b;
+    
+    if (alufn==b000000 | alufn==b000001){
+      out = adder.s;
+      }
+    else if (alufn==b011110 | alufn==b010110 | alufn==b011010){
+      out = boolean.alu;
+      }
+    else if (alufn==b100000 | alufn==b100001 | alufn==b100011){
+      out = shift.shift;
+      }
+    else if (alufn==b110011 | alufn==b110101 | alufn==b110111){
+      out = comparator.out;
+      }
+    else if (alufn==b100010){
+      out = mul.out;
+    }
+  }
+}
