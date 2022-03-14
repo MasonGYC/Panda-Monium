@@ -8,11 +8,20 @@ template:
  
 ## Basic Functions
 
+### Adder
+- Module name: "adder"
+- Input: `a[16]` (16 bit first input), `b[16]`(16 bit second input), `alufn[[6]`(6 bit alufn OPCODE)
+- Output: `s[16]` (16 bit output), `z[1]` (1 bit output), `v[1]` (1 bit output), `n[1]` (1 bit output)
+- Implementation: Execute addition or subtraction operation based on ALUFN OPCODE. If the input ALUFN OPCODE is invalid, output is 16b0.
+- Test Cases: 
+> 1. input: `a[16]=1010 1011 1111 1000` , `b[16]=0001 0100 0000 1000` , `alufn[6]=000000`; output: `s_out=1100 0000 0000 0000`
+> 2. input: `a[16]=1010 1011 1111 1000` , `b[16]=0001 0100 0000 1000` , `alufn[6]=000001`; output: `s_out=1001 0111 1111 0000`
+
 ### Boolean
 - Module name:'bool2'
-- Input: `a[16]` (16 bit first input), `b[16]`(16 bit second input), `alufn[[4]`(4 bit alufn OPCODE)
+- Input: `a[16]` (16 bit first input), `b[16]`(16 bit second input), `alufn[4]`(4 bit alufn OPCODE)
 - Output `alu[16]`(16 bit output)
-- Implementation: determine and output the result of boolean expression depending on the input alufn opcode. If the input alufn opcode is invalid, output is 16b0.
+- Implementation: Determine and output the result of boolean expression depending on the input alufn opcode. If the input alufn opcode is invalid, output is 16b0.
 - Test cases:
 > 1. input: `a[16]=1010 1011 1111 1000` , `b[16]=0101 0100 0000 1000`, `alufn[4]=1110`; output: `alu=1111 1111 1111 1000`
 > 2. input: `a[16]=1010 1011 1111 1000` , `b[16]=0000 0000 0000 0000`, `alufn[4]=1111`; output: `alu=0101 0100 0000 0111`
