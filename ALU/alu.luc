@@ -9,14 +9,15 @@ module alu (
   ) 
 
 {
+  
   adder2 adder;
-  adder2 compare_adder;
   bool2 boolean;
   shifter shift;
   compare comparator;
   multiply mul;
+  divison div;
+  sixteen_bit_2s_complement com;
   always {
-    out = 16b0;
     // ADD&SUB
     adder.a = a;
     adder.b = b;
@@ -36,18 +37,27 @@ module alu (
     shift.alufn = alufn[1:0];
 
     // COMPARE
-    compare_adder.a = a;
-    compare_adder.b = b;
-    compare_adder.alufn = b000001;
-    comparator.z = compare_adder.z;
-    comparator.v = compare_adder.v;
-    comparator.n = compare_adder.n;
+    adder.a = a;
+    adder.b = b;
+    adder.alufn = b000001;
+    comparator.z = adder.z;
+    comparator.v = adder.v;
+    comparator.n = adder.n;
     comparator.alufn = alufn;
     
     // MUL
     mul.a = a;
     mul.b = b;
+    out = mul.out;
     
+    //DIV 
+    div.a = a;
+    div.b = b;
+    
+    //com
+    com.a = a;
+    
+    out = 16b0;
     if (alufn==b000000 | alufn==b000001){
       out = adder.s;
       }
@@ -63,5 +73,14 @@ module alu (
     else if (alufn==b100010){
       out = mul.out;
     }
+    else if (alufn==b000011){
+      out = div.q;
+      }
+    else if (alufn==b000100){
+      out = div.r;
+      }
+    else if (alufn==b000101){
+       out = com.n;
+      }
   }
 }
