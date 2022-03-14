@@ -4,7 +4,9 @@ module rom (
     output outB[16]
     output alufn[6]
     output correct_answer[16]
-    output outZVN[3]  
+    output outZ[1]
+    output outV[1]
+    output outN[1]  
   ) {
  
   // 25 testcases in the format of 
