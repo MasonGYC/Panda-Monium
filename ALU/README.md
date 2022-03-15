@@ -8,7 +8,7 @@ template:
  
 ## Basic Functions
 
-### Adder
+### Add
 - Module name: "adder"
 - Input: `a[16]` (16 bit first input), `b[16]`(16 bit second input), `alufn[[6]`(6 bit alufn OPCODE)
 - Output: `s[16]` (16 bit output), `z[1]` (1 bit output), `v[1]` (1 bit output), `n[1]` (1 bit output)
@@ -47,7 +47,7 @@ template:
 | XNOR | 0111 |
 | invert of msb | 0100 |
 
-### Shifter
+### Shift
 - Module name:'shifter'
 - Input: `a[16]` (16 bit first input), `b[4]`(4 bit second input), `alufn[[2]`(2 bit alufn OPCODE)
 - Output `shift[16]`(16 bit output)
@@ -58,6 +58,15 @@ template:
 
 ## Additional Functions
 
+### Multiply
+- Module name:`multiply`
+- Input: `a[16]` (16 bit first input), `b[4]`(4 bit second input), `alufn[[6]`(6 bit alufn OPCODE)
+- Output: `out[16]` (16 bit output)
+- Implementation: Execute mulplication between a and b.
+- Test cases: 
+> 1. input: `a[16]=1010 1011 1111 1000` , `b[16]=0101 0100 0000 1000`, `alufn[6]=000010`; output: `alu=1011 1111 1100 0000`
+> 2. input: `a[16]=1010 1011 1111 1000` , `b[16]=0000 0000 0000 0000`, `alufn[6]=000010`; output: `alu=0000 0000 0000 0000`
+
 ### 2's complement
 - Module name:`sixteen_bit_2s_complement`
 - Input: `a[16]` (16 bit input to be negated using 2's complement)
@@ -66,7 +75,7 @@ template:
 - Test cases: 
 > 1. input:  `a[16]=1010 1011 1111 1000` ; output: `n[16]=0101 0100 0000 1000`  *possible error: try remove add 1*  
 > 2. input:  `a[16]=0110 0101 1001 0111` ; output: `n[16]=1001 1010 0110 1001`
-### Division
+### Division & Modulo
 - Module name:'division'
 - Input: `a[16]` (16 bit input divident), `b[16]`(16 bit divisor)
 - Output `q[16]`(16 bit quotient), `r[16]`(16 bit remainder)
