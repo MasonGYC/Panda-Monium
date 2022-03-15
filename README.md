@@ -1,10 +1,4 @@
 # ALU for checkoff1
-template:
-- Module name:
-- Input:
-- Output:
-- Implementation: 
-- Test cases:
  
 ## Basic Functions
 
@@ -163,3 +157,14 @@ template:
 1. pullup `io_dip[2][7]` to switch to auto check mode
 2. set false test case(0-25) at io_dip[2][0:4]
 3. test cases are automatically run, if io_led[2][7:6] both light up, it means all test cases have passed; if only io_led[2][6] lights up, it means certain test case fails.
+
+
+# Contributors
+1005005	Lim Sheng Xiang  
+1005548	Ng Jing Heng Jarron  
+1005031	Mun Yit Hung, Nigel  
+1005053	Jon-Taylor Lim Ming Te  
+1004885	Guo Yuchen  
+1004875	Xiang Siqi  
+1004866	Wang Yueheng  
+1005254	Visshal Natarajan  
