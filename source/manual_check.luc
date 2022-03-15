@@ -1,0 +1,76 @@
+module manual_check (
+    input clk,  // clock
+    input rst,  // reset
+    input io_dip[16],
+    input io_button,
+    output out[16],
+    output z,
+    output v,
+    output n,
+    output ex //exception
+  ) {
+
+  dff register_a[16](#INIT(0), .clk(clk), .rst(rst));
+  dff register_b[16](#INIT(0), .clk(clk), .rst(rst));
+  dff register_alu[6](#INIT(0), .clk(clk), .rst(rst));
+  
+  dff register_zvn[3](#INIT(0), .clk(clk), .rst(rst));
+  dff register_ex[1](#INIT(0), .clk(clk), .rst(rst));
+  dff store[16](#INIT(0), .clk(clk), .rst(rst));
+  
+  alu test_alu;
+  fsm alu_checker(.clk(clk), .rst(rst)) = {S0, S1, S2, S3};
+  
+  always {
+    out = store.q;
+    z = register_zvn.q[0];
+    v = register_zvn.q[1];
+    n = register_zvn.q[2];
+    ex = register_ex.q;
+    
+    test_alu.a = register_a.q;
+    test_alu.b = register_b.q;
+    test_alu.alufn = register_alu.q;
+    
+    case (alu_checker.q){
+      alu_checker.S0:
+        register_ex.d = b0;
+        register_zvn.d = 3b0;
+        store.d = 16b1111111111111111;
+        register_a.d = io_dip;
+        if (io_button){
+          alu_checker.d = alu_checker.S1;
+          store.d = register_a.q;
+        }
+      
+      alu_checker.S1:
+        register_b.d = io_dip;
+        if (io_button){
+          alu_checker.d = alu_checker.S2;
+          store.d = register_b.q;
+        }
+        
+      alu_checker.S2:
+        register_alu.d = io_dip[5:0];
+        if (io_button){
+          alu_checker.d = alu_checker.S3;
+        }
+        
+      alu_checker.S3:
+        store.d = test_alu.out;
+        if (register_alu.q==b000000|register_alu.q==b000001){
+          register_zvn.d[0] = test_alu.z;
+          register_zvn.d[1] = test_alu.v;
+          register_zvn.d[2] = test_alu.n;
+        }
+        
+        if (register_alu.q==b000011|register_alu.q==b000100){
+          register_ex.d[0] = test_alu.ex;
+        }
+        
+        if (io_button){
+          alu_checker.d = alu_checker.S0;
+        }
+      }
+  }
+}

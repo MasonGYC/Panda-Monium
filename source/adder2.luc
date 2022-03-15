@@ -1,0 +1,27 @@
+module adder2 (
+    input a[16],             // 16-bit signed input
+    input b[16],             // 16-bit signed input
+    input alufn[6],          // 6-bit ALUFN OPCODE
+    output s[16],          // 16-bit output
+    output z[1],             // 1-bit output for zero condition
+    output v[1],             // 1-bit output for overflow condition
+    output n[1]              // 1-bit output for MSB of output (positive/negative)
+  ) {
+  
+  sig s_out[16];                 // intermediary connector
+  
+  always {                   // behaviour of machine
+    s_out = 16b0;                // setting s_out to have value of value of 0 but with 16-bits 
+
+    
+    case(alufn[0]){          // multiplexer
+      0: s_out = a+b;            // ADD (S = A+B); OPCODE = 000000
+      1: s_out = a-b;            // SUB [S = A+(-B)] ; OPCODE = 000001
+      default: s_out = 16b0;
+  }
+    n = s_out[15];                                                                            // checking for MSB (positive/negative)
+    v = (a[15] & (b[15] ^ alufn[0]) & !s_out[15]) | (!a[15] & !(b[15] ^ alufn[0]) & s_out[15]);   // computing overflow
+    z = ~|s_out;                                                                      // checking for zero condition
+    s = s_out;                                                                              // output as s_out
+  }
+}

@@ -1,0 +1,25 @@
+module bool2 (
+    input a[16],// 16-bit input
+    input b[16],//16-bit input
+    input alufn[4],//4-bit alufn OPCODE
+    output alu[16]//16-bit output
+  ) {
+
+  always { //machine behaviour 
+    case(alufn[3:0]){ //different case as shown below(as alufn)
+    
+      // Boolean Operations:
+      b1000: alu = a & b; // AND
+      b1110: alu = a | b; // OR
+      b0110: alu = a ^ b; // XOR
+      b1010: alu = a;     // "A"
+      b0001: alu = ~(a & b); // Additional: NAND
+      b1111: alu = ~(a | b); // Additional: NOR
+      b0111: alu = ~(a ^ b); // Additional: XNOR
+      b0100: alu = c{~a[15], a[14:0]}; // invert MSB
+
+      default: alu = 16b0;  // if all case not satisfied, do default
+      
+      }
+  }
+}

@@ -1,0 +1,9 @@
+module sixteen_bit_2s_complement (
+    input a[16], // 16 bit input to be negated using 2's complement
+    output n[16] //negated value
+  ) {
+  
+  always {
+    n = ~a+1; //not for each bit
+  }
+}

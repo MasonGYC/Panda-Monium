@@ -1,0 +1,533 @@
+module auto_check (
+    input clk,  // clock
+    input rst,  // reset
+
+    // 5 bit binary number to represent which specific test case shall be failed (inverting LSB of ALU[15:0] of ALU
+    // from b00001 (Test Case #1) to b10111 (Test Case #23)
+    input fail_case[5],
+    input switch[2], // io_dip[2][7] is the toggle to start the auto_tester, io_dip[2][6] is the toggle to reset the auto_tester
+    input button,
+    output status[2],// // status for all test cases, b00 means still testing, b01 means PASS, b10 means FAIL
+    
+    output out_true[16], // hardcoded answer key from rom
+    output out_calc[16], // value calculated by ALU
+    output progress[16],
+    output index[4][4] // 4 digit index of test case in decimal for 7-seg
+  ) {
+  counter slowclock(#SIZE(1),#DIV(26),.clk(clk),.rst(rst));
+  fsm fsm_t(.clk(slowclock.value),.rst(rst))={START, 
+                                              S0, S1, S2, // addition test cases
+                                              S3, S4, S5, S6, // subtraction test cases
+                                              S7, S8, S9, S10, S11, // multiplication, division, moduluo test cases
+                                              S12, S13, S14, S15, // and or xor a test cases
+                                              S16, S17, S18, S19, S20, S21, // comparator ==, < , <= test cases
+                                              S22, S23, S24, // shifter SHL, SHR, SRA test cases
+                                              S25, // 2s complement
+                                              PASS, FAIL, B, ALUFN
+                                              };
+  rom r;
+  alu aluUnit;
+  dff reg_index[4][4](#INIT({4h0,4h0,4h0,4h0}), .clk(clk), .rst(rst));
+  dff register_address[5](#INIT(0), .clk(clk), .rst(rst));
+  sig computed[16], a[16], b[16], alufn[6], z, v, n, o[16];
+
+  always {
+    status = b00; // to show that it is still testing the test cases
+    r.address = register_address.q; // from ROM
+    a = r.outA;
+    b = r.outB;
+    o = r.correct_answer;
+    z = r.outZ;
+    v = r.outV;
+    n = r.outN;
+    alufn = r.alufn;
+    progress = 16b0;
+    index = reg_index.q;
+
+    aluUnit.a = a;  // feed ROM test case to ALU
+    aluUnit.b = b;
+    aluUnit.alufn = alufn;
+    computed = aluUnit.out;
+    out_calc = computed;
+    out_true = o;
+
+    case(fsm_t.q){ // TODO: fsm logic when handling the test cases, to compare the alu output with the rom output denoted by variable r (done)
+      fsm_t.START:
+        reg_index.d = {4h8,4h8,4h8,4h8};
+        if (switch[1]){ // if io_dip[2][7] is high
+            fsm_t.d = fsm_t.S0; // start the auto tester by testing Test Case #0
+        }
+          
+        else {
+          fsm_t.d = fsm_t.START; // keep waiting for io_dip[2][7] to be high
+        }
+      
+      fsm_t.S0:
+        register_address.d=5b0;
+        progress = 16b1;
+        reg_index.d = {4h0,4h0,4h2,4h6};
+        if (fail_case == b11010){ // if Test Case #1 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+        //  & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n
+        if (computed == o & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n){
+          fsm_t.d = fsm_t.S1; // next state is state S1 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.S1:
+        register_address.d=5b1;
+        progress = 16b11;
+        reg_index.d = {4h0,4h0,4h2,4h5}; //TODO: copy each state
+        if (fail_case == b11001){ // if Test Case #2 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+        
+        if (computed == o & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n){
+          fsm_t.d = fsm_t.S2; // next state is state S2 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.S2:
+        register_address.d=5b10;
+        progress = 16b11;
+        reg_index.d = {4h0,4h0,4h2,4h4};
+        if (fail_case == b11000){ // if Test Case #3 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+          
+        if (computed == o & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n){
+          fsm_t.d = fsm_t.S3; // next state is state S3 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+            
+      fsm_t.S3:
+        register_address.d=5b11;
+        progress = 16b111;
+        reg_index.d = {4h0,4h0,4h2,4h3};
+        if (fail_case == b10111){ // if Test Case #4 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+          
+        if (computed == o & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n){
+          fsm_t.d = fsm_t.S4; // next state is state S4 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.S4:
+        register_address.d=5b100;
+        progress = 16b1111;
+        reg_index.d = {4h0,4h0,4h2,4h2};
+        if (fail_case == b10110){ // if Test Case #5 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+        
+        if (computed == o & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n){
+          fsm_t.d = fsm_t.S5; // next state is state S5 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.S5:
+        register_address.d=5b101;
+        progress = 16b1111;
+        reg_index.d = {4h0,4h0,4h2,4h1};
+        if (fail_case == b10101){ // if Test Case #6 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+        
+        if (computed == o & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n){
+          fsm_t.d = fsm_t.S6; // next state is state S6 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.S6:
+        register_address.d=5b110;
+        progress = 16b1111;
+        reg_index.d = {4h0,4h0,4h2,4h0};
+        if (fail_case == b10100){ // if Test Case #7 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+
+        if (computed == o & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n){
+          fsm_t.d = fsm_t.S7; // next state is state S7 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.S7:
+        register_address.d=5b111;
+        progress = 16b11111;
+        reg_index.d = {4h0,4h0,4h1,4h9};
+        if (fail_case == b10011){ // if Test Case #8 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+
+        if (computed == o & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n){
+          fsm_t.d = fsm_t.S8; // next state is state S8 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.S8:
+        register_address.d=5b1000;
+        progress = 16b11111;
+        reg_index.d = {4h0,4h0,4h1,4h8};
+        if (fail_case == b10010){ // if Test Case #9 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+
+        if (computed == o & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n){
+          fsm_t.d = fsm_t.S9; // next state is state S9 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.S9:
+        register_address.d=5b1001;
+        progress = 16b11111;
+        reg_index.d = {4h0,4h0,4h1,4h7};
+        if (fail_case == b10001){ // if Test Case #10 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+        
+        if (computed == o & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n){
+          fsm_t.d = fsm_t.S10; // next state is state S10 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.S10:
+        register_address.d=5b1010;
+        progress = 16b111111;
+        reg_index.d = {4h0,4h0,4h1,4h6};
+        if (fail_case == b10000){ // if Test Case #11 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+        
+        if (computed == o & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n){
+          fsm_t.d = fsm_t.S11; // next state is state S11 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.S11:
+        register_address.d=5b1011;
+        progress = 16b1111111;
+        reg_index.d = {4h0,4h0,4h1,4h5};
+        if (fail_case == b01111){ // if Test Case #12 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+        
+        if (computed == o & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n){
+          fsm_t.d = fsm_t.S12; // next state is state S12 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.S12:
+        register_address.d=5b1100;
+        progress = 16b11111111;
+        reg_index.d = {4h0,4h0,4h1,4h4};
+        if (fail_case == b01110){ // if Test Case #13 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+        
+        if (computed == o & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n){
+          fsm_t.d = fsm_t.S13; // next state is state S13 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.S13:
+        register_address.d=5b1101;
+        progress = 16b11111111;
+        reg_index.d = {4h0,4h0,4h1,4h3};
+        if (fail_case == b01101){ // if Test Case #14 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+        
+        if (computed == o & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n){
+          fsm_t.d = fsm_t.S14; // next state is state S14 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.S14:
+        register_address.d=5b1110;
+        progress = 16b111111111;
+        reg_index.d = {4h0,4h0,4h1,4h2};
+        if (fail_case == b01100){ // if Test Case #15 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+        
+        if (computed == o & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n){
+          fsm_t.d = fsm_t.S15; // next state is state S15 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.S15:
+        register_address.d=5b1111;
+        progress = 16b1111111111;
+        reg_index.d = {4h0,4h0,4h1,4h1};
+        if (fail_case == b01011){ // if Test Case #16 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+        
+        if (computed == o & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n){
+          fsm_t.d = fsm_t.S16; // next state is state S16 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.S16:
+        register_address.d=5b10000;
+        progress = 16b1111111111;
+        reg_index.d = {4h0,4h0,4h1,4h0};
+        if (fail_case == b01010){ // if Test Case #17 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+        
+        if (computed == o & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n){
+          fsm_t.d = fsm_t.S17; // next state is state S17 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.S17:
+        register_address.d=5b10001;
+        progress = 16b11111111111;
+        reg_index.d = {4h0,4h0,4h0,4h9};
+        if (fail_case == b01001){ // if Test Case #18 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+        
+        if (computed == o & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n){
+          fsm_t.d = fsm_t.S18; // next state is state S18 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.S18:
+        register_address.d=5b10010;
+        progress = 16b111111111111;
+        reg_index.d = {4h0,4h0,4h0,4h8};
+        if (fail_case == b01000){ // if Test Case #19 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+        
+        if (computed == o & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n){
+          fsm_t.d = fsm_t.S19; // next state is state S19 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.S19:
+        register_address.d=5b10011;
+        progress = 16b1111111111111;
+        reg_index.d = {4h0,4h0,4h0,4h7};
+        if (fail_case == b00111){ // if Test Case #20 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+        
+        if (computed == o & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n){
+          fsm_t.d = fsm_t.S20; // next state is state S20 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.S20:
+        register_address.d=5b10100;
+        progress = 16b1111111111111;
+        reg_index.d = {4h0,4h0,4h0,4h6};
+        if (fail_case == b00110){ // if Test Case #21 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+
+        if (computed == o & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n){
+          fsm_t.d = fsm_t.S21; // next state is state S21 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.S21:
+        register_address.d=5b10101;
+        progress = 16b11111111111111;
+        reg_index.d = {4h0,4h0,4h0,4h5};
+        if (fail_case == b00101){ // if Test Case #22 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+        
+        if (computed == o & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n){
+          fsm_t.d = fsm_t.S22; // next state is state S22 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.S22:
+        register_address.d=5b10110;
+        progress = 16b11111111111111;
+        reg_index.d = {4h0,4h0,4h0,4h4};
+        if (fail_case == b00100){ // if Test Case #23 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+        
+        if (computed == o & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n){
+          fsm_t.d = fsm_t.S23; // next state is state S23 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.S23:
+        register_address.d=5b10111;
+        progress = 16b11111111111111;
+        reg_index.d = {4h0,4h0,4h0,4h3};
+        if (fail_case == b00011){ // if Test Case #24 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+        
+        if (computed == o & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n){
+          fsm_t.d = fsm_t.S24; // next state is state S24 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.S24:
+        register_address.d=5b11000;
+        progress = 16b111111111111111;
+        reg_index.d = {4h0,4h0,4h0,4h2};
+        if (fail_case == b00010){ // if Test Case #25 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+        
+        if (computed == o & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n){
+          fsm_t.d = fsm_t.S25; // next state is PASS if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+       
+      fsm_t.S25:
+        register_address.d=5b11001;
+        progress = 16b111111111111111;
+        reg_index.d = {4h0,4h0,4h0,4h1};
+        if (fail_case == b00001){ // if Test Case #25 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+        
+        if (computed == o & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n){
+          fsm_t.d = fsm_t.PASS; // next state is PASS if correct (i.e. the ALU's output matches the expected answer)
+        }
+ 
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.PASS:
+        status = b11;
+        progress = 16b1111111111111111;
+        reg_index.d = {4h0,4h0,4h0,4h0};
+        if (switch[0]){ // if io_dip[2][6] is high, then reset the auto_tester by going back to the START state
+          fsm_t.d = fsm_t.START; // go back to the START state
+        }
+        else{ // else, keep waiting for the io_dip[2][6] to be high
+          fsm_t.d = fsm_t.PASS;
+        }
+      
+      fsm_t.FAIL:
+        progress=a;
+        status = b10;
+        if (button){
+          fsm_t.d = fsm_t.B;
+        }
+        else if (switch[0]){ // if io_dip[2][6] is high, then reset the auto_tester by going back to the START state
+          fsm_t.d = fsm_t.START; // go back to the START state
+        }
+        else{
+          fsm_t.d = fsm_t.FAIL;
+        }
+        
+      fsm_t.B:
+        progress=b;
+        status = b01;
+        if (button){
+        fsm_t.d = fsm_t.ALUFN;
+        }
+        else if (switch[0]){ // if io_dip[2][6] is high, then reset the auto_tester by going back to the START state
+          fsm_t.d = fsm_t.START; // go back to the START state
+        }
+        else{
+          fsm_t.d = fsm_t.B;
+        }
+        
+      fsm_t.ALUFN:
+        progress=alufn;
+        status = b11;
+        if (button){
+        fsm_t.d = fsm_t.FAIL;
+        }
+        else if (switch[0]){ // if io_dip[2][6] is high, then reset the auto_tester by going back to the START state
+          fsm_t.d = fsm_t.START; // go back to the START state
+        }
+        else{
+          fsm_t.d = fsm_t.ALUFN;
+        }
+      }
+  }
+}

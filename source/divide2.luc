@@ -1,0 +1,21 @@
+module divide2 (
+    output q[16],
+    output r[16],
+    input a[16],
+    input b[16],
+    output ex[1] //exception if div_by_0
+  ) {
+
+  always {
+    if (b!=16b0){
+      q = a/b;
+      r = a - b*(a/b);
+      ex =0;
+    }
+    else{
+      q = 0;
+      r = 0;
+      ex =1;
+    }
+  }
+}
