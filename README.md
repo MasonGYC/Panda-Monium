@@ -125,43 +125,43 @@
 
 ### IO components
 (Specified in au_top.luc)
-- io_led[1:0] = output[16] / operand[16]
-- io_led[2][0] = button[0] pressed indicator
-- io_led[2][1] = `z` when add / substract
-- io_led[2][2] = `v` when add / substract
-- io_led[2][3] = `n` when add / substract
-- io_led[2][4] = exception when divided by 0
-- io_dip[1:0] = operand[16] / alufn[6]
-- io_dip[2][7] = switch between auto and manual check modes
-- io_button[0] = switch states
+- `io_led[1:0]` = `output[16]` / `operand[16]`
+- `io_led[2][0]` = `button[0]` pressed indicator
+- `io_led[2][1]` = `z` when add / substract
+- `io_led[2][2]` = `v` when add / substract
+- `io_led[2][3]` = `n` when add / substract
+- `io_led[2][4]`` = exception when divided by 0
+- `io_dip[1:0]` = `operand[16]` / `alufn[6]`
+- `io_dip[2][7]` = switch between auto and manual check modes
+- `io_button[0]` = switch states
 
 ### Instructions
 1. pulldown `io_dip[2][7]` to switch to mannual check mode
-2. input 16 bit first operand using io_dip[1] and io_dip[0]
-3. press io_button[0](top button)
-4. input 16 bit second operand using io_dip[1] and io_dip[0]
-5. press io_button[0](top button)
-6. input 6 bit OPCODE(see table) using io_dip[0]
-7. press io_button[0](top button)
-8. result is shown on io_led[1] and io_led[0]
-9. press io_button[0](top button)
+2. input 16 bit first operand using `io_dip[1]` and `io_dip[0]`
+3. press `io_button[0]`(top button)
+4. input 16 bit second operand using `io_dip[1]` and `io_dip[0]`
+5. press `io_button[0]`(top button)
+6. input 6 bit OPCODE(see table) using `io_dip[0]`
+7. press `io_button[0]`(top button)
+8. result is shown on `io_led[1]` and `io_led[0]`
+9. press `io_button[0]`(top button)
 10. reset to initial state, go back to step2 to input the first operand.
 
 
 ## Auto Check
 
 ### IO components
-- io_dip[2][7] = switch between auto and manual check modes
-- io_dip[2][6] = reset
-- io_led[2][7:6] = status
-- io_dip[2][0:4] = set false test case for demo
-- io_button[4] = switch between B and ALUFN states
+- `io_dip[2][7]` = switch between auto and manual check modes
+- `io_dip[2][6]` = reset
+- `io_led[2][7:6]` = status
+- `io_dip[2][0:4]` = set false test case for demo
+- `io_button[4]` = switch between B and ALUFN states
  
 ### Instructions
 1. pullup `io_dip[2][7]` to switch to auto check mode
-2. set false test case(0-25) at io_dip[2][0:4]
-3. test cases are automatically run, if io_led[2][7:6] both light up, it means all test cases have passed; if only io_led[2][6] lights up, it means certain test case fails.
-4. io_led[1:0] shows the testing progress.
+2. set false test case(0-25) at `io_dip[2][0:4]`
+3. test cases are automatically run, if `io_led[2][7:6]` both light up, it means all test cases have passed; if only `io_led[2][6]` lights up, it means certain test case fails.
+4. `io_led[1:0]` shows the testing progress.
 
 # Contributors
 1005005	Lim Sheng Xiang  
