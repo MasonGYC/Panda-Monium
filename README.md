@@ -118,7 +118,7 @@
 ### Auto check
 - Module name: `auto_check`
 - Input: `fail_case[5]` (5 bit test_Case_index for failure demo), `switch[2]` (control button to stert/reset), `clk`, `rst`
-- Output: `status[2]` (`b00` means still testing, `b01` means `PASS`, `b10` means `FAIL`), `out_true[16]`(hardcoded answer key from rom), `out_calc[16]` (value calculated by ALU)
+- Output: `status[2]` (`b00` means still testing, `b01` means `PASS`, `b10` means `FAIL`), `out_true[16]`(hardcoded answer key from rom), `out_calc[16]` (value calculated by ALU), `progress[16]` (progress of the test)
 - Implementation: define a fsm `fsm_t` with 31 states, corresponding to 26 test cases defined in `rom` and `START`, `PASS`, `FAIL`, `B`, `ALUFN`. If the `S(i)` test case passes, go to the `S(i+1)` test_case/state, if not, go to `FAIL` state, then a is displayed using io_led[1:0], and when io_button[4] is pressed, the failed `B`, `ALUFN` will be displayed successively.
 
 ## Mannual Check
