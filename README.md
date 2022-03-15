@@ -115,17 +115,17 @@ template:
 - Output: `outA[16]` (TESTCASES[address][5]), `outB[16]` = TESTCASES[address][4], `correct_answer[16]` (TESTCASES[address][3]), `outZ[1]` (TESTCASES[address][2][0]),`outV[1]` (TESTCASES[address][1][0]),`outN[1]`(TESTCASES[address][0][0])
 - Implementation: 26 TESTCASES in the format of `ALUNF[5:0]  a   b  correct_ans  correct_z  correct_v  correct_n`, to be used by `auto_check`.
 
-### Auto check
-- Module name: `auto_check`
+### Manual check
+- Module name: `manual_check`
 - Input: `io_dip[16]` (16 bit operands), `io_button` (control button to switch to next state), `clk`, `rst`
 - Output: `out[16]` (last input operand during input states; calculated value by the alu during output states), `ex`(DivisinByZeroException)
 - Implementation: define a fsm `alu_checker` with 4 states: `S0,S1,S2,S3`, corresponding to input a, input b, input alufn, output calculated value by the alu and return to S0. 
 
-### Manual check
-- Module name: `manual_check`
+### Auto check
+- Module name: `auto_check`
 - Input: `fail_case[5]` (5 bit test_Case_index for failure demo), `switch[2]` (control button to stert/reset), `clk`, `rst`
 - Output: `status[2]` (`b00` means still testing, `b01` means `PASS`, `b10` means `FAIL`), `out_true[16]`(hardcoded answer key from rom), `out_calc[16]` (value calculated by ALU)
-- Implementation: define a fsm `fsm_t` with 29 states, corresponding to 26 test cases defined in `rom` and `START`, `PASS`, `FAIL`. If the `S(i)` test case passes, go to the `S(i+1)` test_case/state, if not, go to `FAIL` state
+- Implementation: define a fsm `fsm_t` with 31 states, corresponding to 26 test cases defined in `rom` and `START`, `PASS`, `FAIL`, `B`, `ALUFN`. If the `S(i)` test case passes, go to the `S(i+1)` test_case/state, if not, go to `FAIL` state, then a is displayed using io_led[1:0], and when io_button[4] is pressed, the failed `B`, `ALUFN` will be displayed successively.
 
 ## Mannual Check
 
@@ -157,8 +157,8 @@ template:
 - io_dip[2][6] = reset
 - io_led[2][7:6] = status
 - io_dip[2][0:4] = set false test case for demo
-
-
+- io_button[4] = switch between B and ALUFN states
+ 
 ### Instructions
 1. pullup `io_dip[2][7]` to switch to auto check mode
 2. set false test case(0-25) at io_dip[2][0:4]
