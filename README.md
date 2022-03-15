@@ -9,7 +9,7 @@ template:
 ## Basic Functions
 
 ### Add
-- Module name: "adder"
+- Module name: `adder`
 - Input: `a[16]` (16 bit first input), `b[16]` (16 bit second input), `alufn[6]` (6 bit alufn OPCODE)
 - Output: `s[16]` (16 bit output), `z[1]` (1 bit output), `v[1]` (1 bit output), `n[1]` (1 bit output)
 - Implementation: Execute addition or subtraction operation based on ALUFN OPCODE. If the input ALUFN OPCODE is invalid, output is 16b0.
@@ -18,7 +18,7 @@ template:
 > 2. input: `a[16]=1010 1011 1111 1000` , `b[16]=0001 0100 0000 1000` , `alufn[6]=000001`; output: `s_out=1001 0111 1111 0000`
 
 ### Compare
-- Module name: 'compare'
+- Module name: `compare`
 - Input: `z[1]` (1 bit input), `v[1]` (1 bit input), `n[1]` (1 bit input), `alufn[6]` (6 bit alufn OPCODE)
 - Output: `out[1]` (1 bit output)
 - Implementation: Determining the least significant bit (0 or 1) depending on the ALUFN OPCODE and the Z, V and N outputs of the adder/subtractor unit.
@@ -28,7 +28,7 @@ template:
 > 3. input: `z[1]=0`, `v[1]=0` , `n[1]=0` , `alufn[6]=110111`; output = `out=0`
 
 ### Boolean
-- Module name:'bool2'
+- Module name:`bool2`
 - Input: `a[16]` (16 bit first input), `b[16]`(16 bit second input), `alufn[4]`(4 bit alufn OPCODE)
 - Output `alu[16]`(16 bit output)
 - Implementation: Determine and output the result of boolean expression depending on the input alufn opcode. If the input alufn opcode is invalid, output is 16b0.
@@ -48,7 +48,7 @@ template:
 | invert of msb | 0100 |
 
 ### Shift
-- Module name:'shifter'
+- Module name:`shifter`
 - Input: `a[16]` (16 bit first input), `b[4]`(4 bit second input), `alufn[[2]`(2 bit alufn OPCODE)
 - Output `shift[16]`(16 bit output)
 - Implementation: Do Logical Shift left (SHL),	Logical Shift right (SHR) and Arithmetic Shift right (SRA)	depending on different alufn
@@ -79,7 +79,7 @@ template:
 - Module name:'division'
 - Input: `a[16]` (16 bit input divident), `b[16]`(16 bit divisor)
 - Output `q[16]`(16 bit quotient), `r[16]`(16 bit remainder)
-- Implementation: Using built-in / to calculate quotient, and subtract the product to get remainder. If b =0, then both q and r will be 0.
+- Implementation: Using built-in `/` to calculate quotient, and subtract the product to get remainder. If b =0, then both q and r will be 0.
 - Test cases:
 > 1. input:  `a[16]=1010 1011 1111 1000` , `b[16]=0101 0100 0000 1000` ; output: `q=0x0002`, `r=0000 0011 1110 1000` , `ex=0x0000`; ps:a=44024,b=21512  
 > 2. input:  `a[16]=1010 1011 1111 1000` , `b[16]=0000 0000 0000 0000` ; output: `q=0x0000`, `r=0x0000` , `ex=0x0001'; ps:a=44024,b=0
@@ -132,7 +132,7 @@ template:
 ### IO components
 (Specified in au_top.luc)
 - io_led[1:0] = output[16] / operand[16]
-- io_led[2][0] = exception
+- io_led[2][0] = exception when divided by 0
 - io_dip[1:0] = operand[16] / alufn[6]
 - io_dip[2][7] = switch between auto and manual check modes
 - io_button[4] = switch states
