@@ -126,10 +126,14 @@
 ### IO components
 (Specified in au_top.luc)
 - io_led[1:0] = output[16] / operand[16]
-- io_led[2][0] = exception when divided by 0
+- io_led[2][0] = button[0] pressed indicator
+- io_led[2][1] = `z` when add / substract
+- io_led[2][2] = `v` when add / substract
+- io_led[2][3] = `n` when add / substract
+- io_led[2][4] = exception when divided by 0
 - io_dip[1:0] = operand[16] / alufn[6]
 - io_dip[2][7] = switch between auto and manual check modes
-- io_button[4] = switch states
+- io_button[0] = switch states
 
 ### Instructions
 1. pulldown `io_dip[2][7]` to switch to mannual check mode
