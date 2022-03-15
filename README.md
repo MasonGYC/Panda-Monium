@@ -138,13 +138,13 @@
 ### Instructions
 1. pulldown `io_dip[2][7]` to switch to mannual check mode
 2. input 16 bit first operand using io_dip[1] and io_dip[0]
-3. press io_button[4](rightmost button)
+3. press io_button[0](top button)
 4. input 16 bit second operand using io_dip[1] and io_dip[0]
-5. press io_button[4](rightmost button)
+5. press io_button[0](top button)
 6. input 6 bit OPCODE(see table) using io_dip[0]
-7. press io_button[4](rightmost button)
+7. press io_button[0](top button)
 8. result is shown on io_led[1] and io_led[0]
-9. press io_button[4](rightmost button)
+9. press io_button[0](top button)
 10. reset to initial state, go back to step2 to input the first operand.
 
 
@@ -161,7 +161,7 @@
 1. pullup `io_dip[2][7]` to switch to auto check mode
 2. set false test case(0-25) at io_dip[2][0:4]
 3. test cases are automatically run, if io_led[2][7:6] both light up, it means all test cases have passed; if only io_led[2][6] lights up, it means certain test case fails.
-
+4. io_led[1:0] shows the testing progress.
 
 # Contributors
 1005005	Lim Sheng Xiang  
