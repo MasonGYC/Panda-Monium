@@ -10,7 +10,7 @@ template:
 
 ### Add
 - Module name: "adder"
-- Input: `a[16]` (16 bit first input), `b[16]`(16 bit second input), `alufn[[6]`(6 bit alufn OPCODE)
+- Input: `a[16]` (16 bit first input), `b[16]` (16 bit second input), `alufn[6]` (6 bit alufn OPCODE)
 - Output: `s[16]` (16 bit output), `z[1]` (1 bit output), `v[1]` (1 bit output), `n[1]` (1 bit output)
 - Implementation: Execute addition or subtraction operation based on ALUFN OPCODE. If the input ALUFN OPCODE is invalid, output is 16b0.
 - Test Cases: 
