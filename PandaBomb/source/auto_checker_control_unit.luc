@@ -1,0 +1,215 @@
+module auto_checker_control_unit ( //TODO: change the whole auto check file
+    input clk,  // clock
+    input rst,  // reset
+
+    // 5 bit binary number to represent which specific test case shall be failed (inverting LSB of ALU[15:0] of ALU
+    // from b00001 (Test Case #1) to b10111 (Test Case #23)
+    input fail_case[5],
+    input switch[2], // io_dip[2][7] is the toggle to start the auto_tester, io_dip[2][6] is the toggle to reset the auto_tester
+    input button,
+    output status[2],// // status for all test cases, b00 means still testing, b01 means PASS, b10 means FAIL
+    
+    output out_true_x_pos_out, // hardcoded answer key from rom
+    output out_true_y_pos_out,
+    output out_true_level,
+    output out_x_pos_out, // value outputted from control unit
+    output out_y_pos_out,
+    output out_level,
+    output progress[16],
+    output index[4][4] // 4 digit index of test case in decimal for 7-seg
+  ) {
+  counter slowclock(#SIZE(1),#DIV(26),.clk(clk),.rst(rst));
+  fsm fsm_t(.clk(slowclock.value),.rst(rst))={START, 
+                                              S0, S1, S2, S3, S4, S5 // testing up down lefrt right and panda movement
+                                              PASS, FAIL
+                                              };
+  ROM_control_unit_test r;
+  control_unit cu;
+  dff reg_index[4][4](#INIT({4h0,4h0,4h0,4h0}), .clk(clk), .rst(rst));
+  dff register_address[5](#INIT(0), .clk(clk), .rst(rst));
+  sig cu_x_pos_out, cu_y_pos_out, cu_level;
+
+  always {
+    status = b00; // to show that it is still testing the test cases
+    progress = 16b0;
+    index = reg_index.q;
+    r.address = register_address.q; // send address from this module to ROM
+
+    ///////////////////////////////////////////////////////////////
+
+    level_in = r.level_in; // input test cases from ROM
+    start = r.start;
+    reset = r.reset;
+    timer = r.timer;
+    up = r.up;
+    down = r.down;
+    left = r.left;
+    right = r.right;
+    map[8][8] = r.map;
+    direction = r.direction;
+    x_pos_in = r.x_pos_in;
+    y_pos_in = r.y_pos_in;
+    
+    ///////////////////////////////////////////////////////////////
+
+    rom_x_pos_out = r.x_pos_out; // output true correct value from ROM
+    rom_y_pos_out = r.y_pos_out; 
+    rom_level_out = r.level_out;
+
+    /////////////////////////////////////////////////////////////
+
+    cu.level_in = level_in;  // feed ROM test case to CU
+    cu.start = start;
+    cu.reset = reset;
+    cu.timer = timer;
+    cu.up = up;
+    cu.down = down;
+    cu.left = left;
+    cu.right = right;
+    cu.map = map;
+    cu.direction = direction;
+    cu.x_pos_in = x_pos_in;
+    cu.y_pos_in = y_pos_in;
+
+/////////////////////////////////////////////////////////////////////
+
+    cu_x_pos_out = cu.x_pos_out; // output from CU
+    cu_y_pos_out = cu.y_pos_out;
+    cu_level_out = cu.level_out;
+
+///////////////////////////////////////////////////////////////////
+
+    case(fsm_t.q){ // fsm logic when handling the test cases, to compare the cu output with the rom output denoted by variable r
+      fsm_t.START:
+        reg_index.d = {4h8,4h8,4h8,4h8};
+        if (switch[1]){ // if io_dip[2][7] is high
+            fsm_t.d = fsm_t.S0; // start the auto tester by testing Test Case #0
+        }
+          
+        else {
+          fsm_t.d = fsm_t.START; // keep waiting for io_dip[2][7] to be high
+        }
+      
+      fsm_t.S0:
+        register_address.d=5b0;
+        progress = 16b1;
+        reg_index.d = {4h0,4h0,4h0,4h6};
+        if (fail_case == b11010){ // if Test Case #1 is chosen to fail
+          cu_y_pos_out[0] = ~cu_y_pos_out[0]; // inverts the LSB of correct answer
+        }
+        //  & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n
+        if (cu_x_pos_out == rom_x_pos_out & cu_y_pos_out == rom_y_pos_out & cu_level_out == rom_level_out){
+          fsm_t.d = fsm_t.S1; // next state is state S1 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.S1:
+        register_address.d=5b1;
+        progress = 16b11;
+        reg_index.d = {4h0,4h0,4h0,4h5};
+        if (fail_case == b11001){ // if Test Case #2 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+        
+        if (cu_x_pos_out == rom_x_pos_out & cu_y_pos_out == rom_y_pos_out & cu_level_out == rom_level_out){
+          fsm_t.d = fsm_t.S2; // next state is state S2 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.S2:
+        register_address.d=5b10;
+        progress = 16b11;
+        reg_index.d = {4h0,4h0,4h0,4h4};
+        if (fail_case == b11000){ // if Test Case #3 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+          
+        if (cu_x_pos_out == rom_x_pos_out & cu_y_pos_out == rom_y_pos_out & cu_level_out == rom_level_out){
+          fsm_t.d = fsm_t.S3; // next state is state S3 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+            
+      fsm_t.S3:
+        register_address.d=5b11;
+        progress = 16b111;
+        reg_index.d = {4h0,4h0,4h0,4h3};
+        if (fail_case == b10111){ // if Test Case #4 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+          
+        if (cu_x_pos_out == rom_x_pos_out & cu_y_pos_out == rom_y_pos_out & cu_level_out == rom_level_out){
+          fsm_t.d = fsm_t.S4; // next state is state S4 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.S4:
+        register_address.d=5b100;
+        progress = 16b1111;
+        reg_index.d = {4h0,4h0,4h0,4h2};
+        if (fail_case == b10110){ // if Test Case #5 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+        
+        if (cu_x_pos_out == rom_x_pos_out & cu_y_pos_out == rom_y_pos_out & cu_level_out == rom_level_out){
+          fsm_t.d = fsm_t.S5; // next state is state S5 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.S5:
+        register_address.d=5b101;
+        progress = 16b1111;
+        reg_index.d = {4h0,4h0,4h0,4h1};
+        if (fail_case == b10101){ // if Test Case #6 is chosen to fail
+          o[0] = ~o[0]; // inverts the LSB of correct answer
+        }
+        
+        if (cu_x_pos_out == rom_x_pos_out & cu_y_pos_out == rom_y_pos_out & cu_level_out == rom_level_out){
+          fsm_t.d = fsm_t.PASS; // next state is state S6 if correct (i.e. the ALU's output matches the expected answer)
+        }
+        
+        else{
+          fsm_t.d = fsm_t.FAIL; // next state is state FAIL if wrong (i.e. the ALU's output does not match the expected answer)
+        }
+
+      fsm_t.PASS:
+        status = b11;
+        progress = 16b1111111111111111;
+        reg_index.d = {4h0,4h0,4h0,4h0};
+        if (switch[0]){ // if io_dip[2][6] is high, then reset the auto_tester by going back to the START state
+          fsm_t.d = fsm_t.START; // go back to the START state
+        }
+        else{ // else, keep waiting for the io_dip[2][6] to be high
+          fsm_t.d = fsm_t.PASS;
+        }
+      
+      fsm_t.FAIL:
+        progress=a;
+        status = b10;
+        if (button){
+          fsm_t.d = fsm_t.B;
+        }
+        else if (switch[0]){ // if io_dip[2][6] is high, then reset the auto_tester by going back to the START state
+          fsm_t.d = fsm_t.START; // go back to the START state
+        }
+        else{
+          fsm_t.d = fsm_t.FAIL;
+        }
+      }
+  }
+}
