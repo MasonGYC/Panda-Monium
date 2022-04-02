@@ -1,0 +1,146 @@
+module control_unit (
+//the overall control_unit of the game
+    input clk,  // clock
+    input rst,  // reset
+
+    input level_in, //current level
+    output level_out, //next level
+    
+    input start, //START button
+    input reset, //RESET button
+    input timer, //remaining time 
+    
+    input up, //move
+    input down,
+    input left,
+    input right,
+    
+    input map[8][8],
+    
+    input direction, //udlr
+    input x_pos_in, //suppose 1 bit for x and y coordinate
+    input y_pos_in,
+    output x_pos_out,
+    output y_pos_out;
+    
+  ) {
+      //sig
+
+
+    //init
+    //preprocess unit for change position to 1 bit decimal
+    dff x_temp[1](#INIT(0), .clk(clk), .rst(rst)); //code in decimal
+    dff y_temp[1](#INIT(0), .clk(clk), .rst(rst)); //code in decimal
+    dff level_temp[1](#INIT(0), .clk(clk), .rst(rst)); //code in decimal
+  
+    fsm ctrl(.clk(clk),.rst(rst))={
+        START, //wait for start button
+        GENERATE_MAP, //map -> idle
+        IDLE,
+        CHECK_BORDER,
+        CHECK_GOAL, //check whether reached goal
+        CHECK_COLL, //check obstacle
+        GAMEOVER,
+        WIN};
+  
+
+  always {
+
+    //connection
+    x_temp.d = x_pos_in;
+    y_temp.d = y_pos_in;
+    x_pos_out = x_temp.q;
+    y_pos_out = y_temp.q;
+    level_temp.d = level_in;
+    level_out = level_temp.q;
+
+    //check timer
+    if (timer > 60){ctrl.d = ctrl.GAMEOVER;}//exceed time
+
+    //fms ctrl
+    case(ctrl.q){
+
+        ctrl.START:
+            if (start == 1){ctrl.d = ctrl.GENERATE_MAP;}
+            else{ctrl.d = ctrl.START;}
+     
+        //////////////////////////////
+        ctrl.GENERATE_MAP:
+            case(level_in){
+            0: 
+            //generate map 0
+
+            1:
+            //generate map 1
+
+            2:
+            //generate map 2
+
+
+            }
+            ctrl.d = ctrl.IDLE;
+        //////////////////////////////
+        ctrl.IDLE:
+            if (left==1 || right==1 || up==1 || down==1){
+                //change position temp
+                case(direction){
+                    "UP": y_temp.d = y_temp.q + 1;
+                    "DOWN":y_temp.d = y_temp.q - 1;
+                    "RIGHT":x_temp.d = x_temp.q + 1;
+                    "LEFT":x_temp.d = x_temp.q - 1;
+                }
+                ctrl.d = ctrl.CHECK_GOAL;
+            }
+            else{ctrl.d = ctrl.IDLE;}
+        //////////////////////////////
+        ctrl.CHECK_GOAL:
+            if (x_temp.q == 0b111 && y_temp.q == 0b111){
+                ctrl.d = ctrl.WIN;
+                }
+            else {ctrl.d = ctrl.CHECK_BORDER;}
+
+        //////////////////////////////
+        ctrl.CHECK_BORDER:
+            if (x_temp.q>7 || x_temp.q <0 || y_temp.q>7 || y_temp.q<0){
+                ctrl.d = ctrl.IDLE;
+            }
+            else{ctrl.d = ctrl.CHECK_COLL;}
+        //////////////////////////////
+        ctrl.CHECK_COLL:
+            if (map[x_temp.q][y_temp.q]==1){
+                ctrl.d = ctrl.IDLE;
+            }
+            else{
+                //write position from temp dff
+                x_pos_out = x_temp.q;
+                y_pos_out = y_temp.q;
+                ctrl.d = ctrl.IDLE; 
+        }
+        //////////////////////////////
+        ctrl.WIN:
+            if (level_in <2 && level_in >=0){
+                level_out = level_in + 1;
+                ctrl.d = ctrl.START;
+            }
+            else {ctrl.d = ctrl.GAMEOVER;}
+        //////////////////////////////
+        ctrl.GAMEOVER:
+        if (reset == 1){
+            level_out = 0;
+            ctrl.d=ctrl.START;
+            }
+        else{
+            //show 7-seg msg
+            ctrl.d = ctrl.GAMEOVER;}
+
+        
+
+    }
+  }
+}
+
+
+
+
+
+

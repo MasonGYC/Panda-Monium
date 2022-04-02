@@ -1,0 +1,33 @@
+module slowtimer(
+    input clk,  // clock
+    input rst,  // reset
+    input time_in, //in binary
+    output time_out, //in binary
+    input orientation_in,
+    output orientation_out
+
+){
+  sig mod[16];
+    counter slowclock(#SIZE(1),#DIV(26),.clk(clk),.rst(rst));
+    alu alu;
+
+always{
+
+    time_out = slowclock.value;
+    alu.a = time_in;
+    alu.b = 10;
+    alu.alufn = b000011;
+    mod = alu.out;
+    
+    
+    //calc modulo
+    
+    
+    //change orientation
+    if ( mod == 0){
+        if (orientation_in <3){orientation_out = orientation_in + 1;}
+        else {orientation_out = 0;}
+    }
+
+  }
+}
