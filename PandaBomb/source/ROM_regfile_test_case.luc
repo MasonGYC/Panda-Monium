@@ -1,0 +1,67 @@
+module ROM_regfile_test_case ( // FIXME: KIV might change whole structure of regfile
+    input address[5],  // ROM address
+
+    output ra[4], // inputs to regfile to test
+    output rb[4],
+    output rc[4],
+    output we,
+    output write_data[16],
+    output level,
+
+    output correct_out_time[16], // supposed correct outputs of regfile
+    output correct_XPos,
+    output correct_YPos,
+    output correct_ra_data,
+    output correct_rb_data;
+    output correct_map;
+  ) {
+ 
+  // 25 testcases in the format of 
+  // ra[4] rb[4] rc[4] we write_data[16] level correct_out_time[16] correct_XPos correct_YPos correct_ra_data[16] correct_rb_data[16], correct_map
+  // FIXME: can we actually test for a correct out time??
+  const TESTCASES_regfile =      
+  { 
+    {4h2, 4h7, 4h3, 1h0, 16b0001000100000001, 1, 16h0000, 0, 0, {1, 0, 0, 0, 0, 0, 0, 1}, {0, 0, 0, 0, 0, 0, 0, 0}, 
+        {
+          {0, 0, 0, 0, 0, 1, 0, 0},              // level 1 map row 1
+          {0, 0, 0, 1, 0, 1, 1, 0},              // level 1 map row 2
+          {1, 0, 0, 0, 0, 0, 0, 1},              // level 1 map row 3
+          {0, 0, 0, 1, 0, 1, 0, 0},              // level 1 map row 4
+          {0, 0, 1, 1, 0, 0, 1, 0},              // level 1 map row 5
+          {1, 0, 0, 0, 0, 0, 0, 0},              // level 1 map row 6
+          {0, 0, 1, 0, 0, 1, 0, 0},              // level 1 map row 7
+          {0, 0, 0, 0, 0, 0, 0, 0},              // level 1 map row 8
+        }
+    }, // TEST: level 1, we=0, ra_data should be map1 row 3, rb_data should be map1 row 8 
+
+    {4h2, 4h8, 4h3, 1h0, 16b0001000100000001, 1, 16h0000, 0, 0, {1, 0, 0, 0, 0, 0, 0, 1}, {0, 0, 0, 0, 0, 0, 0, 0}, 
+        {
+          {0, 0, 0, 0, 0, 1, 0, 0},              // level 1 map row 1
+          {0, 0, 0, 1, 0, 1, 1, 0},              // level 1 map row 2
+          {1, 0, 0, 0, 0, 0, 0, 1},              // level 1 map row 3
+          {0, 0, 0, 1, 0, 1, 0, 0},              // level 1 map row 4
+          {0, 0, 1, 1, 0, 0, 1, 0},              // level 1 map row 5
+          {1, 0, 0, 0, 0, 0, 0, 0},              // level 1 map row 6
+          {0, 0, 1, 0, 0, 1, 0, 0},              // level 1 map row 7
+          {0, 0, 0, 0, 0, 0, 0, 0},              // level 1 map row 8
+        }
+    }, // TEST: level 1, we=0, ra_data should be map2 row 3, rb_data should be XPos 
+
+
+
+  };
+
+  always {
+    correct_out_time = TESTCASES_regfile[address][5]; //NOTE: indexing order in array in lucid: 0 starts from right
+    correct_XPos = TESTCASES_regfile[address][4];
+    correct_YPos = TESTCASES_regfile[address][3];
+    correct_ra_data = TESTCASES_regfile[address][2];
+    correct_rb_data = TESTCASES_regfile[address][1];
+    correct_map = TESTCASES_regfile[address][0];
+  }
+}
+
+// 6 hex digits
+// 1 byte is 8 binary bits
+// 1 byte is 2 hex digits
+// 1 hex digit is 4 binary bits
