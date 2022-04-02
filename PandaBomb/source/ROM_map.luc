@@ -1,0 +1,155 @@
+module rom_map (
+    input address[5],  // ROM address 
+    input level_input,    // ROM level input from regfile
+    output out_row1,
+    output out_row2,
+    output out_row3,
+    output out_row4,
+    output out_row5,
+    output out_row6,
+    output out_row7,
+    output out_row8,
+    output out_row_by_address,
+    output full_map;        
+  ) {
+ 
+  // NOTE: 3 ways to address the ROM, either through a level input or a address input, or get the full map in a 2D array 
+  // FIXME: not sure which map format to take, just did both just in case we need either one
+  const MAP =      
+  { 
+    {0, 0, 0, 0, 0, 1, 0, 0},              // level 1 map row 1
+    {0, 0, 0, 1, 0, 1, 1, 0},              // level 1 map row 2
+    {1, 0, 0, 0, 0, 0, 0, 1},              // level 1 map row 3
+    {0, 0, 0, 1, 0, 1, 0, 0},              // level 1 map row 4
+    {0, 0, 1, 1, 0, 0, 1, 0},              // level 1 map row 5
+    {1, 0, 0, 0, 0, 0, 0, 0},              // level 1 map row 6
+    {0, 0, 1, 0, 0, 1, 0, 0},              // level 1 map row 7
+    {0, 0, 0, 0, 0, 0, 0, 0},              // level 1 map row 8
+
+    {0, 0, 1, 0, 0, 0, 0, 0},              // level 2 map row 1
+    {0, 0, 0, 1, 1, 0, 0, 0},              // level 2 map row 2
+    {1, 0, 0, 1, 0, 0, 1, 0},              // level 2 map row 3
+    {1, 0, 0, 0, 0, 0, 0, 0},              // level 2 map row 4
+    {0, 1, 0, 0, 0, 1, 1, 0},              // level 2 map row 5
+    {0, 1, 0, 0, 1, 1, 0, 0},              // level 2 map row 6
+    {0, 0, 0, 0, 0, 0, 0, 0},              // level 2 map row 7
+    {0, 0, 1, 0, 0, 0, 0, 0},              // level 2 map row 8
+
+    {0, 0, 1, 0, 0, 0, 0, 1},              // level 3 map row 1
+    {0, 1, 1, 0, 1, 0, 1, 0},              // level 3 map row 2
+    {0, 0, 0, 0, 1, 0, 1, 0},              // level 3 map row 3
+    {1, 1, 1, 1, 0, 0, 1, 0},              // level 3 map row 4
+    {0, 0, 0, 0, 0, 1, 0, 0},              // level 3 map row 5
+    {0, 0, 0, 0, 1, 0, 0, 0},              // level 3 map row 6
+    {0, 1, 1, 1, 0, 0, 0, 0},              // level 3 map row 7
+    {0, 0, 0, 0, 0, 0, 0, 0}               // level 3 map row 8
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // {1b0, 1b0, 1b0, 1b0, 1b0, 1b1, 1b0, 1b0},              // level 1 map row 1
+    // {1b0, 1b0, 1b0, 1b1, 1b0, 1b1, 1b1, 1b0},              // level 1 map row 2
+    // {1b1, 1b0, 1b0, 1b0, 1b0, 1b0, 1b0, 1b1},              // level 1 map row 3
+    // {1b0, 1b0, 1b0, 1b1, 1b0, 1b1, 1b0, 1b0},              // level 1 map row 4
+    // {1b0, 1b0, 1b1, 1b1, 1b0, 1b0, 1b1, 1b0},              // level 1 map row 5
+    // {1b1, 1b0, 1b0, 1b0, 1b0, 1b0, 1b0, 1b0},              // level 1 map row 6
+    // {1b0, 1b0, 1b1, 1b0, 1b0, 1b1, 1b0, 1b0},              // level 1 map row 7
+    // {1b0, 1b0, 1b0, 1b0, 1b0, 1b0, 1b0, 1b0},              // level 1 map row 8
+
+    // {1b0, 1b0, 1b1, 1b0, 1b0, 1b0, 1b0, 1b0},              // level 2 map row 1
+    // {1b0, 1b0, 1b0, 1b1, 1b1, 1b0, 1b0, 1b0},              // level 2 map row 2
+    // {1b1, 1b0, 1b0, 1b1, 1b0, 1b0, 1b1, 1b0},              // level 2 map row 3
+    // {1b1, 1b0, 1b0, 1b0, 1b0, 1b0, 1b0, 1b0},              // level 2 map row 4
+    // {1b0, 1b1, 1b0, 1b0, 1b0, 1b1, 1b1, 1b0},              // level 2 map row 5
+    // {1b0, 1b1, 1b0, 1b0, 1b1, 1b1, 1b0, 1b0},              // level 2 map row 6
+    // {1b0, 1b0, 1b0, 1b0, 1b0, 1b0, 1b0, 1b0},              // level 2 map row 7
+    // {1b0, 1b0, 1b1, 1b0, 1b0, 1b0, 1b0, 1b0},              // level 2 map row 8
+
+    // {1b0, 1b0, 1b1, 1b0, 1b0, 1b0, 1b0, 1b1},              // level 3 map row 1
+    // {1b0, 1b1, 1b1, 1b0, 1b1, 1b0, 1b1, 1b0},              // level 3 map row 2
+    // {1b0, 1b0, 1b0, 1b0, 1b1, 1b0, 1b1, 1b0},              // level 3 map row 3
+    // {1b1, 1b1, 1b1, 1b1, 1b0, 1b0, 1b1, 1b0},              // level 3 map row 4
+    // {1b0, 1b0, 1b0, 1b0, 1b0, 1b1, 1b0, 1b0},              // level 3 map row 5
+    // {1b0, 1b0, 1b0, 1b0, 1b1, 1b0, 1b0, 1b0},              // level 3 map row 6
+    // {1b0, 1b1, 1b1, 1b1, 1b0, 1b0, 1b0, 1b0},              // level 3 map row 7
+    // {1b0, 1b0, 1b0, 1b0, 1b0, 1b0, 1b0, 1b0}               // level 3 map row 8
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // {8b00000100},              // level 1 map row 1
+    // {8b00010110},              // level 1 map row 2
+    // {8b10000001},              // level 1 map row 3
+    // {8b00010100},              // level 1 map row 4
+    // {8b00110010},              // level 1 map row 5
+    // {8b10000000},              // level 1 map row 6
+    // {8b00100100},              // level 1 map row 7
+    // {8b00000000},              // level 1 map row 8
+
+    // {8b0010000},               // level 2 map row 1
+    // {8b00011000},              // level 2 map row 2
+    // {8b10010010},              // level 2 map row 3
+    // {8b10000000},              // level 2 map row 4
+    // {8b01000110},              // level 2 map row 5
+    // {8b01001100},              // level 2 map row 6
+    // {8b00000000},              // level 2 map row 7
+    // {8b00100000},              // level 2 map row 8
+
+    // {8b00100001},              // level 3 map row 1
+    // {8b01101010},              // level 3 map row 2
+    // {8b00001010},              // level 3 map row 3
+    // {8b11110010},              // level 3 map row 4
+    // {8b00000100},              // level 3 map row 5
+    // {8b00001000},              // level 3 map row 6
+    // {8b01110000},              // level 3 map row 7
+    // {8b00000000}               // level 3 map row 8
+  };
+
+  always {
+    out_row_by_address = MAP[address];
+
+    case(level_input) {
+      1: {
+        out_row1 = MAP[0];
+        out_row2 = MAP[1];
+        out_row3 = MAP[2];
+        out_row4 = MAP[3];
+        out_row5 = MAP[4];
+        out_row6 = MAP[5];
+        out_row7 = MAP[6];
+        out_row8 = MAP[7];
+      }
+
+      2: {
+        out_row1 = MAP[8];
+        out_row2 = MAP[9];
+        out_row3 = MAP[10];
+        out_row4 = MAP[11];
+        out_row5 = MAP[12];
+        out_row6 = MAP[13];
+        out_row7 = MAP[14];
+        out_row8 = MAP[15];
+      }
+
+      3: {
+        out_row1 = MAP[16];
+        out_row2 = MAP[17];
+        out_row3 = MAP[18];
+        out_row4 = MAP[19];
+        out_row5 = MAP[20];
+        out_row6 = MAP[21];
+        out_row7 = MAP[22];
+        out_row8 = MAP[23];
+      }
+    }
+
+    full_map = {
+      out_row1,
+      out_row2,
+      out_row3,
+      out_row4,
+      out_row5,
+      out_row6,
+      out_row7,
+      out_row8
+    }
+  }
+}
