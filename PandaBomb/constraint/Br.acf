@@ -1,0 +1,8 @@
+pin clk CLOCK;
+clock clk 100MHz;
+
+// Declare your Br pins here, C49, C46, C2, C3 used for joystick
+pin joystickUp C49 pullup;
+pin joystickDown C48 pullup;
+pin joystickLeft C2 pullup;
+pin joystickRight C3 pullup;
