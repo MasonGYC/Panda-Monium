@@ -1,0 +1,34 @@
+module seq_plus_two (
+    input clk,  // clock
+    input rst,  // reset
+    input btn,
+    output out[8]
+  ) 
+
+{
+dff register_1[8](#INIT(0), .clk(clk), .rst(rst));
+eight_bit_adder plus_two;
+//counter slowClock(#SIZE(1), #DIV(26), .clk(clk), .rst(rst));
+//edge_detector slowClockEdge(#RISE(1), #FALL(0), .clk(clk)); // detects a rising edge
+  // used to do +2 once every second, depending on the input of the slow clock and write into edge detector on FPGA clk's rising edge
+
+
+  
+always {
+  //slowClockEdge.in = slowClock.value; // passing '1' from slowClock into slowClockEdge at the rising edge of FPGA Clock
+    // slowclockEdge is edge detector, will remain at '1' for one cycle of FPGA clock 
+    plus_two.x = register_1.q;  
+    plus_two.y = 8h02;
+    plus_two.cin = b0;
+  
+    //if (slowClockEdge.out == b1){ // if edge detector is 'high'
+    // one output split into 2 paths 
+    if (btn == b1){
+      register_1.d = plus_two.s; // connect sum output of FA to input of register
+      }
+  //}
+    if(rst == b1){
+       	register_1.d = b0;
+    }
+    out = plus_two.s; // other output of FA
+}
