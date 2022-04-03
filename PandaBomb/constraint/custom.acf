@@ -1,6 +1,15 @@
 pin clk CLOCK;
 clock clk 100MHz;
 
+// Declare your Br pins here, C49, C46, C2, C3 used for joystick
+pin joystickUp C49 pullup;
+pin joystickDown C48 pullup;
+pin joystickLeft C2 pullup;
+pin joystickRight C3 pullup;
+
+
+
+// IO pins
 pin rst_n RESET;
 
 pin led[0] LED0;
@@ -12,10 +21,6 @@ pin led[5] LED5;
 pin led[6] LED6;
 pin led[7] LED7;
 
-pin joystickUp C49 pullup;
-pin joystickDown C48 pullup;
-pin joystickLeft C2 pullup;
-pin joystickRight C3 pullup;
 
 // flip the Tx/Rx lines
 pin usb_rx USB_TX;
