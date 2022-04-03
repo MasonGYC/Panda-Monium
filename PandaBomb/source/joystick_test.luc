@@ -13,7 +13,7 @@ eight_bit_adder plus_two;
   // used to do +2 once every second, depending on the input of the slow clock and write into edge detector on FPGA clk's rising edge
 
 
-  
+ 
 always {
   //slowClockEdge.in = slowClock.value; // passing '1' from slowClock into slowClockEdge at the rising edge of FPGA Clock
     // slowclockEdge is edge detector, will remain at '1' for one cycle of FPGA clock 
