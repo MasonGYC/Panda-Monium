@@ -1,4 +1,4 @@
-module rom_map (
+module maps (
     input address[5],  // ROM address 
     input level_input,    // ROM level input from regfile
     output out_row1[8],
@@ -14,7 +14,6 @@ module rom_map (
   ) {
  
   // NOTE: 3 ways to address the ROM, either through a level input or a address input, or get the full map in a 2D array 
-  // FIXME: not sure which map format to take, just did both just in case we need either one
   const MAP =      
   { 
     {0, 0, 0, 0, 0, 1, 0, 0},              // level 1 map row 1
@@ -104,9 +103,9 @@ module rom_map (
   };
 
   always {
-    out_row_by_address = MAP[address];
+    out_row_by_address = MAP[address]; // first way to index a map 
 
-    case(level_input) {
+    case(level_input) { // second way to index a map, input a level and get all the rows filled out for you
       1: {
         out_row1 = MAP[0];
         out_row2 = MAP[1];
@@ -141,7 +140,7 @@ module rom_map (
       }
     }
 
-    full_map = {
+    full_map = { // third way to index a map, input a level and get the map[8][8] in a 2D array
       out_row1,
       out_row2,
       out_row3,
