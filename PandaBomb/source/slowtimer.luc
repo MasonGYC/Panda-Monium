@@ -1,10 +1,10 @@
 module slowtimer(
     input clk,  // clock
     input rst,  // reset
-    input time_in, //in binary
+    input time_in], //in binary
     output time_out, //in binary
-    input orientation_in,
-    output orientation_out
+    input orientation_in[2],
+    output orientation_out[2];
 
 ){
   sig mod[16];
@@ -20,12 +20,12 @@ always{
     mod = alu.out;
     
     
-    //calc modulo
+    //todo： calc modulo
     
     
     //change orientation
     if ( mod == 0){
-        if (orientation_in <3){orientation_out = orientation_in + 1;}
+        if (orientation_in < b11){orientation_out = orientation_in + 1;}
         else {orientation_out = 0;}
     }
 

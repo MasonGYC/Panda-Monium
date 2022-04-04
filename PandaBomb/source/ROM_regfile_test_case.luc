@@ -9,8 +9,8 @@ module rom_regfile_test_case ( // FIXME: KIV might change whole structure of reg
     output level,
 
     output correct_out_time[16], // supposed correct outputs of regfile
-    output correct_XPos,
-    output correct_YPos,
+    output correct_XPos[3],
+    output correct_YPos[3],
     output correct_ra_data,
     output correct_rb_data;
     output correct_map;
