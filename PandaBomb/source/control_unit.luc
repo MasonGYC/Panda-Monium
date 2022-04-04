@@ -3,25 +3,24 @@ module control_unit (
     input clk,  // clock
     input rst,  // reset
 
-    input level_in[1], //current level
-    output level_out[1], //next level
+    input level_in[2], //current level
+    output level_out[2], //next level
     
-    input start, //START button
-    input reset, //RESET button
-    input timer, //remaining time 
-    
-    input up[1], //move
-    input down[1],
-    input left[1],
-    input right[1],
+    input start[1], //START button
+    input reset[1], //RESET button
+    input timer[16], //remaining time 
     
     input map[8][8],
     
-    input direction[2], //up:2b00 d:2b01 l:2b10 r:2b11
+    input direction[4], //up down left right
     input x_pos_in[3], //suppose 3 bit for x and y coordinate 0-7
     input y_pos_in[3],
     output x_pos_out[3],
-    output y_pos_out[3];
+    output y_pos_out[3],
+
+    output we[1], //todo： write enable for map writing 
+
+    output game_start[1];//todo：selector signal for led mux
     
   ) {
       //sig
@@ -29,9 +28,9 @@ module control_unit (
 
     //init
     //preprocess unit for change position to 1 bit decimal
-    dff x_temp[1](#INIT(0), .clk(clk), .rst(rst)); //code in decimal
-    dff y_temp[1](#INIT(0), .clk(clk), .rst(rst)); //code in decimal
-    dff level_temp[1](#INIT(0), .clk(clk), .rst(rst)); //code in decimal
+    dff x_temp[3](#INIT(0), .clk(clk), .rst(rst)); //code in decimal
+    dff y_temp[3](#INIT(0), .clk(clk), .rst(rst)); //code in decimal
+    dff level_temp[2](#INIT(0), .clk(clk), .rst(rst)); //code in decimal
   
     fsm ctrl(.clk(clk),.rst(rst))={
         START, //wait for start button
@@ -53,41 +52,35 @@ module control_unit (
     y_pos_out = y_temp.q;
     level_temp.d = level_in;
     level_out = level_temp.q;
+    we = 0;
 
     //check timer
-    if (timer > 60){ctrl.d = ctrl.GAMEOVER;}//exceed time
+    if (timer > 16b111100){
+        ctrl.d = ctrl.GAMEOVER;}//exceed time 60 sec
 
     //fms ctrl
     case(ctrl.q){
 
         ctrl.START:
-            if (start == 1){ctrl.d = ctrl.GENERATE_MAP;}
-            else{ctrl.d = ctrl.START;}
+            if (start == 1){
+                ctrl.d = ctrl.GENERATE_MAP;}
+            else{
+                ctrl.d = ctrl.START;}
      
         //////////////////////////////
         ctrl.GENERATE_MAP:
-            case(level_in){
-            0: 
-            //generate map 0
-
-            1:
-            //generate map 1
-
-            2:
-            //generate map 2
-
-
-            }
+            we = 1;
+            game_start = 1;
             ctrl.d = ctrl.IDLE;
         //////////////////////////////
         ctrl.IDLE:
-            if (left==1 || right==1 || up==1 || down==1){
+            if (direction[0]==1 || direction[1]==1 || direction[2]==1 || direction[3]==1){
                 //change position temp
                 case(direction){
-                    2b00: y_temp.d = y_temp.q + 1;
-                    2b01:y_temp.d = y_temp.q - 1;
-                    2b10:x_temp.d = x_temp.q + 1;
-                    2b11:x_temp.d = x_temp.q - 1;
+                    b1000: y_temp.d = y_temp.q + 1;//up
+                    b0100: y_temp.d = y_temp.q - 1;//down
+                    b0010: x_temp.d = x_temp.q + 1;//right
+                    b0001: x_temp.d = x_temp.q - 1;//left
                 }
                 ctrl.d = ctrl.CHECK_GOAL;
             }
@@ -101,7 +94,7 @@ module control_unit (
 
         //////////////////////////////
         ctrl.CHECK_BORDER:
-            if (x_temp.q>b111 || x_temp.q <0 || y_temp.q>b111 || y_temp.q<0){
+            if (x_temp.q>b111 || x_temp.q <b00 || y_temp.q>b111 || y_temp.q<b000){
                 ctrl.d = ctrl.IDLE;
             }
             else{ctrl.d = ctrl.CHECK_COLL;}
@@ -127,6 +120,7 @@ module control_unit (
         ctrl.GAMEOVER:
         if (reset == 1){
             level_out = 0;
+            game_start = 0;
             ctrl.d=ctrl.START;
             }
         else{

@@ -1,0 +1,50 @@
+module led_output(
+    input game_start, //write enable
+    input reg_Xpos[3],
+    input reg_YPos[3],
+
+    input reg_map[8][8],
+    output led_matrix[8][8][24]//
+
+
+
+//0x000000: black, shows the path
+//0x00FF00: red, shows current position of Panda
+//0x00FFFF: pink, shows the goal
+//0x0000FF: blue, shows the obstacles
+//grb: {hFF0000, h00FF00, h0000FF}
+
+){
+const BLACK = h000000;
+const PANDA = h00FF00;
+const GOAL = h00FFFF;
+const BOMB = h0000FF;
+sig i[3],j[3];
+
+
+always{
+
+    for (i = 3b0; i<b1000; i = i+3b1) {
+        for (j = 3b0; j<b1000; j = j+3b1) {
+            if (game_start == 0){
+                led_matrix[i][j] = BLACK;
+            }
+            else if (i==reg_Xpos && j == reg_YPos){
+                led_matrix[i][j] = PANDA;
+            }
+            else if (i == b111 && j == b111){
+                led_matrix[i][j] = GOAL;
+            }
+            else if (reg_map[i][j] == b1){
+                led_matrix[i][j] = BOMB;
+            }
+            else{
+                led_matrix[i][j] = BLACK;
+            }
+       }
+
+    }
+
+  
+}
+}
