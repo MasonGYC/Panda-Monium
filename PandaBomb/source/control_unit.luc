@@ -18,7 +18,7 @@ module control_unit (
     input map[8][8],
     
     input direction[2], //up:2b00 d:2b01 l:2b10 r:2b11
-    input x_pos_in[3], //suppose 3 bit for x and y coordinate
+    input x_pos_in[3], //suppose 3 bit for x and y coordinate 0-7
     input y_pos_in[3],
     output x_pos_out[3],
     output y_pos_out[3];
@@ -84,24 +84,24 @@ module control_unit (
             if (left==1 || right==1 || up==1 || down==1){
                 //change position temp
                 case(direction){
-                    "UP": y_temp.d = y_temp.q + 1;
-                    "DOWN":y_temp.d = y_temp.q - 1;
-                    "RIGHT":x_temp.d = x_temp.q + 1;
-                    "LEFT":x_temp.d = x_temp.q - 1;
+                    2b00: y_temp.d = y_temp.q + 1;
+                    2b01:y_temp.d = y_temp.q - 1;
+                    2b10:x_temp.d = x_temp.q + 1;
+                    2b11:x_temp.d = x_temp.q - 1;
                 }
                 ctrl.d = ctrl.CHECK_GOAL;
             }
             else{ctrl.d = ctrl.IDLE;}
         //////////////////////////////
         ctrl.CHECK_GOAL:
-            if (x_temp.q == 0b111 && y_temp.q == 0b111){
+            if (x_temp.q == b111 && y_temp.q == b111){
                 ctrl.d = ctrl.WIN;
                 }
             else {ctrl.d = ctrl.CHECK_BORDER;}
 
         //////////////////////////////
         ctrl.CHECK_BORDER:
-            if (x_temp.q>7 || x_temp.q <0 || y_temp.q>7 || y_temp.q<0){
+            if (x_temp.q>b111 || x_temp.q <0 || y_temp.q>b111 || y_temp.q<0){
                 ctrl.d = ctrl.IDLE;
             }
             else{ctrl.d = ctrl.CHECK_COLL;}
@@ -118,7 +118,7 @@ module control_unit (
         }
         //////////////////////////////
         ctrl.WIN:
-            if (level_in <2 && level_in >=0){
+            if (level_in < b10 && level_in >= b00){
                 level_out = level_in + 1;
                 ctrl.d = ctrl.START;
             }
