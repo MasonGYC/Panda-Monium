@@ -1,20 +1,20 @@
-module ROM_control_unit_test ( // TODO: revist again after sunday meeting
+module rom_control_unit_test ( // TODO: revist again after sunday meeting
     input address[5],  // ROM address
-    output level_in,
-    output start,
-    output reset,
-    output timer,
-    output up,
-    output down,
-    output left,
-    output right,
+    output level_in[1],
+    output start[1],
+    output reset[1],
+    output timer[6],
+    output up[1],
+    output down[1],
+    output left[1],
+    output right[1],
     output map[8][8],
-    output direction,
-    output x_pos_in,
-    output y_pos_in,
-    output x_pos_out,
-    output y_pos_out,
-    output level_out;
+    output direction[1],
+    output x_pos_in[3],//set as 3 bits
+    output y_pos_in[3],
+    output x_pos_out[3],
+    output y_pos_out[3],
+    output level_out[1];
     
   ) {
  
@@ -33,7 +33,7 @@ module ROM_control_unit_test ( // TODO: revist again after sunday meeting
             {0, 0, 1, 0, 0, 1, 0, 0},              // level 1 map row 7
             {0, 0, 0, 0, 0, 0, 0, 0},              // level 1 map row 8
         },              
-        "UP", 0, 0, 0, 0, 1
+        2b00, 0, 0, 0, 0, 1 //"up"
     },  
 
     {1, 1, 0, 40, 0, 1, 0, 0,                      // test if move down is working when pos is (0,0) should move to (0,1)
@@ -47,7 +47,7 @@ module ROM_control_unit_test ( // TODO: revist again after sunday meeting
             {0, 0, 1, 0, 0, 1, 0, 0},              // level 1 map row 7
             {0, 0, 0, 0, 0, 0, 0, 0},              // level 1 map row 8
         },              
-        "DOWN", 0, 0, 0, 1, 1
+        2b01, 0, 0, 0, 1, 1 //down
     },  
 
     {1, 1, 0, 40, 0, 0, 1, 0,                      // test if move left is working when pos is (0,0) should not be able to move, stay at (0,0)
@@ -61,7 +61,7 @@ module ROM_control_unit_test ( // TODO: revist again after sunday meeting
             {0, 0, 1, 0, 0, 1, 0, 0},              // level 1 map row 7
             {0, 0, 0, 0, 0, 0, 0, 0},              // level 1 map row 8
         },              
-        "LEFT", 0, 0, 0, 0, 1
+        2b10, 0, 0, 0, 0, 1 //left
     },
 
     {1, 1, 0, 40, 0, 0, 0, 1,                      // test if move right is working when pos is (0,0) should move to (1,0)
@@ -75,7 +75,7 @@ module ROM_control_unit_test ( // TODO: revist again after sunday meeting
             {0, 0, 1, 0, 0, 1, 0, 0},              // level 1 map row 7
             {0, 0, 0, 0, 0, 0, 0, 0},              // level 1 map row 8
         },              
-        "RIGHT", 0, 0, 1, 0, 1
+        2b11, 0, 0, 1, 0, 1 //right
     },              
 
     {1, 1, 0, 40, 0, 0, 0, 1,                      // test if level up is working
@@ -89,7 +89,7 @@ module ROM_control_unit_test ( // TODO: revist again after sunday meeting
             {0, 0, 1, 0, 0, 1, 0, 0},              // level 1 map row 7
             {0, 0, 0, 0, 0, 0, 0, 0},              // level 1 map row 8
         },              
-        "RIGHT", 8, 8, 8, 8, 2
+        2b11, 8, 8, 8, 8, 2 //right
     },  
 
 

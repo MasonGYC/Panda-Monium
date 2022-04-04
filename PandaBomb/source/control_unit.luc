@@ -3,25 +3,25 @@ module control_unit (
     input clk,  // clock
     input rst,  // reset
 
-    input level_in, //current level
-    output level_out, //next level
+    input level_in[1], //current level
+    output level_out[1], //next level
     
     input start, //START button
     input reset, //RESET button
     input timer, //remaining time 
     
-    input up, //move
-    input down,
-    input left,
-    input right,
+    input up[1], //move
+    input down[1],
+    input left[1],
+    input right[1],
     
     input map[8][8],
     
-    input direction, //udlr
-    input x_pos_in, //suppose 1 bit for x and y coordinate
-    input y_pos_in,
-    output x_pos_out,
-    output y_pos_out;
+    input direction[2], //up:2b00 d:2b01 l:2b10 r:2b11
+    input x_pos_in[3], //suppose 3 bit for x and y coordinate
+    input y_pos_in[3],
+    output x_pos_out[3],
+    output y_pos_out[3];
     
   ) {
       //sig

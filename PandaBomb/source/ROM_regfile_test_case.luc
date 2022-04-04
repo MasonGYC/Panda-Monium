@@ -1,4 +1,4 @@
-module ROM_regfile_test_case ( // FIXME: KIV might change whole structure of regfile
+module rom_regfile_test_case ( // FIXME: KIV might change whole structure of regfile
     input address[5],  // ROM address
 
     output ra[4], // inputs to regfile to test

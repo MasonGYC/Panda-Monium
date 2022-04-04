@@ -1,16 +1,16 @@
 module rom_map (
     input address[5],  // ROM address 
     input level_input,    // ROM level input from regfile
-    output out_row1,
-    output out_row2,
-    output out_row3,
-    output out_row4,
-    output out_row5,
-    output out_row6,
-    output out_row7,
-    output out_row8,
-    output out_row_by_address,
-    output full_map;        
+    output out_row1[8],
+    output out_row2[8],
+    output out_row3[8],
+    output out_row4[8],
+    output out_row5[8],
+    output out_row6[8],
+    output out_row7[8],
+    output out_row8[8],
+    output out_row_by_address[8],
+    output full_map[8][8];        
   ) {
  
   // NOTE: 3 ways to address the ROM, either through a level input or a address input, or get the full map in a 2D array 

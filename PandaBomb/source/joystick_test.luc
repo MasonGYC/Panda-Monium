@@ -1,4 +1,4 @@
-module seq_plus_two (
+module joystick_test (
     input clk,  // clock
     input rst,  // reset
     input btn,
