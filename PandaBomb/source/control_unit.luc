@@ -18,7 +18,7 @@ module control_unit (
     output x_pos_out[3],
     output y_pos_out[3],
 
-    output werf[1], //todo： write enable for map writing 
+    output we[1], //todo： write enable for map writing 
 
     output game_start[1];//todo：selector signal for led mux
     
@@ -52,31 +52,25 @@ module control_unit (
     y_pos_out = y_temp.q;
     level_temp.d = level_in;
     level_out = level_temp.q;
+    we = 0;
 
     //check timer
-    if (timer > 60){ctrl.d = ctrl.GAMEOVER;}//exceed time
+    if (timer > 16b111100){
+        ctrl.d = ctrl.GAMEOVER;}//exceed time 60 sec
 
     //fms ctrl
     case(ctrl.q){
 
         ctrl.START:
-            if (start == 1){ctrl.d = ctrl.GENERATE_MAP;}
-            else{ctrl.d = ctrl.START;}
+            if (start == 1){
+                ctrl.d = ctrl.GENERATE_MAP;}
+            else{
+                ctrl.d = ctrl.START;}
      
         //////////////////////////////
         ctrl.GENERATE_MAP:
-            case(level_in){
-            0: 
-            //generate map 0
-
-            1:
-            //generate map 1
-
-            2:
-            //generate map 2
-
-
-            }
+            we = 1;
+            game_start = 1;
             ctrl.d = ctrl.IDLE;
         //////////////////////////////
         ctrl.IDLE:
@@ -126,6 +120,7 @@ module control_unit (
         ctrl.GAMEOVER:
         if (reset == 1){
             level_out = 0;
+            game_start = 0;
             ctrl.d=ctrl.START;
             }
         else{
