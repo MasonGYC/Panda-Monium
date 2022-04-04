@@ -9,7 +9,7 @@ module rom_control_unit_test ( // TODO: revist again after sunday meeting
     output left[1],
     output right[1],
     output map[8][8],
-    output direction[1],
+    output direction[4], // up: 1000 down: 0100 left: 0010 right: 0001
     output x_pos_in[3],//set as 3 bits
     output y_pos_in[3],
     output x_pos_out[3],
