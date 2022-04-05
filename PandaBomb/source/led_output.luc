@@ -1,4 +1,4 @@
-module led (
+module led_output (
     input clk,  // clock
     input rst,  // reset
     input disappear,
@@ -19,7 +19,7 @@ module led (
     matrix = 8x{{8x{{BLACK}}}};
   }
   else{
-    
+    //define 64 leds one by one according to diff control signals
     //led[7][7]
     matrix[7][7] = GOAL;
     
