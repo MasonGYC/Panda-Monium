@@ -1,45 +1,50 @@
 module orientation_unit (
-    input joystick[2],  // input direction
-    input state[2],  // current state
+    input joystick[3],  // input direction
+    input orientation_state[2],  // current orientation_state
     output direction[4] //actual direction
   ) {
 
   always {  //machine behaviour
     //fsm orientation_unit={00,01,10,11},
-    case(state[1:0] ){  //different states
+    if (joystick == b100){
+      direction=4b0;//invalid
+      }
+    else{
+      case(orientation_state){  //different orientation_states
   
       //different direction output
-      b00://state 1
+      b00://orientation_state 1
       case(joystick[1:0]){
-          b00: direction=0001;
-          b01:direction=1000;
-          b10:direction=0100;
-          b11:direction=0010;
+          b00: direction=b0001;
+          b01: direction=b1000;
+          b10: direction=b0100;
+          b11: direction=b0010;
           }
       
-      b01: //state2
+      b01: //orientation_state2
       case(joystick[1:0]){
-          b00: direction=0010;
-          b01:direction=0001;
-          b10:direction=1000;
-          b11:direction=0100;
+          b00: direction=b0010;
+          b01: direction=b0001;
+          b10: direction=b1000;
+          b11: direction=b0100;
           }
-      b10: //state3
+      b10: //orientation_state3
       case(joystick[1:0]){
-          b00: direction=0100;
-          b01:direction=0010;
-          b10:direction=0001;
-          b11:direction=1000;
+          b00: direction=b0100;
+          b01: direction=b0010;
+          b10: direction=b0001;
+          b11: direction=b1000;
           }
-      b11: //state4
+      b11: //orientation_state4
       case(joystick[1:0]){
-          b00: direction=1000;
-          b01:direction=0100;
-          b10:direction=0010;
-          b11:direction=0001;
+          b00: direction=b1000;
+          b01: direction=b0100;
+          b10: direction=b0010;
+          b11: direction=b0001;
           }
-      default: direction=4b0;
-  
     }
+    }
+
   }
 }
+
