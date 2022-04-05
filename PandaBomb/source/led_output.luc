@@ -9,9 +9,9 @@ module led_output (
   ) {
   
   const BLACK = h000000;
-  const PANDA = h00FF00;
-  const GOAL = h00FFFF;
-  const BOMB = h0000FF;
+  const PANDA = hFF0000; //green
+  const GOAL = h00FF00; //red
+  const BOMB = h0000FF; //blue
   
   always {
   
