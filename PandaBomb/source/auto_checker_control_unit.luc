@@ -9,11 +9,11 @@ module auto_checker_control_unit ( //TODO: change the whole auto check file
     input button,
     output status[2],// // status for all test cases, b00 means still testing, b01 means PASS, b10 means FAIL
     
-    output out_true_x_pos_out, // hardcoded answer key from rom
-    output out_true_y_pos_out,
+    output out_true_x_pos_out[3], // hardcoded answer key from rom
+    output out_true_y_pos_out[3],
     output out_true_level,
-    output out_x_pos_out, // value outputted from control unit
-    output out_y_pos_out,
+    output out_x_pos_out[3], // value outputted from control unit
+    output out_y_pos_out[3],
     output out_level,
     output progress[16],
     output index[4][4] // 4 digit index of test case in decimal for 7-seg
