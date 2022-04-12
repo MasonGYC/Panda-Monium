@@ -1,0 +1,92 @@
+module au_top (
+    input clk,              // 100MHz clock
+
+    input usb_rx,           // don't know what is this
+    output usb_tx,          // don't know what is this
+    output io_seg [8],      // 7-segment LEDs on IO Shield
+    output io_sel [4],      // Digit select on IO Shield
+
+    // game start button
+    input rst_n,
+    input io_dip [3][8],
+
+    // auto_check
+    input io_button [5],
+
+    // 8x8 LED
+    output led [8][8][24],
+
+    // joystick button
+    input up_button,
+    input down_button,
+    input left_button,
+    input right_button,
+    output joystick[2]
+    ) {
+    sig rst;                  // reset signal
+  
+    // init slow clock 
+    .clk(clk) {
+    // The reset conditioner is used to synchronize the reset signal to the FPGA
+    // clock. This ensures the entire FPGA comes out of reset at the same time.
+    reset_conditioner reset_cond;
+    }
+    auto_checker_control_unit(.clk(clk), .rst(rst));
+    auto_checker_regfile(.clk(clk), .rst(rst));
+
+    // multi_seven_seg
+    multi_seven_seg seg(.clk(clk), .rst(rst));
+    
+    //button_conditioner
+    button_conditioner buttoncond[5](.clk(clk));
+    edge_detector buttondetector[5](#RISE(1), #FALL(0),.clk(clk)); //detect on rising edge only
+  
+    always {
+        reset_cond.in = ~rst_n; // input raw inverted reset signal
+        rst = reset_cond.out;   // conditioned reset
+
+        // TODO: turn everything off: LEDs/seven segments
+
+        // initialization
+        auto_checker_control_unit.fail_case = 5b0;
+        auto_checker_control_unit.switch[1] = 0;
+        auto_checker_control_unit.switch[0] = 0;
+        auto_checker_control_unit.button = 0;
+
+        auto_checker_regfile.fail_case = 5b0;
+        auto_checker_regfile.switch[1] = 0;
+        auto_checker_regfile.switch[0] = 0;
+        auto_checker_regfile.button = 0;
+
+        // button
+        buttoncond.in = // control button in
+        buttondetector.in = buttoncond.out;
+
+        // 7-seg
+        io_seg = ~seg.seg;  // connect segments to the driver
+        io_sel = ~seg.sel;  // connect digit select to the driver
+    
+        case (io_dip[2][7]){
+            1:  // auto check
+            case (io_dip[2][6]){
+                1:  // auto_checker_control_unit
+                auto_checker_control_unit.button = io_button[4];
+                auto_checker_control_unit.switch[1] = io_dip[2][7];
+                auto_checker_control_unit.switch[0] = io_dip[2][6];
+                auto_checker_control_unit.fail_case = io_dip[2][4:0];
+
+                default:  // auto_checker_regfile
+                auto_checker_regfile.button = io_button[4];
+                auto_checker_regfile.switch[1] = io_dip[2][7];
+                auto_checker_regfile.switch[0] = io_dip[2][6];
+                auto_checker_regfile.fail_case = io_dip[2][4:0];
+            }
+
+            default:
+            // TODO:
+            // Firstly, set buttons/joysticks to control_unit
+            // Secondly, set the output of control_unit to ALU
+            // Thirdly, set the output of ALU to Regfile
+            // Finally, connect Regfile to LEDs
+        }
+    }
