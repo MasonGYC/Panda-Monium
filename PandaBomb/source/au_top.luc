@@ -1,92 +1,180 @@
 module au_top (
     input clk,              // 100MHz clock
-
-    input usb_rx,           // don't know what is this
-    output usb_tx,          // don't know what is this
+    input rst_n,            // reset button (active low)
+    output led [8],         // 8 user controllable LEDs
+    input usb_rx,           // USB->Serial input           
+    output usb_tx,          // USB->Serial output
+    output io_led [3][8],   // LEDs on IO Shield
     output io_seg [8],      // 7-segment LEDs on IO Shield
     output io_sel [4],      // Digit select on IO Shield
-
-    // game start button
-    input rst_n,
-    input io_dip [3][8],
-
-    // auto_check
-    input io_button [5],
-
-    // 8x8 LED
-    output led [8][8][24],
-
-    // joystick button
-    input up_button,
-    input down_button,
-    input left_button,
-    input right_button,
-    output joystick[2]
-    ) {
-    sig rst;                  // reset signal
+    input io_button [5] ,    // 5 buttons on IO Shield
+    input io_dip [3][8],     // DIP switches on IO Shield
+    output outled, output outled1, output outled2, output outled3, output outled4, output outled5, output outled6, output outled7
+    //input joystick
+  ) {
   
-    // init slow clock 
-    .clk(clk) {
+  sig rst;                  // reset signal
+  const LEDCOLOR = {h000000, h00FF00, h000000, h00FF00, h000000, h000000, h000000, hFF0000};
+  const LEDCOLOR1 = {h000000, h000000, h000000, h00FF00, h000000, h00FF00, h000000, h000000};
+  const LEDCOLORTEST = {hFFFFFF, h000000, h000000, h00FF00, h000000, h00FF00, h000000, h000000};
+  const LEDCOLOR2 = {h000000, h000000, h000000, h000000, h00FF00, h000000, h000000, h000000};
+  const LEDCOLOR3 = {h000000, h00FF00, h00FF00, h000000, h000000, h000000, h000000, h000000};
+  const LEDCOLOR4 = {h00FF00, h00FF00, h000000, h000000, h000000, h000000, h00FF00, h000000};
+  const LEDCOLOR5 = {h000000, h000000, h000000, h000000, h00FF00, h000000, h00FF00, h00FF00};
+  const LEDCOLOR6 = {h000000, h00FF00, h00FF00, h000000, h000000, h000000, h00FF00, h000000};
+  const LEDCOLOR7 = {h0000FF, h000000, h000000, h000000, h00FF00, h000000, h000000, h000000};
+  
+  // extra to test br pins
+  const LEDCOLOR8 = {hFF00FF, h00FF00, h000000, h00FF00, h000000, h00FF00, h000000, h00FF00};
+  const LEDCOLOR9 = {h00FF00, h000000, h00FF00, h000000, h00FF00, h000000, h00FF00, h000000};
+  const LEDCOLOR10 = {hFF00FF, h00FF00, h000000, h00FF00, h000000, h00FF00, h000000, h00FF00};
+  const LEDCOLOR11 = {h00FF00, h000000, h00FF00, h000000, h00FF00, h000000, h00FF00, h000000};
+  const LEDCOLOR12 = {hFF00FF, h00FF00, h000000, h00FF00, h000000, h00FF00, h000000, h00FF00};
+  const LEDCOLOR13 = {h00FF00, h000000, h00FF00, h000000, h00FF00, h000000, h00FF00, h000000};
+  const LEDCOLOR14 = {hFF00FF, h00FF00, h000000, h00FF00, h000000, h00FF00, h000000, h00FF00};
+  const LEDCOLOR15 = {h00FF00, h000000, h00FF00, h000000, h00FF00, h000000, h00FF00, h000000};
+  const LEDCOLOR16 = {hFF00FF, h00FF00, h000000, h00FF00, h000000, h00FF00, h000000, h00FF00};
+  
+  // led strip 1
+  ledstrip led_strip(#PIXEL_COUNT(8), .clk(clk), .rst(rst)); //set for 3 pixels
+  .clk(clk) {
     // The reset conditioner is used to synchronize the reset signal to the FPGA
     // clock. This ensures the entire FPGA comes out of reset at the same time.
     reset_conditioner reset_cond;
-    }
-    auto_checker_control_unit(.clk(clk), .rst(rst));
-    auto_checker_regfile(.clk(clk), .rst(rst));
-
-    // multi_seven_seg
-    multi_seven_seg seg(.clk(clk), .rst(rst));
-    
-    //button_conditioner
-    button_conditioner buttoncond[5](.clk(clk));
-    edge_detector buttondetector[5](#RISE(1), #FALL(0),.clk(clk)); //detect on rising edge only
+  }
   
-    always {
-        reset_cond.in = ~rst_n; // input raw inverted reset signal
-        rst = reset_cond.out;   // conditioned reset
-
-        // TODO: turn everything off: LEDs/seven segments
-
-        // initialization
-        auto_checker_control_unit.fail_case = 5b0;
-        auto_checker_control_unit.switch[1] = 0;
-        auto_checker_control_unit.switch[0] = 0;
-        auto_checker_control_unit.button = 0;
-
-        auto_checker_regfile.fail_case = 5b0;
-        auto_checker_regfile.switch[1] = 0;
-        auto_checker_regfile.switch[0] = 0;
-        auto_checker_regfile.button = 0;
-
-        // button
-        buttoncond.in = // control button in
-        buttondetector.in = buttoncond.out;
-
-        // 7-seg
-        io_seg = ~seg.seg;  // connect segments to the driver
-        io_sel = ~seg.sel;  // connect digit select to the driver
+  // led strip 2
+  ledstrip led_strip1(#PIXEL_COUNT(8), .clk(clk), .rst(rst)); //set for 3 pixels
+  .clk(clk) {
+    // The reset conditioner is used to synchronize the reset signal to the FPGA
+    // clock. This ensures the entire FPGA comes out of reset at the same time.
+    reset_conditioner reset_cond1;
+  }
+  
+  // led strip 3
+  ledstrip led_strip2(#PIXEL_COUNT(8), .clk(clk), .rst(rst)); //set for 3 pixels
+  .clk(clk) {
+    // The reset conditioner is used to synchronize the reset signal to the FPGA
+    // clock. This ensures the entire FPGA comes out of reset at the same time.
+    reset_conditioner reset_cond2;
+  }
+  
+  // led strip 4
+  ledstrip led_strip3(#PIXEL_COUNT(8), .clk(clk), .rst(rst)); //set for 3 pixels
+  .clk(clk) {
+    // The reset conditioner is used to synchronize the reset signal to the FPGA
+    // clock. This ensures the entire FPGA comes out of reset at the same time.
+    reset_conditioner reset_cond3;
+  }
+  
+  // led strip 5
+  ledstrip led_strip4(#PIXEL_COUNT(8), .clk(clk), .rst(rst)); //set for 3 pixels
+  .clk(clk) {
+    // The reset conditioner is used to synchronize the reset signal to the FPGA
+    // clock. This ensures the entire FPGA comes out of reset at the same time.
+    reset_conditioner reset_cond4;
+  }
+  
+  // led strip 6
+  ledstrip led_strip5(#PIXEL_COUNT(8), .clk(clk), .rst(rst)); //set for 3 pixels
+  .clk(clk) {
+    // The reset conditioner is used to synchronize the reset signal to the FPGA
+    // clock. This ensures the entire FPGA comes out of reset at the same time.
+    reset_conditioner reset_cond5;
+  }
+  
+  // led strip 7
+  ledstrip led_strip6(#PIXEL_COUNT(8), .clk(clk), .rst(rst)); //set for 3 pixels
+  .clk(clk) {
+    // The reset conditioner is used to synchronize the reset signal to the FPGA
+    // clock. This ensures the entire FPGA comes out of reset at the same time.
+    reset_conditioner reset_cond6;
+  }
+  
+  // led strip 8
+  ledstrip led_strip7(#PIXEL_COUNT(8), .clk(clk), .rst(rst)); //set for 3 pixels
+  .clk(clk) {
+    // The reset conditioner is used to synchronize the reset signal to the FPGA
+    // clock. This ensures the entire FPGA comes out of reset at the same time.
+    reset_conditioner reset_cond7;
+  }
+  //button_conditioner buttoncond(.clk(clk));
+  //edge_detector buttondetector(#RISE(1), #FALL(0),.clk(clk)); //detect on rising edge only
+  
+  always {
+    reset_cond.in = ~rst_n; // input raw inverted reset signal
+    rst = reset_cond.out;   // conditioned reset
     
-        case (io_dip[2][7]){
-            1:  // auto check
-            case (io_dip[2][6]){
-                1:  // auto_checker_control_unit
-                auto_checker_control_unit.button = io_button[4];
-                auto_checker_control_unit.switch[1] = io_dip[2][7];
-                auto_checker_control_unit.switch[0] = io_dip[2][6];
-                auto_checker_control_unit.fail_case = io_dip[2][4:0];
+    reset_cond1.in = ~rst_n; // input raw inverted reset signal
+    rst = reset_cond1.out;   // conditioned reset
+    
+    reset_cond2.in = ~rst_n; // input raw inverted reset signal
+    rst = reset_cond2.out;   // conditioned reset
+    
+    reset_cond3.in = ~rst_n; // input raw inverted reset signal
+    rst = reset_cond3.out;   // conditioned reset
+    
+    reset_cond4.in = ~rst_n; // input raw inverted reset signal
+    rst = reset_cond4.out;   // conditioned reset
+    
+    reset_cond5.in = ~rst_n; // input raw inverted reset signal
+    rst = reset_cond5.out;   // conditioned reset
+    
+    reset_cond6.in = ~rst_n; // input raw inverted reset signal
+    rst = reset_cond6.out;   // conditioned reset
+    
+    reset_cond7.in = ~rst_n; // input raw inverted reset signal
+    rst = reset_cond7.out;   // conditioned reset
+    
+    usb_tx = usb_rx;        // loop serial port
+    
+     led = 8h00;             // turn LEDs off
+    
+    io_led = 3x{{8h00}};    // turn LEDs off
+    io_seg = 8hff;          // turn segments off
+    io_sel = 4hf;           // select no digits
+    
 
-                default:  // auto_checker_regfile
-                auto_checker_regfile.button = io_button[4];
-                auto_checker_regfile.switch[1] = io_dip[2][7];
-                auto_checker_regfile.switch[0] = io_dip[2][6];
-                auto_checker_regfile.fail_case = io_dip[2][4:0];
-            }
-
-            default:
-            // TODO:
-            // Firstly, set buttons/joysticks to control_unit
-            // Secondly, set the output of control_unit to ALU
-            // Thirdly, set the output of ALU to Regfile
-            // Finally, connect Regfile to LEDs
-        }
-    }
+    led_strip.update=1; //sample write 
+    led_strip.color=LEDCOLOR[led_strip.pixel];
+    outled=led_strip.led;
+    
+    led_strip1.update=1;
+    led_strip1.color=LEDCOLOR1[led_strip1.pixel];
+    led_strip1.color=LEDCOLORTEST[led_strip1.pixel];
+    outled1=led_strip1.led;
+    outled1=led_strip1.led;
+    
+    led_strip2.update=1;
+    led_strip2.color=LEDCOLOR2[led_strip2.pixel];
+    outled2=led_strip2.led;
+    
+    led_strip3.update=1;
+    led_strip3.color=LEDCOLOR3[led_strip3.pixel];
+    outled3=led_strip3.led;
+    
+    led_strip4.update=1;
+    led_strip4.color=LEDCOLOR4[led_strip4.pixel];
+    outled4=led_strip4.led;
+    
+    led_strip5.update=1;
+    led_strip5.color=LEDCOLOR5[led_strip5.pixel];
+    outled5=led_strip5.led;
+    
+    led_strip6.update=1;
+    led_strip6.color=LEDCOLOR6[led_strip6.pixel];
+    outled6=led_strip6.led;
+    
+    led_strip7.update=1;
+    led_strip7.color=LEDCOLOR7[led_strip7.pixel];
+    outled7=led_strip7.led;
+    
+    
+    
+    //outled1=led_strip1.led;
+    
+    //buttoncond.in = joystick;
+    //buttondetector.in = buttoncond.out;
+    //led_strip.btn = buttondetector.out;
+  }
+}
