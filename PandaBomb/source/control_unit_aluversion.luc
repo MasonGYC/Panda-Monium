@@ -28,13 +28,14 @@ module control_unit (
     regfile regfile;
     fsm ctrl(.clk(clk),.rst(rst))={
         START, //wait for start button
-        GENERATE_MAP, //map -> idle
+        GENERATE_MAP,GENERATE_MAP_ROW2,GENERATE_MAP_ROW3,GENERATE_MAP_ROW4,GENERATE_MAP_ROW5,GENERATE_MAP_ROW6,GENERATE_MAP_ROW7,GENERATE_MAP_ROW8, //map -> idle
         IDLE,
-        CHECK_BORDER,
-        CHECK_GOAL, //check whether reached goal
+        CHECK_BORDER_XLeft,CHECK_BORDER_XRight,CHECK_BORDER_YLeft,CHECK_BORDER_YRight,BORDER_CHECK_ZERO,BORDER_CHECK_ONE,
+        CHECK_GOAL_X, CHECK_GOAL_Y,CHECK_GOAL_XY,CHECK_GOAL_XY_MOVE, //check whether reached goal
         CHECK_COLL, //check obstacle
-        GAMEOVER,
-        WIN};
+        UPDATE_XPOS,UPDATE_YPOS,
+        CHECK_WIN_UPPERBOUND,CHECK_WIN_LOWERBOUND,CHECK_WIN_AND,CHECK_WIN_LEVELUP,CHECK_WIN_LEVELUP_CHECK,
+        GAMEOVER,RESET_LEVEL};
   
 
   always {
@@ -45,7 +46,7 @@ module control_unit (
     regfile.ra = //TODO: CONNECT REGFILE INPUT AND OUTPUT
     
 
-
+    //TODO: how to check in terms of datapath?
     //check timer
     if (timer > 16b111100){
         ctrl.d = ctrl.GAMEOVER;}//exceed time 60 sec
@@ -79,37 +80,37 @@ module control_unit (
             // we = 1; // write enable
             // wdsel = 3b100; //choose rom data
 
-        ctrl.d = ctrl.GENERATE_MAP_ROW2:
+        ctrl.GENERATE_MAP_ROW2:
             we = 1
             rc = 5h1; // row2
             ctrl.d = ctrl.GENERATE_MAP_ROW3;
         
-        ctrl.d = ctrl.GENERATE_MAP_ROW3:
+        ctrl.GENERATE_MAP_ROW3:
             we = 1
             rc = 5h2; // row3
             ctrl.d = ctrl.GENERATE_MAP_ROW4;
 
-        ctrl.d = ctrl.GENERATE_MAP_ROW4:
+        ctrl.GENERATE_MAP_ROW4:
             we = 1
             rc = 5h3; // row4
             ctrl.d = ctrl.GENERATE_MAP_ROW5;
 
-        ctrl.d = ctrl.GENERATE_MAP_ROW5:
+        ctrl.GENERATE_MAP_ROW5:
             we = 1
             rc = 5h4; // row5
             ctrl.d = ctrl.GENERATE_MAP_ROW6;
 
-        ctrl.d = ctrl.GENERATE_MAP_ROW6:
+        ctrl.GENERATE_MAP_ROW6:
             we = 1
             rc = 5h5; // row6
             ctrl.d = ctrl.GENERATE_MAP_ROW7;
 
-        ctrl.d = ctrl.GENERATE_MAP_ROW7:
+        ctrl.GENERATE_MAP_ROW7:
             we = 1
             rc = 5h6; // row7
             ctrl.d = ctrl.GENERATE_MAP_ROW8;
 
-        ctrl.d = ctrl.GENERATE_MAP_ROW8:
+        ctrl.GENERATE_MAP_ROW8:
             we = 1
             rc = 5h7; // row8
             ctrl.d = ctrl.IDLE;
@@ -159,7 +160,7 @@ module control_unit (
                         we = 1; // write enable
                         wdsel = 3b0; //take alu output
                 }
-                ctrl.d = ctrl.CHECK_GOAL;
+                ctrl.d = ctrl.CHECK_GOAL_X;
             }
             else{ctrl.d = ctrl.IDLE;}
         //////////////////////////////
@@ -185,7 +186,7 @@ module control_unit (
                 we = 1; // write enable
                 wdsel = 3b0; //take alu output
                 ctrl.d = ctrl.CHECK_GOAL_XY;
-        ctrl.d = ctrl.CHECK_GOAL_XY:
+        ctrl.CHECK_GOAL_XY:
             //if x && y
                 ra = 5hB; // x=7
                 rb = 5hC; // y=7
@@ -196,7 +197,7 @@ module control_unit (
                 we = 1; // write enable
                 wdsel = 3b0; //take alu output
                 ctrl.d = ctrl.CHECK_GOAL_XY_MOVE;
-        ctrl.d = ctrl.CHECK_GOAL_XY_MOVE:
+        ctrl.CHECK_GOAL_XY_MOVE:
             regfile.ra = 5h10;
             if (regfile.ra_data == 1){
                 ctrl.d = ctrl.CHECK_WIN_UPPERBOUND; // both x and y == 7
@@ -255,7 +256,7 @@ module control_unit (
             alufn = 6b110101; // cmplt
             we = 1; // write enable
             wdsel = 3b0; //take alu output
-        ctrl.d = ctrl.BORDER_XY;
+        ctrl.d = ctrl.BORDER_CHECK_ZERO;
 
         ctrl.BORDER_CHECK_ZERO:
             regfile.ra = 5h10;
