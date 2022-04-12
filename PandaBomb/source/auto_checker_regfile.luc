@@ -9,17 +9,19 @@ module auto_checker_regfile ( //TODO: change the whole auto check file for regfi
     input button,
     output status[2],// // status for all test cases, b00 means still testing, b01 means PASS, b10 means FAIL
     
-    output out_true_level_out[2], // hardcoded answer key from rom
-    output out_true_out_time[16],
-    output out_true_XPos[3],
-    output out_true_YPos[3],
-    output out_true_map[8][8],
+    output rom_level_out[2], // hardcoded answer key from rom
+    output rom_out_time[16],
+    output rom_XPos[3],
+    output rom_YPos[3],
+    output rom_ra_data[16],
+    output rom_rb_data[16],
+    output rom_map[8][8],
 
-    output out_level_out[2], // value outputted from regfile unit
-    output out_time[16],
-    output out_XPos[3],
-    output out_YPos[3],
-    output out_map[8][8],
+    output regfile_level_out[2], // value outputted from regfile unit
+    output regfile_time[16],
+    output regfile_XPos[3],
+    output regfile_YPos[3],
+    output regfile_map[8][8],
 
     output progress[16],
     output index[4][4] // 4 digit index of test case in decimal for 7-seg
@@ -33,7 +35,7 @@ module auto_checker_regfile ( //TODO: change the whole auto check file for regfi
   regfile regfile;
   dff reg_index[4][4](#INIT({4h0,4h0,4h0,4h0}), .clk(clk), .rst(rst));
   dff register_address[5](#INIT(0), .clk(clk), .rst(rst));
-  sig regfile_level_out, regfile_out_time, regfile_XPos, regfile_YPos, regfile_map;
+  sig  ra[5], rb[5], rc[5], we, write_data[16], level_in[2];
 
   always {
     status = b00; // to show that it is still testing the test cases
@@ -43,39 +45,42 @@ module auto_checker_regfile ( //TODO: change the whole auto check file for regfi
 
     ///////////////////////////////////////////////////////////////
 
-    in_time = r.in_time; // input test cases from ROM
-    x_pos_in = r.x_pos_in;
-    y_pos_in = r.y_pos_in;
+    ra = r.ra; // input test cases from ROM
+    rb = r.rb;
+    rc = r.rc;
     we = r.we;
     write_data = r.write_data;
     level_in = r.level_in;
+    in_time = r.in_time;
     
     ///////////////////////////////////////////////////////////////
 
-    rom_x_pos_out = r.x_pos_out; // output true correct value from ROM
-    rom_level_out = r.level_out;
+    rom_level_out = r.level_out; // output true correct value from ROM
     rom_out_time = r.out_time;
-    rom_Xpos = r.Xpos;
-    rom_Ypos = r.Ypos;
+    rom_XPos = r.XPos;
+    rom_YPos = r.YPos;
+    rom_ra_data = r.ra_data;
+    rom_rb_data = r.rb_data;
     rom_map = r.map;
-
 
     /////////////////////////////////////////////////////////////
 
-    regfile.in_time = in_time;  // feed ROM test case to regfile
-    regfile.x_pos_in = x_pos_in;
-    regfile.y_pos_in = y_pos_in;
+    regfile.ra = ra  // feed ROM test case to regfile
+    regfile.rb = rb;
+    regfile.rc = rc;
     regfile.we = we;
     regfile.write_data = write_data;
     regfile.level_in = level_in;
+    regfile.in_time = in_time;
     
-
 /////////////////////////////////////////////////////////////////////
 
-    regfile_level_out = regfile.level_out; // output from CU
+    regfile_level_out = regfile.level_out; // output from regfile
     regfile_out_time = regfile.out_time;
     regfile_XPos = regfile.Xpos;
     regfile_YPos = regfile.Ypos;
+    regfile_ra_data = regfile.ra_data;
+    regfile_rb_data = regfile.rb_data;
     regfile_map = regfile.map;
 
 ///////////////////////////////////////////////////////////////////
@@ -99,7 +104,7 @@ module auto_checker_regfile ( //TODO: change the whole auto check file for regfi
           regfile_level[0] = ~regfile_level[0]; // inverts the LSB of correct answer
         }
         //  & aluUnit.z == z & aluUnit.v == v & aluUnit.n == n
-        if (regfile_level_out == rom_level_out & regfile_out_time == rom_out_time & regfile_XPos == rom_Xpos & regfile_YPos == rom_Ypos & regfile_map == rom_map){
+        if (regfile_level_out == rom_level_out & regfile_out_time == rom_out_time & regfile_XPos == rom_Xpos & regfile_YPos == rom_Ypos & rom_ra_data == regfile_ra_data & rom_rb_data == regfile_rb_data & regfile_map == rom_map){
           fsm_t.d = fsm_t.S1; // next state is state S1 if correct (i.e. the ALU's output matches the expected answer)
         }
         
@@ -115,7 +120,7 @@ module auto_checker_regfile ( //TODO: change the whole auto check file for regfi
           regfile_level[0] = ~regfile_level[0]; // inverts the LSB of correct answer
         }
         
-        if (regfile_level_out == rom_level_out & regfile_out_time == rom_out_time & regfile_XPos == rom_Xpos & regfile_YPos == rom_Ypos & regfile_map == rom_map){
+        if (regfile_level_out == rom_level_out & regfile_out_time == rom_out_time & regfile_XPos == rom_Xpos & regfile_YPos == rom_Ypos & rom_ra_data == regfile_ra_data & rom_rb_data == regfile_rb_data & regfile_map == rom_map){
           fsm_t.d = fsm_t.S2; // next state is state S2 if correct (i.e. the ALU's output matches the expected answer)
         }
         
@@ -131,7 +136,7 @@ module auto_checker_regfile ( //TODO: change the whole auto check file for regfi
           regfile_level[0] = ~regfile_level[0]; // inverts the LSB of correct answer
         }
           
-        if (regfile_level_out == rom_level_out & regfile_out_time == rom_out_time & regfile_XPos == rom_Xpos & regfile_YPos == rom_Ypos & regfile_map == rom_map){
+        if (regfile_level_out == rom_level_out & regfile_out_time == rom_out_time & regfile_XPos == rom_Xpos & regfile_YPos == rom_Ypos & rom_ra_data == regfile_ra_data & rom_rb_data == regfile_rb_data & regfile_map == rom_map){
           fsm_t.d = fsm_t.S3; // next state is state S3 if correct (i.e. the ALU's output matches the expected answer)
         }
         
@@ -148,7 +153,7 @@ module auto_checker_regfile ( //TODO: change the whole auto check file for regfi
           regfile_level[0] = ~regfile_level[0]; // inverts the LSB of correct answer
         }
           
-        if (regfile_level_out == rom_level_out & regfile_out_time == rom_out_time & regfile_XPos == rom_Xpos & regfile_YPos == rom_Ypos & regfile_map == rom_map){
+        if (regfile_level_out == rom_level_out & regfile_out_time == rom_out_time & regfile_XPos == rom_Xpos & regfile_YPos == rom_Ypos & rom_ra_data == regfile_ra_data & rom_rb_data == regfile_rb_data & regfile_map == rom_map){
           fsm_t.d = fsm_t.S4; // next state is state S4 if correct (i.e. the ALU's output matches the expected answer)
         }
         
@@ -164,7 +169,7 @@ module auto_checker_regfile ( //TODO: change the whole auto check file for regfi
           regfile_level[0] = ~regfile_level[0]; // inverts the LSB of correct answer
         }
         
-        if (regfile_level_out == rom_level_out & regfile_out_time == rom_out_time & regfile_XPos == rom_Xpos & regfile_YPos == rom_Ypos & regfile_map == rom_map){
+        if (regfile_level_out == rom_level_out & regfile_out_time == rom_out_time & regfile_XPos == rom_Xpos & regfile_YPos == rom_Ypos & rom_ra_data == regfile_ra_data & rom_rb_data == regfile_rb_data & regfile_map == rom_map){
           fsm_t.d = fsm_t.S5; // next state is state S5 if correct (i.e. the ALU's output matches the expected answer)
         }
         
@@ -180,7 +185,7 @@ module auto_checker_regfile ( //TODO: change the whole auto check file for regfi
           regfile_level[0] = ~regfile_level[0]; // inverts the LSB of correct answer
         }
         
-        if (regfile_level_out == rom_level_out & regfile_out_time == rom_out_time & regfile_XPos == rom_Xpos & regfile_YPos == rom_Ypos & regfile_map == rom_map){
+        if (regfile_level_out == rom_level_out & regfile_out_time == rom_out_time & regfile_XPos == rom_Xpos & regfile_YPos == rom_Ypos & rom_ra_data == regfile_ra_data & rom_rb_data == regfile_rb_data & regfile_map == rom_map){
           fsm_t.d = fsm_t.PASS; // next state is state S6 if correct (i.e. the ALU's output matches the expected answer)
         }
         

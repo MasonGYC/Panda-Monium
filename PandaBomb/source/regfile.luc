@@ -1,12 +1,13 @@
 module regfile (
     input clk,  // clock
     input rst,  // reset
-    input ra[4],
-    input rb[4],
-    input rc[4],
+    input ra[5],
+    input rb[5],
+    input rc[5],
     input we,
     input write_data[16],
     input level_in[2],
+    input in_time[16],
 
     output level_out[2],
     output out_time[16], // output time to 7 segment 16 bits
@@ -28,76 +29,91 @@ module regfile (
   dff reg_Xpos[3](.clk(clk), .rst(rst));        // 3-bit binary number to represent value of x coordinate from 0 - 7
   dff reg_Ypos[3](.clk(clk), .rst(rst));        // 3-bit binary number to represent value of y coordinate from 0 - 7
   dff reg_time[16](.clk(clk), .rst(rst));       // 16-bit binary number to represent time in seconds
-  dff reg_temp[4][16](.clk(clk), .rst(rst));    // 3 temporary 16-bit registers in case we need to do something with it
+  dff reg_temp[9][16](.clk(clk), .rst(rst));    // 9 temporary 16-bit registers in case we need to do something with it
   dff reg_level[2](.clk(clk), .rst(rst));       // 1: level1, 2: level2, 3: level3 (2bit binary number)
 
   always {
 
     ra_data = 16h0000;
     rb_data = 16h0000;
-    ROM_map r;
+    maps r;
 
     if (we) { 
       case (rc) {
         r.level_input = reg_level.q // tell ROM that level is _?_ stored in dff reg_level.q ROM should have case functionality that takes in level and give out the corresponding map rows of that level
 
-        4h0: reg_map_row1.d = r.out_row1;
-        4h1: reg_map_row2.d = r.out_row2;
-        4h2: reg_map_row3.d = r.out_row3;
-        4h3: reg_map_row4.d = r.out_row4;
-        4h4: reg_map_row5.d = r.out_row5;
-        4h5: reg_map_row6.d = r.out_row6;
-        4h6: reg_map_row7.d = r.out_row7;
-        4h7: reg_map_row8.d = r.out_row8;
-        4h8: reg_Xpos.d = write_data[2:0]; // 4h00 is the address of rc. thus when rc is 4h00, that particular line will be overwritten with a new write_data
-        4h9: reg_Ypos.d = write_data[2:0];
-        4hA: reg_time.d = write_data[16:0];
-        4hB: reg_temp.d[0] = write_data;
-        4hC: reg_temp.d[1] = write_data;
-        4hD: reg_temp.d[2] = write_data;
-        4hE: reg_temp.d[3] = write_data;
-        4hF: reg_level.d = level_in;
+        5h0: reg_map_row1.d = r.out_row1;
+        5h1: reg_map_row2.d = r.out_row2;
+        5h2: reg_map_row3.d = r.out_row3;
+        5h3: reg_map_row4.d = r.out_row4;
+        5h4: reg_map_row5.d = r.out_row5;
+        5h5: reg_map_row6.d = r.out_row6;
+        5h6: reg_map_row7.d = r.out_row7;
+        5h7: reg_map_row8.d = r.out_row8;
+        5h8: reg_Xpos.d = write_data[2:0]; // 5h8 is the address of rc. thus when rc is 4h00, that particular line will be overwritten with a new write_data
+        5h9: reg_Ypos.d = write_data[2:0];
+        5hA: reg_time.d = write_data[16:0];
+        5hB: reg_temp.d[0] = write_data[16:0];
+        5hC: reg_temp.d[1] = write_data[16:0];
+        5hD: reg_temp.d[2] = write_data[16:0];
+        5hE: reg_temp.d[3] = write_data[16:0];
+        5hF: reg_level.d = level_in;
+        5h10: reg_temp.d[4] = write_data[16:0];
+        5h11: reg_temp.d[5] = write_data[16:0];
+        5h12: reg_temp.d[6] = write_data[16:0];
+        5h13: reg_temp.d[7] = write_data[16:0];
+        5h14: reg_temp.d[8] = write_data[16:0];
       }
     }
 
     case (ra) {
-      4h0: ra_data[8:0] = reg_map_row1.q;
-      4h1: ra_data[8:0] = reg_map_row2.q;
-      4h2: ra_data[8:0] = reg_map_row3.q;
-      4h3: ra_data[8:0] = reg_map_row4.q;
-      4h4: ra_data[8:0] = reg_map_row5.q;
-      4h5: ra_data[8:0] = reg_map_row6.q;
-      4h6: ra_data[8:0] = reg_map_row7.q;
-      4h7: ra_data[8:0] = reg_map_row8.q;
-      4h8: ra_data[8:0] = reg_Xpos.q;
-      4h9: ra_data[2:0] = reg_Ypos.q;
-      4hA: ra_data[16:0] = reg_time.q;
-      4hB: ra_data = reg_temp.q[0];
-      4hC: ra_data = reg_temp.q[1];
-      4hD: ra_data = reg_temp.q[2];
-      4hE: ra_data = reg_temp.q[3];
-      4hF: ra_data = reg_level.q;
+      5h0: ra_data[8:0] = reg_map_row1.q;
+      5h1: ra_data[8:0] = reg_map_row2.q;
+      5h2: ra_data[8:0] = reg_map_row3.q;
+      5h3: ra_data[8:0] = reg_map_row4.q;
+      5h4: ra_data[8:0] = reg_map_row5.q;
+      5h5: ra_data[8:0] = reg_map_row6.q;
+      5h6: ra_data[8:0] = reg_map_row7.q;
+      5h7: ra_data[8:0] = reg_map_row8.q;
+      5h8: ra_data[8:0] = reg_Xpos.q;
+      5h9: ra_data[2:0] = reg_Ypos.q;
+      5hA: ra_data[16:0] = reg_time.q;
+      5hB: ra_data = reg_temp.q[0];
+      5hC: ra_data = reg_temp.q[1];
+      5hD: ra_data = reg_temp.q[2];
+      5hE: ra_data = reg_temp.q[3];
+      5hF: ra_data = reg_level.q;
+      5h10: ra_data = reg_temp.q[4];
+      5h11: ra_data = reg_temp.q[5];
+      5h12: ra_data = reg_temp.q[6];
+      5h13: ra_data = reg_temp.q[7];
+      5h14: ra_data = reg_temp.q[8];
     }
 
     case (rb) {
-      4h0: rb_data[8:0] = reg_map_row1.q;
-      4h1: rb_data[8:0] = reg_map_row2.q;
-      4h2: rb_data[8:0] = reg_map_row3.q;
-      4h3: rb_data[8:0] = reg_map_row4.q;
-      4h4: rb_data[8:0] = reg_map_row5.q;
-      4h5: rb_data[8:0] = reg_map_row6.q;
-      4h6: rb_data[8:0] = reg_map_row7.q;
-      4h7: rb_data[8:0] = reg_map_row8.q;
-      4h8: rb_data[8:0] = reg_Xpos.q;
-      4h9: rb_data[2:0] = reg_Ypos.q;
-      4hA: rb_data[16:0] = reg_time.q;
-      4hB: rb_data = reg_temp.q[0];
-      4hC: rb_data = reg_temp.q[1];
-      4hD: rb_data = reg_temp.q[2];
-      4hE: rb_data = reg_temp.q[3];
-      4hF: rb_data = reg_level.q;
+      5h0: rb_data[8:0] = reg_map_row1.q;
+      5h1: rb_data[8:0] = reg_map_row2.q;
+      5h2: rb_data[8:0] = reg_map_row3.q;
+      5h3: rb_data[8:0] = reg_map_row4.q;
+      5h4: rb_data[8:0] = reg_map_row5.q;
+      5h5: rb_data[8:0] = reg_map_row6.q;
+      5h6: rb_data[8:0] = reg_map_row7.q;
+      5h7: rb_data[8:0] = reg_map_row8.q;
+      5h8: rb_data[8:0] = reg_Xpos.q;
+      5h9: rb_data[2:0] = reg_Ypos.q;
+      5hA: rb_data[16:0] = reg_time.q;
+      5hB: rb_data = reg_temp.q[0];
+      5hC: rb_data = reg_temp.q[1];
+      5hD: rb_data = reg_temp.q[2];
+      5hE: rb_data = reg_temp.q[3];
+      5hF: rb_data = reg_level.q;
+      5h10: rb_data = reg_temp.q[4];
+      5h11: rb_data = reg_temp.q[5];
+      5h12: rb_data = reg_temp.q[6];
+      5h13: rb_data = reg_temp.q[7];
+      5h14: rb_data = reg_temp.q[8];
     }
-
+    reg_time.d = in_time;
     out_time = reg_time.q; 
     XPos = reg_Xpos.q;
     YPos = reg_Ypos.q;
