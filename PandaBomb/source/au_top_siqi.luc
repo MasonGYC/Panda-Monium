@@ -6,7 +6,6 @@ module au_top (
     output io_seg [8],      // 7-segment LEDs on IO Shield
     output io_sel [4],      // Digit select on IO Shield
 
-    // game start button
     input rst_n,
     input io_dip [3][8],
 
@@ -33,8 +32,8 @@ module au_top (
     // clock. This ensures the entire FPGA comes out of reset at the same time.
     reset_conditioner reset_cond;
     }
-    auto_checker_control_unit(.clk(clk), .rst(rst));
-    auto_checker_regfile(.clk(clk), .rst(rst));
+    auto_checker_control_unit auto_checker_control_unit(.clk(clk), .rst(rst));
+    auto_checker_regfile auto_checker_regfile(.clk(clk), .rst(rst));
 
     // multi_seven_seg
     multi_seven_seg seg(.clk(clk), .rst(rst));
@@ -43,15 +42,30 @@ module au_top (
     button_conditioner buttoncond[6](.clk(clk));
     edge_detector buttondetector[6](#RISE(1), #FALL(0),.clk(clk)); //detect on rising edge only
   
-    //joystick_input
+    ///////////////////////
+    // module initializtaion//
+    alu alu;
+    regfile regfile(.clk(clk), .rst(rst));
+    wdselmux wdselmux;
+    abselmux aselmux;
+    abselmux bselmux;
     joystick_input joystick_input;
+    orientation_unit orientation_unit; 
+    control_unit control_unit(.clk(clk), .rst(rst));
 
-    always {
+    always { 
         reset_cond.in = ~rst_n; // input raw inverted reset signal
         rst = reset_cond.out;   // conditioned reset
 
         // TODO: turn everything off: LEDs/seven segments
-
+        usb_tx = usb_rx;        // loop serial port
+        led = 8x{{8x{{24h0}}}};             // turn LEDs off
+        io_seg = 8hff;          // turn segments off
+        io_sel = 4hf;           // select no digits
+    
+        /////////////////////////
+        //auto_check initialization//
+    
         // initialization
         auto_checker_control_unit.fail_case = 5b0;
         auto_checker_control_unit.switch[1] = 0;
@@ -62,8 +76,11 @@ module au_top (
         auto_checker_regfile.switch[1] = 0;
         auto_checker_regfile.switch[0] = 0;
         auto_checker_regfile.button = 0;
+    
+        /////////////////////////
+        //module connection//
 
-        // button joystick&start reset
+        // button joystick & start reset
         buttoncond.in[0] = up_button;
         buttoncond.in[1] = down_button;
         buttoncond.in[2] = left_button;
@@ -72,11 +89,33 @@ module au_top (
         buttoncond.in[5] = reset_button;
         buttondetector.in = buttoncond.out;
     
-        // joystick_input input
         joystick_input.up_button=buttondetector.out[0];
         joystick_input.down_button=buttondetector.out[1];
         joystick_input.left_button=buttondetector.out[2];
         joystick_input.right_button=buttondetector.out[3];
+        orientation_unit.joystick = joystick_input.joystick;
+        
+        // control_unit connection
+        control_unit.start = buttondetector.out[4]; //start_button
+        control_unit.reset = buttondetector.out[5];
+        control_unit.direction[0] = up_button;
+        control_unit.direction[1] = down_button;
+        control_unit.direction[2] = left_button;
+        control_unit.direction[3] = right_button;
+    
+    regfile.we = control_unit.we;
+ = control_unit.ra;
+    regfile.rb = control_unit.rb;
+    regfile.rc = control_unit.rc;
+    aselmux.sel = control_unit.asel;
+    bselmux.sel = 
+    wdselmux.wdsel = control_unit.wdsel;
+    alu.alufn = control_unit.alufn;
+    
+
+
+    
+        //
     
 
         // 7-seg

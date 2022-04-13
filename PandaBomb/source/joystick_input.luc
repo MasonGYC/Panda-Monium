@@ -1,6 +1,4 @@
 module joystick_input (
-    input clk,  // clock
-    input rst,  // reset
     input up_button,
     input down_button,
     input left_button,
@@ -15,9 +13,7 @@ module joystick_input (
 always {
   
     joystick = b100; //invalid
-    
-    // button
-    
+      
     
     if (up_button == 1 || down_button == 1 || left_button == 1 || right_button == 1){
         if (up_button == b1){
