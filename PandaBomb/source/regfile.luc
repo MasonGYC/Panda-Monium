@@ -8,10 +8,12 @@ module regfile (
     input write_data[16],
     input level_in[16],
     input in_time[16],
-
+    input orientation_in[16],
+    
+    output orientation_out[16],
     output level_out[16],
     output out_time[16], // output time to 7 segment 16 bits
-    output xpos[16], 
+    output xpos[16],
     output ypos[16], // 3bit binary number to represent value of y coordinate from 0 - 7
     output ra_data[16],
     output rb_data[16],
@@ -22,7 +24,7 @@ module regfile (
     output maprow5[16],
     output maprow6[16],
     output maprow7[16],
-    output maprow8[16] // output full map 
+    output maprow8[16] // output full map
   ) {
   
   maps r1;
@@ -33,49 +35,51 @@ module regfile (
   maps r6;
   maps r7;
   maps r8;
-
-  dff reg_map_row1[16](.clk(clk), .rst(rst));    // 8-bit binary number to represent row 1 of the map
-  dff reg_map_row2[16](.clk(clk), .rst(rst));    // 8-bit binary number to represent row 2 of the map
-  dff reg_map_row3[16](.clk(clk), .rst(rst));    // 8-bit binary number to represent row 3 of the map
-  dff reg_map_row4[16](.clk(clk), .rst(rst));    // 8-bit binary number to represent row 4 of the map
-  dff reg_map_row5[16](.clk(clk), .rst(rst));    // 8-bit binary number to represent row 5 of the map
-  dff reg_map_row6[16](.clk(clk), .rst(rst));    // 8-bit binary number to represent row 6 of the map
-  dff reg_map_row7[16](.clk(clk), .rst(rst));    // 8-bit binary number to represent row 7 of the map
-  dff reg_map_row8[16](.clk(clk), .rst(rst));    // 8-bit binary number to represent row 8 of the map
+  
+  dff reg_map_row1[16](.clk(clk), .rst(rst));    // 16-bit binary number to represent row 1 of the map
+  dff reg_map_row2[16](.clk(clk), .rst(rst));    // 16-bit binary number to represent row 2 of the map
+  dff reg_map_row3[16](.clk(clk), .rst(rst));    // 16-bit binary number to represent row 3 of the map
+  dff reg_map_row4[16](.clk(clk), .rst(rst));    // 16-bit binary number to represent row 4 of the map
+  dff reg_map_row5[16](.clk(clk), .rst(rst));    // 16-bit binary number to represent row 5 of the map
+  dff reg_map_row6[16](.clk(clk), .rst(rst));    // 16-bit binary number to represent row 6 of the map
+  dff reg_map_row7[16](.clk(clk), .rst(rst));    // 16-bit binary number to represent row 7 of the map
+  dff reg_map_row8[16](.clk(clk), .rst(rst));    // 16-bit binary number to represent row 8 of the map
   dff reg_xpos[16](.clk(clk), .rst(rst));        // 3-bit binary number to represent value of x coordinate from 0 - 7
   dff reg_ypos[16](.clk(clk), .rst(rst));        // 3-bit binary number to represent value of y coordinate from 0 - 7
   dff reg_time[16](.clk(clk), .rst(rst));       // 16-bit binary number to represent time in seconds
-  dff reg_temp[9][16](.clk(clk), .rst(rst));    // 9 temporary 16-bit registers in case we need to do something with it
+  dff reg_temp[8][16](.clk(clk), .rst(rst));    // 8 temporary 16-bit registers in case we need to do something with it
+  dff reg_orientation[16](.clk(clk), .rst(rst)); // 16 bit orientation
   dff reg_level[16](.clk(clk), .rst(rst));       // 1: level1, 2: level2, 3: level3 (2bit binary number)
   
-
+  
   
   always {
-
+    
     ra_data = 16h0000;
     rb_data = 16h0000;
-        r1.level_input = reg_level.q;
+    r1.level_input = reg_level.q;
     r1.address=5b00000;
     r2.level_input = reg_level.q;
     r2.address=5b00001;
     r3.level_input=reg_level.q;
-      r3.address=5b00010;
-      r4.level_input=reg_level.q;
-      r4.address=5b00011;
-      r5.level_input=reg_level.q;
-      r5.address=5b00100;
-      r6.level_input=reg_level.q;
-      r6.address=5b00101;
-      r7.level_input=reg_level.q;
-      r7.address=5b00110;
-      r8.level_input=reg_level.q;
-      r8.address=5b00111;
+    r3.address=5b00010;
+    r4.level_input=reg_level.q;
+    r4.address=5b00011;
+    r5.level_input=reg_level.q;
+    r5.address=5b00100;
+    r6.level_input=reg_level.q;
+    r6.address=5b00101;
+    r7.level_input=reg_level.q;
+    r7.address=5b00110;
+    r8.level_input=reg_level.q;
+    r8.address=5b00111;
     
-    if (we) { 
-
+    
+    if (we) {
+      
       case (rc) {
         // tell ROM that level is _?_ stored in dff reg_level.q ROM should have case functionality that takes in level and give out the corresponding map rows of that level
-
+        
         5h0: reg_map_row1.d = r1.out_row;
         5h1: reg_map_row2.d = r2.out_row;
         5h2: reg_map_row3.d = r3.out_row;
@@ -96,10 +100,10 @@ module regfile (
         5h11: reg_temp.d[5] = write_data[15:0];
         5h12: reg_temp.d[6] = write_data[15:0];
         5h13: reg_temp.d[7] = write_data[15:0];
-        5h14: reg_temp.d[8] = write_data[15:0];
+        5h14: reg_orientation.d = orientation_in;
       }
     }
-
+    
     case (ra) {
       5h0: ra_data[15:0] = reg_map_row1.q;
       5h1: ra_data[15:0] = reg_map_row2.q;
@@ -121,9 +125,9 @@ module regfile (
       5h11: ra_data = reg_temp.q[5];
       5h12: ra_data = reg_temp.q[6];
       5h13: ra_data = reg_temp.q[7];
-      5h14: ra_data = reg_temp.q[8];
+      5h14: ra_data = reg_orientation.q;
     }
-
+    
     case (rb) {
       5h0: rb_data[15:0] = reg_map_row1.q;
       5h1: rb_data[15:0] = reg_map_row2.q;
@@ -145,10 +149,10 @@ module regfile (
       5h11: rb_data = reg_temp.q[5];
       5h12: rb_data = reg_temp.q[6];
       5h13: rb_data = reg_temp.q[7];
-      5h14: rb_data = reg_temp.q[8];
+      5h14: rb_data = reg_orientation.q;
     }
     reg_time.d = in_time;
-    out_time = reg_time.q; 
+    out_time = reg_time.q;
     xpos = reg_xpos.q;
     ypos = reg_ypos.q;
     maprow1=r1.out_row;
@@ -160,5 +164,6 @@ module regfile (
     maprow7=r7.out_row;
     maprow8=r8.out_row;
     level_out = reg_level.q; // put level input into dff reg
+    orientation_out = reg_orientation.q;
   }
 }
