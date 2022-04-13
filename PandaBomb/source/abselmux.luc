@@ -1,42 +1,48 @@
 module abselmux (
-    input ASEL[4], // mux selector signal
-    input BSEL[4], // mux selector signal
+    input asel[4], // mux selector signal
+    input bsel[4], // mux selector signal
 
-    input ra_data, // input coming from regfile
-    input rb_data, // input coming from regfile
+    input ra_data[16], // input coming from regfile
+    input rb_data[16], // input coming from regfile
 
-    output A; // to go to alu
-    output B; // to go to alu
-)
+    output a[16], // to go to alu
+    output b[16] // to go to alu
+  ) {
 
-{
-    case (ASEL[4]) {
-        4b0000: A = ra_data;
-        4b0001: A = 4h1;
-        4b0010: A = 4h2;
-        4b0011: A = 4h3;
-        4b0100: A = 4h4;
-        4b0101: A = 4h5;
-        4b0110: A = 4h6;
-        4b0111: A = 4h7;
-        4b1000: A = 4h8;
-        4b1001: A = 4h80;
-        4b1010: A = 4h0;
-        4b1011: A = 4h3C;
+  always {
+  
+    a = 16h0;
+    b = 16h0;
+    
+    case (asel) {
+        4b0000: a = ra_data;
+        4b0001: a = 16h1;
+        4b0010: a = 16h2;
+        4b0011: a = 16h3;
+        4b0100: a = 16h4;
+        4b0101: a = 16h5;
+        4b0110: a = 16h6;
+        4b0111: a = 16h7;
+        4b1000: a = 16h8;
+        4b1001: a = 16h80;
+        4b1010: a = 16h0;
+        4b1011: a = 16h3C;
+
     }
 
-    case(BSEL[4]) {
-        4b0000: B = rb_data;
-        4b0001: B = 4h1;
-        4b0010: B = 4h2;
-        4b0011: B = 4h3;
-        4b0100: B = 4h4;
-        4b0101: B = 4h5;
-        4b0110: B = 4h6;
-        4b0111: B = 4h7;
-        4b1000: B = 4h8;
-        4b1001: B = 4h80;
-        4b1010: B = 4h0;
-        4b1011: B = 4h3C;
+    case(bsel) {
+        4b0000: b = rb_data;
+        4b0001: b = 16h1;
+        4b0010: b = 16h2;
+        4b0011: b = 16h3;
+        4b0100: b = 16h4;
+        4b0101: b = 16h5;
+        4b0110: b = 16h6;
+        4b0111: b = 16h7;
+        4b1000: b = 16h8;
+        4b1001: b = 16h80;
+        4b1010: b = 16h0;
+        4b1011: b = 16h3C;
     }
+  }
 }
