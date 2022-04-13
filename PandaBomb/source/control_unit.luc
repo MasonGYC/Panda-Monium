@@ -8,7 +8,7 @@ module control_unit (
     input direction[4], //up down LEFT RIGHT,
     input start[1], //START button
     input reset[1], //RESET button
-    input timer,
+    input timer[16],
     output alufn[6],
     output asel[4],
     output bsel[4],
