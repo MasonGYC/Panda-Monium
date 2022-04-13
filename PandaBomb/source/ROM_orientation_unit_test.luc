@@ -1,0 +1,31 @@
+module ROM_orientation_unit_test (
+    input address[5],  // ROM address
+    output joystick[3],
+    output orientation_state[2],
+    output direction[4];
+    
+  ) {
+ 
+  // 25 testcases in the format of 
+  // joystick orientation_state direction
+  // by default we is 0, we only used once we=1 when we want to generate map
+  const TESTCASES =      
+  { 
+    {3b001, 2b01, b0001},  
+    {3b010, 2b11, b0010},
+    {3b011, 2b00, b0010},              
+    {3b000, 2b10, b0100}
+
+  };
+
+  always {
+    joystick = TESTCASES[address][2];
+    orientation_state = TESTCASES[address][1];
+    direction = TESTCASES[address][0];
+  }
+}
+
+// 6 hex digits
+// 1 byte is 8 binary bits
+// 1 byte is 2 hex digits
+// 1 hex digit is 4 binary bits
