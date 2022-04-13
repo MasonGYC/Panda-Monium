@@ -99,17 +99,17 @@ module maps (
     //out_row_by_address = MAP[address]; // first way to index a map 
 
     case(level_input) { // second way to index a map, input a level and get all the rows filled out for you
-      1: 
+      0: 
         out_row = MAP[address];
         
       
 
-      2: 
+      1: 
         out_row = MAP[address+8];
 
       
 
-      3: 
+      2: 
         out_row = MAP[address+16];
         
       default: out_row=16b0;
