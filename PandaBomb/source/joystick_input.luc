@@ -11,14 +11,13 @@ module joystick_input (
 {
 
 
-//button_conditioner
-button_conditioner buttoncond[5](.clk(clk));
-edge_detector buttondetector[5](#RISE(1), #FALL(0),.clk(clk)); //detect on rising edge only
-
  
 always {
   
     joystick = b100; //invalid
+    
+    // button
+    
     
     if (up_button == 1 || down_button == 1 || left_button == 1 || right_button == 1){
         if (up_button == b1){

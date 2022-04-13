@@ -21,7 +21,9 @@ module au_top (
     input down_button,
     input left_button,
     input right_button,
-    output joystick[2]
+    input reset_button,
+    input start_button
+    
     ) {
     sig rst;                  // reset signal
 
@@ -38,8 +40,11 @@ module au_top (
     multi_seven_seg seg(.clk(clk), .rst(rst));
 
     //button_conditioner
-    button_conditioner buttoncond[5](.clk(clk));
-    edge_detector buttondetector[5](#RISE(1), #FALL(0),.clk(clk)); //detect on rising edge only
+    button_conditioner buttoncond[6](.clk(clk));
+    edge_detector buttondetector[6](#RISE(1), #FALL(0),.clk(clk)); //detect on rising edge only
+  
+    //joystick_input
+    joystick_input joystick_input;
 
     always {
         reset_cond.in = ~rst_n; // input raw inverted reset signal
@@ -58,9 +63,21 @@ module au_top (
         auto_checker_regfile.switch[0] = 0;
         auto_checker_regfile.button = 0;
 
-        // button
-        buttoncond.in = // control button in
+        // button joystick&start reset
+        buttoncond.in[0] = up_button;
+        buttoncond.in[1] = down_button;
+        buttoncond.in[2] = left_button;
+        buttoncond.in[3] = right_button;
+        buttoncond.in[4] = start_button;
+        buttoncond.in[5] = reset_button;
         buttondetector.in = buttoncond.out;
+    
+        // joystick_input input
+        joystick_input.up_button=buttondetector.out[0];
+        joystick_input.down_button=buttondetector.out[1];
+        joystick_input.left_button=buttondetector.out[2];
+        joystick_input.right_button=buttondetector.out[3];
+    
 
         // 7-seg
         io_seg = ~seg.seg;  // connect segments to the driver
