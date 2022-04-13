@@ -1,4 +1,4 @@
-module ROM_regfile_test_case (
+module rom_regfile_test_case (
     input address[5],  // ROM address
 
     output ra[5],
@@ -16,7 +16,7 @@ module ROM_regfile_test_case (
     output xpos[16],
     output ypos[16],
     output ra_data[16],
-    output rb_data[16];
+    output rb_data[16],
     output maprow1[8],
     output maprow2[8],
     output maprow3[8],
@@ -30,13 +30,13 @@ module ROM_regfile_test_case (
  
   // 5 testcases in the format of  FIXME: add 3 more test cases since autochecker implements 5 test cases
   // ra, rb, rc we, write_data, level_in, in_time, oreintation_in, level_out, out_time, xPos, yPos, ra_data, rb_data, maprow1, maprow2, maprow3, maprow4, maprow5, maprow6, maprow7, maprow8
-  const TESTCASES_regfile =      
+  const TESTCASES_REGFILE =      
   { 
     {
-      5h0, //ra
-      5h1, //rb
-      5hb, //rc
-      1b1, //we
+      16h0, //ra
+      16h1, //rb
+      16hb, //rc
+      16b1, //we
       16b0001000100000001, //write_data
       16b00, // level_in
       16b0, // in_time
@@ -48,21 +48,21 @@ module ROM_regfile_test_case (
       16b000, // ypos
       16b00000100, // ra_data
       16b00010110, // rb_data
-      8b00000100,              // level 1 map row 1
-      8b00010110,              // level 1 map row 2
-      8b10000001,              // level 1 map row 3
-      8b00010100,              // level 1 map row 4
-      8b00110010,              // level 1 map row 5
-      8b10000000,              // level 1 map row 6
-      8b00100100,              // level 1 map row 7
-      8b00000000,              // level 1 map row 8
+      16b00000100,              // level 1 map row 1
+      16b00010110,              // level 1 map row 2
+      16b10000001,              // level 1 map row 3
+      16b00010100,              // level 1 map row 4
+      16b00110010,              // level 1 map row 5
+      16b10000000,              // level 1 map row 6
+      16b00100100,              // level 1 map row 7
+      16b00000000              // level 1 map row 8
     }, // TEST: level 1 is 2b00, we=1, timer is less than 60, panda (0,0), test if correct map comes out
 
     {
-      5h4, //ra map row 4
-      5h14, //rb orienation state
-      5h13, //rc temp reg
-      1b1, //we
+      16h4, //ra map row 4
+      16h14, //rb orienation state
+      16h13, //rc temp reg
+      16b1, //we
       16b0001000100000001, //write_data
       16b01, // level_in level 2
       16b0, // in_time
@@ -74,42 +74,42 @@ module ROM_regfile_test_case (
       16b000, // ypos
       16b10000000, // ra_data
       16b00, // rb_data
-      8b00100000,              // level 2 map row 1
-      8b00011000,              // level 2 map row 2
-      8b10010010,              // level 2 map row 3
-      8b10000000,              // level 2 map row 4
-      8b01000110,              // level 2 map row 5
-      8b01001100,              // level 2 map row 6
-      8b00000000,              // level 2 map row 7
-      8b00100000,              // level 2 map row 8
-    },
+      16b00100000,              // level 2 map row 1
+      16b00011000,              // level 2 map row 2
+      16b10010010,              // level 2 map row 3
+      16b10000000,              // level 2 map row 4
+      16b01000110,              // level 2 map row 5
+      16b01001100,              // level 2 map row 6
+      16b00000000,              // level 2 map row 7
+      16b00100000              // level 2 map row 8
+    }
   };
 
   always {
    //NOTE: indexing order in array in lucid: 0 starts from right
-    ra = TESTCASES_regfile[address][22];
-    rb = TESTCASES_regfile[address][21];
-    rc = TESTCASES_regfile[address][20];
-    we = TESTCASES_regfile[address][19];
-    write_data = TESTCASES_regfile[address][18];
-    level_in = TESTCASES_regfile[address][17];
-    in_time = TESTCASES_regfile[address][16];
-    orientation_in = TESTCASES_regfile[address][15];
-    orientation_out = TESTCASES_regfile[address][14];
-    level_out = TESTCASES_regfile[address][13];
-    out_time = TESTCASES_regfile[address][12];
-    xpos = TESTCASES_regfile[address][11];
-    ypos = TESTCASES_regfile[address][10];
-    ra_data = TESTCASES_regfile[address][9];
-    rb_data = TESTCASES_regfile[address][8];
-    maprow1 = TESTCASES_regfile[address][7];
-    maprow2 = TESTCASES_regfile[address][6];
-    maprow3 = TESTCASES_regfile[address][5];
-    maprow4 = TESTCASES_regfile[address][4];
-    maprow5 = TESTCASES_regfile[address][3];
-    maprow6 = TESTCASES_regfile[address][2];
-    maprow7 = TESTCASES_regfile[address][1];
-    maprow8 = TESTCASES_regfile[address][0];
+    ra = TESTCASES_REGFILE[address][22][4:0];
+    rb = TESTCASES_REGFILE[address][21][4:0];
+    rc = TESTCASES_REGFILE[address][20][4:0];
+    we = TESTCASES_REGFILE[address][19][0];
+    write_data = TESTCASES_REGFILE[address][18];
+    level_in = TESTCASES_REGFILE[address][17];
+    in_time = TESTCASES_REGFILE[address][16];
+    orientation_in = TESTCASES_REGFILE[address][15];
+    orientation_out = TESTCASES_REGFILE[address][14];
+    level_out = TESTCASES_REGFILE[address][13];
+    out_time = TESTCASES_REGFILE[address][12];
+    xpos = TESTCASES_REGFILE[address][11];
+    ypos = TESTCASES_REGFILE[address][10];
+    ra_data = TESTCASES_REGFILE[address][9];
+    rb_data = TESTCASES_REGFILE[address][8];
+    maprow1 = TESTCASES_REGFILE[address][7][7:0];
+    maprow2 = TESTCASES_REGFILE[address][6][7:0];
+    maprow3 = TESTCASES_REGFILE[address][5][7:0];
+    maprow4 = TESTCASES_REGFILE[address][4][7:0];
+    maprow5 = TESTCASES_REGFILE[address][3][7:0];
+    maprow6 = TESTCASES_REGFILE[address][2][7:0];
+    maprow7 = TESTCASES_REGFILE[address][1][7:0];
+    maprow8 = TESTCASES_REGFILE[address][0][7:0];
   }
 }
 
