@@ -34,7 +34,7 @@ module control_unit (
         IDLE,
         CHECK_BORDER_XLEFT,CHECK_BORDER_XRIGHT,CHECK_BORDER_YLEFT,CHECK_BORDER_YRIGHT,BORDER_CHECK_ZERO,BORDER_CHECK_ONE,
         CHECK_GOAL_X, CHECK_GOAL_Y,CHECK_GOAL_XY,CHECK_GOAL_XY_MOVE, //check whether reached goal
-        CHECK_COLL, //check obstacle
+        CHECK_COLL,CHECK_COLL_INDEX, //check obstacle
         UPDATE_XPOS,UPDATE_YPOS,
         CHECK_WIN_UPPERBOUND,CHECK_WIN_LOWERBOUND,CHECK_WIN_AND,CHECK_WIN_LEVELUP,CHECK_WIN_LEVELUP_CHECK,
         GAMEOVER,RESET_LEVEL};
@@ -297,9 +297,25 @@ module control_unit (
             
         //////////////////////////////
         ctrl.CHECK_COLL:
-            regfile.ra = X_TEMP;
-            regfile.rb = Y_TEMP;
-            if (map[regfile.ra_data][regfile.rb_data]==1){
+            ra = RANDOM; // X_TEMP
+            rb = X_TEMP; // Y_TEMP
+            rc = 5hC; // shifted slicing index
+            asel = 4b1; // 1
+            bsel = 4b0; // choose rb data
+            alufn = 6b100000; // shl
+            we = 1; // write enable
+            wdsel = 3b0; //take alu output
+            ctrl.d = ctrl.CHECK_COLL_INDEX;
+        ctrl.CHECK_COLL_INDEX:
+            ra = Y_TEMP[4:0]; // Y_TEMP
+            rb = 5hC; // shifted one hot
+            rc = 5hD; // shifted slicing index
+            asel = 4b0; // choose ra data
+            bsel = 4b0; // choose rb data
+            alufn = 6b0; // and
+            we = 0; // write not enable
+            wdsel = 3b0; //take alu output
+            if (z==0){
                 ctrl.d = ctrl.IDLE;
             }
             else{
