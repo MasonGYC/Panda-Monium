@@ -6,7 +6,7 @@ module regfile (
     input rc[5],
     input we,
     input write_data[16],
-    input level_in[2],
+    input level_in[16],
     input in_time[16],
 
     output level_out[16],
