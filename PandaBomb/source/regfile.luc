@@ -9,7 +9,7 @@ module regfile (
     input level_in[2],
     input in_time[16],
 
-    output level_out[2],
+    output level_out[16],
     output out_time[16], // output time to 7 segment 16 bits
     output xpos[16], 
     output ypos[16], // 3bit binary number to represent value of y coordinate from 0 - 7
@@ -46,7 +46,7 @@ module regfile (
   dff reg_ypos[16](.clk(clk), .rst(rst));        // 3-bit binary number to represent value of y coordinate from 0 - 7
   dff reg_time[16](.clk(clk), .rst(rst));       // 16-bit binary number to represent time in seconds
   dff reg_temp[9][16](.clk(clk), .rst(rst));    // 9 temporary 16-bit registers in case we need to do something with it
-  dff reg_level[2](.clk(clk), .rst(rst));       // 1: level1, 2: level2, 3: level3 (2bit binary number)
+  dff reg_level[16](.clk(clk), .rst(rst));       // 1: level1, 2: level2, 3: level3 (2bit binary number)
   
 
   

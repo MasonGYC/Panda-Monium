@@ -1,6 +1,6 @@
 module maps (
     input address[16],  // ROM address 
-    input level_input[2],    // ROM level input from regfile
+    input level_input[16],    // ROM level input from regfile
     output out_row[16]
 
     //output out_row_by_address[8],
