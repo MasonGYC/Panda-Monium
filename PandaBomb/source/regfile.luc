@@ -11,7 +11,7 @@ module regfile (
 
     output level_out[2],
     output out_time[16], // output time to 7 segment 16 bits
-    output XPos[3], 
+    output XPos[3],
     output YPos[3], // 3bit binary number to represent value of y coordinate from 0 - 7
     output ra_data[16],
     output rb_data[16],

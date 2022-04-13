@@ -14,6 +14,7 @@ module au_top (
 
     // 8x8 LED
     output led [8][8][24],
+    output outled,
 
     // joystick button
     input up_button,
@@ -38,6 +39,9 @@ module au_top (
     // multi_seven_seg
     multi_seven_seg seg(.clk(clk), .rst(rst));
 
+    // 8x8 led strips
+    ledstrip ledstrip[8](#PIXEL_COUNT(8), .clk(clk), .rst(rst));
+
     //button_conditioner
     button_conditioner buttoncond[6](.clk(clk));
     edge_detector buttondetector[6](#RISE(1), #FALL(0),.clk(clk)); //detect on rising edge only
@@ -46,10 +50,13 @@ module au_top (
     // module initializtaion//
     alu alu;
     maps rom;
+    disappearing_unit dis_unit;
+    slowtimer timer;
     regfile regfile(.clk(clk), .rst(rst));
     wdselmux wdselmux;
     abselmux aselmux;
     abselmux bselmux;
+    led_output led_out;
     joystick_input joystick_input;
     orientation_unit orientation_unit; 
     control_unit control_unit(.clk(clk), .rst(rst));
@@ -128,15 +135,20 @@ module au_top (
         rom.level_input = regfile.level_out;
     
         //regfile connection
-
+        regfile.in_time = timer.time_out;
         
-    
-    
+        timer.orientation_in = orientation_unit.direction;
         
+        led_out.x = regfile.XPos;
+        led_out.y = regfile.YPos;
+        led_out.map = regfile.map;
+        led_out.game_start = buttondetector.out[4];
+        led_out.disappear = disappearing_unit.ledcontrol;
         
-
-
-    
+        ledstrip.update = 1;
+        ledstrip.color = led_out.matrix;
+        ledstrip = LEDCOLOR[led_strip.pixel];
+        outled = led_strip.led;
         //
     
 
