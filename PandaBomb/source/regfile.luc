@@ -17,14 +17,14 @@ module regfile (
     output ypos[16], // 3bit binary number to represent value of y coordinate from 0 - 7
     output ra_data[16],
     output rb_data[16],
-    output maprow1[16],
-    output maprow2[16],
-    output maprow3[16],
-    output maprow4[16],
-    output maprow5[16],
-    output maprow6[16],
-    output maprow7[16],
-    output maprow8[16] // output full map
+    output maprow1[8],
+    output maprow2[8],
+    output maprow3[8],
+    output maprow4[8],
+    output maprow5[8],
+    output maprow6[8],
+    output maprow7[8],
+    output maprow8[8] // output full map
   ) {
   
   maps r1;
@@ -88,9 +88,9 @@ module regfile (
         5h5: reg_map_row6.d = r6.out_row;
         5h6: reg_map_row7.d = r7.out_row;
         5h7: reg_map_row8.d = r8.out_row;
-        5h8: reg_xpos.d = write_data[2:0]; // 5h8 is the address of rc. thus when rc is 4h00, that particular line will be overwritten with a new write_data
-        5h9: reg_ypos.d = write_data[2:0];
-        5hA: reg_time.d = write_data[15:0];
+        5h8: reg_xpos.d = write_data; // 5h8 is the address of rc. thus when rc is 4h00, that particular line will be overwritten with a new write_data
+        5h9: reg_ypos.d = write_data;
+        5hA: reg_time.d = write_data;
         5hB: reg_temp.d[0] = write_data[15:0];
         5hC: reg_temp.d[1] = write_data[15:0];
         5hD: reg_temp.d[2] = write_data[15:0];
@@ -155,14 +155,14 @@ module regfile (
     out_time = reg_time.q;
     xpos = reg_xpos.q;
     ypos = reg_ypos.q;
-    maprow1=r1.out_row;
-    maprow2=r2.out_row;
-    maprow3=r3.out_row;
-    maprow4=r4.out_row;
-    maprow5=r5.out_row;
-    maprow6=r6.out_row;
-    maprow7=r7.out_row;
-    maprow8=r8.out_row;
+    maprow1=r1.out_row[7:0];
+    maprow2=r2.out_row[7:0];
+    maprow3=r3.out_row[7:0];
+    maprow4=r4.out_row[7:0];
+    maprow5=r5.out_row[7:0];
+    maprow6=r6.out_row[7:0];
+    maprow7=r7.out_row[7:0];
+    maprow8=r8.out_row[7:0];
     level_out = reg_level.q; // put level input into dff reg
     orientation_out = reg_orientation.q;
   }
