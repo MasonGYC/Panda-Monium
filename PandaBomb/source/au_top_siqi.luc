@@ -22,7 +22,7 @@ module au_top (
     input left_button,
     input right_button,
     input reset_button,
-    input start_button
+    input start_button,
     
     ) {
     sig rst;                  // reset signal
@@ -84,6 +84,7 @@ module au_top (
         auto_checker_regfile.switch[1] = 0;
         auto_checker_regfile.switch[0] = 0;
         auto_checker_regfile.button = 0;
+        
     
         /////////////////////////
         //module connection//
@@ -120,6 +121,9 @@ module au_top (
         bselmux.sel = control_unit.bsel;
         wdselmux.wdsel = control_unit.wdsel;
         alu.alufn = control_unit.alufn;
+
+        control_unit.level_in = regfile.level_out;
+        regfile.level_in = control_unit.level_out;
         
         //regffile -> abselmux -> alu
         aselmux.rdata = regfile.ra_data;
