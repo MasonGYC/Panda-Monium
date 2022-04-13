@@ -45,6 +45,7 @@ module au_top (
     ///////////////////////
     // module initializtaion//
     alu alu;
+    maps rom;
     regfile regfile(.clk(clk), .rst(rst));
     wdselmux wdselmux;
     abselmux aselmux;
@@ -64,7 +65,7 @@ module au_top (
         io_sel = 4hf;           // select no digits
     
         /////////////////////////
-        //auto_check initialization//
+        //auto_check connection//
     
         // initialization
         auto_checker_control_unit.fail_case = 5b0;
@@ -89,29 +90,50 @@ module au_top (
         buttoncond.in[5] = reset_button;
         buttondetector.in = buttoncond.out;
     
+        // receive joystick input
         joystick_input.up_button=buttondetector.out[0];
         joystick_input.down_button=buttondetector.out[1];
         joystick_input.left_button=buttondetector.out[2];
         joystick_input.right_button=buttondetector.out[3];
+    
+        // joystick -> orientation_unit
         orientation_unit.joystick = joystick_input.joystick;
+        orientation_unit.orientation_state = regfile.level_out;
         
-        // control_unit connection
+        // control_unit input
         control_unit.start = buttondetector.out[4]; //start_button
         control_unit.reset = buttondetector.out[5];
-        control_unit.direction[0] = up_button;
-        control_unit.direction[1] = down_button;
-        control_unit.direction[2] = left_button;
-        control_unit.direction[3] = right_button;
+        control_unit.direction = orientation_unit.direction; //orientation_unit -> control_unit
+        //control_unit output
+        regfile.we = control_unit.we;
+        regfile.ra = control_unit.ra;
+        regfile.rb = control_unit.rb;
+        regfile.rc = control_unit.rc;
+        aselmux.sel = control_unit.asel;
+        bselmux.sel = control_unit.bsel;
+        wdselmux.wdsel = control_unit.wdsel;
+        alu.alufn = control_unit.alufn;
+        
+        //regffile -> abselmux -> alu
+        aselmux.rdata = regfile.ra_data;
+        bselmux.rdata = regfile.rb_data;
+        alu.a = aselmux.out;
+        alu.b = bselmux.out;
     
-    regfile.we = control_unit.we;
- = control_unit.ra;
-    regfile.rb = control_unit.rb;
-    regfile.rc = control_unit.rc;
-    aselmux.sel = control_unit.asel;
-    bselmux.sel = 
-    wdselmux.wdsel = control_unit.wdsel;
-    alu.alufn = control_unit.alufn;
+        // alu -> wdselmux&rom -> regfile
+        wdselmux.alu = alu.out;
+        rom.address = alu.out;
+        wdselmux.mrd = rom.out_row;
+        regfile.write_data = wdselmux.out;
+        rom.level_input = regfile.level_out;
     
+        //regfile connection
+
+        
+    
+    
+        
+        
 
 
     
