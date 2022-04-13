@@ -1,4 +1,4 @@
-module au_top (
+module au_top_siqi (
     input clk,              // 100MHz clock
 
     input usb_rx,           // don't know what is this
@@ -15,6 +15,7 @@ module au_top (
     // 8x8 LED
     output led [8][8][24],
     output outled,
+    output io_led[3][8],
 
     // joystick button
     input up_button,
@@ -22,7 +23,7 @@ module au_top (
     input left_button,
     input right_button,
     input reset_button,
-    input start_button,
+    input start_button
     
     ) {
     sig rst;                  // reset signal
@@ -50,8 +51,8 @@ module au_top (
     // module initializtaion//
     alu alu;
     maps rom;
-    disappearing_unit dis_unit;
-    slowtimer timer;
+    disappearing_unit disappearing_unit;
+    slowtimer timer(.clk(clk), .rst(rst));
     regfile regfile(.clk(clk), .rst(rst));
     wdselmux wdselmux;
     abselmux aselmux;
@@ -66,6 +67,8 @@ module au_top (
         rst = reset_cond.out;   // conditioned reset
 
         // TODO: turn everything off: LEDs/seven segments
+        io_led = 3x{{8h00}}; 
+        seg.values = {4h0,4h0,4h0,4h0};
         usb_tx = usb_rx;        // loop serial port
         led = 8x{{8x{{24h0}}}};             // turn LEDs off
         io_seg = 8hff;          // turn segments off
@@ -106,12 +109,15 @@ module au_top (
     
         // joystick -> orientation_unit
         orientation_unit.joystick = joystick_input.joystick;
-        orientation_unit.orientation_state = regfile.level_out;
+        orientation_unit.orientation_state = regfile.level_out[1:0];
         
         // control_unit input
         control_unit.start = buttondetector.out[4]; //start_button
         control_unit.reset = buttondetector.out[5];
         control_unit.direction = orientation_unit.direction; //orientation_unit -> control_unit
+        control_unit.timer = timer.time_out;
+        control_unit.z = alu.z;
+    
         //control_unit output
         regfile.we = control_unit.we;
         regfile.ra = control_unit.ra;
@@ -124,12 +130,16 @@ module au_top (
 
         control_unit.level_in = regfile.level_out;
         regfile.level_in = control_unit.level_out;
+        regfile.orientation_in = orientation_unit.direction;
         
         //regffile -> abselmux -> alu
         aselmux.rdata = regfile.ra_data;
         bselmux.rdata = regfile.rb_data;
         alu.a = aselmux.out;
         alu.b = bselmux.out;
+    
+        //disappearing_unit
+        disappearing_unit.timer = timer.time_out;
     
         // alu -> wdselmux&rom -> regfile
         wdselmux.alu = alu.out;
@@ -141,18 +151,26 @@ module au_top (
         //regfile connection
         regfile.in_time = timer.time_out;
         
-        timer.orientation_in = orientation_unit.direction;
+        timer.orientation_in = orientation_unit.direction[1:0];
         
-        led_out.x = regfile.XPos;
-        led_out.y = regfile.YPos;
-        led_out.map = regfile.map;
+        led_out.x = regfile.xpos;
+        led_out.y = regfile.ypos;
+        led_out.map[0] = regfile.maprow1;
+        led_out.map[1] = regfile.maprow2;
+        led_out.map[2] = regfile.maprow3;
+        led_out.map[3] = regfile.maprow4;
+        led_out.map[4] = regfile.maprow5;
+        led_out.map[5] = regfile.maprow6;
+        led_out.map[6] = regfile.maprow7;
+        led_out.map[7] = regfile.maprow1;
+
         led_out.game_start = buttondetector.out[4];
         led_out.disappear = disappearing_unit.ledcontrol;
         
         ledstrip.update = 1;
         ledstrip.color = led_out.matrix;
-        ledstrip = LEDCOLOR[led_strip.pixel];
-        outled = led_strip.led;
+        ledstrip = LEDCOLOR[ledstrip.pixel];
+        outled = ledstrip.led;
         //
     
 
@@ -162,25 +180,21 @@ module au_top (
 
         case (io_dip[2][7]){
             1:  // auto check
+            io_led[2][7] = b1;
             case (io_dip[2][6]){
                 1:  // auto_checker_control_unit
                 auto_checker_control_unit.button = io_button[4];
                 auto_checker_control_unit.switch[1] = io_dip[2][7];
                 auto_checker_control_unit.switch[0] = io_dip[2][6];
                 auto_checker_control_unit.fail_case = io_dip[2][4:0];
+                io_led[2][6:5] = auto_checker_control_unit.status;
 
                 default:  // auto_checker_regfile
                 auto_checker_regfile.button = io_button[4];
                 auto_checker_regfile.switch[1] = io_dip[2][7];
                 auto_checker_regfile.switch[0] = io_dip[2][6];
                 auto_checker_regfile.fail_case = io_dip[2][4:0];
+                io_led[2][6:5] = auto_checker_regfile.status;
             }
-
-            default:
-            // TODO:
-            // Firstly, set buttons/joysticks to control_unit
-            // Secondly, set the output of control_unit to ALU
-            // Thirdly, set the output of ALU to Regfile
-            // Finally, connect Regfile to LEDs
-        }
-    } 
+      }
+} 
