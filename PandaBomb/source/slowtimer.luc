@@ -1,7 +1,6 @@
 module slowtimer(
     input clk,  // clock
     input rst,  // reset
-    input time_in[16], //in binary
     output time_out[16], //in binary
     input orientation_in[2],
     output orientation_out[2];
@@ -14,7 +13,7 @@ module slowtimer(
 always{
 
     time_out = slowclock.value;
-    alu.a = time_in;
+    alu.a = time_out;
     alu.b = b1010;
     alu.alufn = b000011;
     mod = alu.out;
