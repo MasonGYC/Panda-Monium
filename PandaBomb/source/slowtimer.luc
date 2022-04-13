@@ -3,7 +3,7 @@ module slowtimer(
     input rst,  // reset
     output time_out[16], //in binary
     input orientation_in[2],
-    output orientation_out[2];
+    output orientation_out[2]
 
 ){
   sig mod[16];
@@ -13,7 +13,7 @@ module slowtimer(
 always{
 
     time_out = slowclock.value;
-    alu.a = time_out;
+    alu.a = slowclock.value;
     alu.b = b1010;
     alu.alufn = b000011;
     mod = alu.out;
