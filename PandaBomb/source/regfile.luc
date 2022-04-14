@@ -104,7 +104,6 @@ module regfile (
       }
     }
     
-    else{
  
     case (ra) {
       5h0: ra_data[15:0] = reg_map_row1.q;
@@ -153,7 +152,7 @@ module regfile (
       5h13: rb_data = reg_temp.q[7];
       5h14: rb_data = reg_orientation.q;
       }
-    }
+    
     reg_time.d = in_time;
     out_time = reg_time.q;
     xpos = reg_xpos.q;
