@@ -5,24 +5,30 @@ module cu_test (
     input switch[2], // io_dip[2][7] is the toggle to start the auto_tester, io_dip[2][6] is the toggle to reset the auto_tester
     // input button,
 
-    output status[2], // status for all test cases, b00 means still testing, b01 means PASS, b10 means FAIL
+    output status[2], // status for all test cases, b00 means still testing, b01 means PASS, b10 means FAIL;
     output progress[16],
-    output index[4][4]; // 4 digit index of test case in decimal for 7-seg
+    output index[4][4] // 4 digit index of test case in decimal for 7-seg
 ) {
     counter slowclock(#SIZE(1),#DIV(26),.clk(clk),.rst(rst));
     fsm fsm_t(.clk(slowclock.value),.rst(rst))={START, 
-                                                S0, S1, S2, S3, S4 // testing up down lefrt right and panda movement
+                                                S0, S1, S2, S3, S4,S5,S6,S7,S8,S9,S10,S11,S12,S13,S14,S15,S16,S17,S18,S19, // testing up down lefrt right and panda movement
                                                 PASS, FAIL
                                                 };
 
-    control_unit cu;
+    control_unit cu(.clk(clk), .rst(rst));
     dff reg_index[4][4](#INIT({4h0,4h0,4h0,4h0}), .clk(clk), .rst(rst));
-    dff register_address[5](#INIT(0), .clk(clk), .rst(rst));
+    //dff register_address[5](#INIT(0), .clk(clk), .rst(rst));
 
     always {
         status = b00;
         progress = 16h0;
-        index = reg_index.q
+        index = reg_index.q;
+        cu.z = 0;
+    cu.start = 0;
+    cu.reset=0;
+    cu.timer = 0;
+    cu.direction = 0;
+    cu.level_in = 3;
 
         case(fsm_t.q) {
             fsm_t.START:
@@ -36,18 +42,18 @@ module cu_test (
             fsm_t.S0:
                 progress = 16h1;
                 reg_index.d = {4h0,4h0,4h0,4h1};
-                cu.start = 0b1 // next state move to generate map
-                fsm_t.d = fsm_t.S1
+                cu.start = b1; // next state move to generate map
+                fsm_t.d = fsm_t.S1;
             
             fsm_t.S1: // state generate map
                 progress = 16h1;
                 reg_index.d = {4h0,4h0,4h0,4h2};
                 
                 if (cu.we != 1 || cu.game_start != 1) {
-                    fsm_t.d = fsm_t.FAIL
+                    fsm_t.d = fsm_t.FAIL;
                 }
                 else {
-                    fsm_t.d = fsm_t.S2 // move onto generate map row 1
+                    fsm_t.d = fsm_t.S2; // move onto generate map row 1
                 }
 
             fsm_t.S2: // generate map row 1
@@ -55,10 +61,10 @@ module cu_test (
                 reg_index.d = {4h0,4h0,4h0,4h3};
 
                 if (cu.rc != 5h0 || cu.we != 1) {
-                    fsm_t.d = fsm_t.FAIL
+                    fsm_t.d = fsm_t.FAIL;
                 }
                 else {
-                    fsm_t.d = fsm_t.S3 // move onto generate map row 2
+                    fsm_t.d = fsm_t.S3; // move onto generate map row 2
                 }
             
             fsm_t.S3: // generate map row 2
@@ -66,10 +72,10 @@ module cu_test (
                 reg_index.d = {4h0,4h0,4h0,4h4};
 
                 if (cu.rc != 5h1 || cu.we != 1) {
-                    fsm_t.d = fsm_t.FAIL
+                    fsm_t.d = fsm_t.FAIL;
                 }
                 else {
-                    fsm_t.d = fsm_t.S4 // move onto generate map row 3
+                    fsm_t.d = fsm_t.S4; // move onto generate map row 3
                 }
             
             fsm_t.S4: // generate map row 3
@@ -77,10 +83,10 @@ module cu_test (
                 reg_index.d = {4h0,4h0,4h0,4h5};
 
                 if (cu.rc != 5h2 || cu.we != 1) {
-                    fsm_t.d = fsm_t.FAIL
+                    fsm_t.d = fsm_t.FAIL;
                 }
                 else {
-                    fsm_t.d = fsm_t.S5 // move onto generate map row 4
+                    fsm_t.d = fsm_t.S5; // move onto generate map row 4
                 }
 
             fsm_t.S5: // generate map row 4
@@ -88,10 +94,10 @@ module cu_test (
                 reg_index.d = {4h0,4h0,4h0,4h6};
 
                 if (cu.rc != 5h3 || cu.we != 1) {
-                    fsm_t.d = fsm_t.FAIL
+                    fsm_t.d = fsm_t.FAIL;
                 }
                 else {
-                    fsm_t.d = fsm_t.S6 // move onto generate map row 5
+                    fsm_t.d = fsm_t.S6; // move onto generate map row 5
                 }
             
             fsm_t.S6: // generate map row 5
@@ -99,10 +105,10 @@ module cu_test (
                 reg_index.d = {4h0,4h0,4h0,4h7};
 
                 if (cu.rc != 5h4 || cu.we != 1) {
-                    fsm_t.d = fsm_t.FAIL
+                    fsm_t.d = fsm_t.FAIL;
                 }
                 else {
-                    fsm_t.d = fsm_t.S7 // move onto generate map row 6
+                    fsm_t.d = fsm_t.S7; // move onto generate map row 6
                 }
             
             fsm_t.S7: // generate map row 6
@@ -110,10 +116,10 @@ module cu_test (
                 reg_index.d = {4h0,4h0,4h0,4h8};
 
                 if (cu.rc != 5h5 || cu.we != 1) {
-                    fsm_t.d = fsm_t.FAIL
+                    fsm_t.d = fsm_t.FAIL;
                 }
                 else {
-                    fsm_t.d = fsm_t.S8 // move onto generate map row 7
+                    fsm_t.d = fsm_t.S8; // move onto generate map row 7
                 }
             
             fsm_t.S8: // generate map row 7
@@ -121,10 +127,10 @@ module cu_test (
                 reg_index.d = {4h0,4h0,4h0,4h9};
 
                 if (cu.rc != 5h6 || cu.we != 1) {
-                    fsm_t.d = fsm_t.FAIL
+                    fsm_t.d = fsm_t.FAIL;
                 }
                 else {
-                    fsm_t.d = fsm_t.S9 // move onto generate map row 8
+                    fsm_t.d = fsm_t.S9; // move onto generate map row 8
                 }
 
             fsm_t.S9: // generate map row 8
@@ -132,10 +138,10 @@ module cu_test (
                 reg_index.d = {4h0,4h0,4h1,4h0};
 
                 if (cu.rc != 5h7 || cu.we != 1) {
-                    fsm_t.d = fsm_t.FAIL
+                    fsm_t.d = fsm_t.FAIL;
                 }
                 else {
-                    fsm_t.d = fsm_t.S10 // move onto idle state of game,
+                    fsm_t.d = fsm_t.S10; // move onto idle state of game,
                 }
             
             fsm_t.S10: // idle state of game
@@ -145,10 +151,10 @@ module cu_test (
                 cu.direction = 4b1000; // input a up direction. test if up selector signals are correct
 
                 if (cu.ra != 5hD || cu.rb != 5hA || cu.rc != 5hD || cu.asel != 4b0 || cu.bsel != 4b1 || cu.alufn != 6b0 || cu.we != 1b1 || cu.wdsel != 3b0) { 
-                    fsm_t.d = fsm_t.FAIL
+                    fsm_t.d = fsm_t.FAIL;
                 }
                 else {
-                    fsm_t.d = fsm_t.S11 // move onto check goal x state
+                    fsm_t.d = fsm_t.S11; // move onto check goal x state
                 }
             
             fsm_t.S11: // check goal x state
@@ -160,10 +166,10 @@ module cu_test (
                 // const RANDOM = 5hA; 
 
                 if (cu.ra != 5hE || cu.rb != 5hA || cu.rc != 5hC || cu.asel != 4b0 || cu.bsel != 4b0111 || cu.alufn != 6b110011 || cu.we != 1 || cu.wdsel != 3b0) { 
-                    fsm_t.d = fsm_t.FAIL
+                    fsm_t.d = fsm_t.FAIL;
                 }
                 else {
-                    fsm_t.d = fsm_t.S12 // move onto check goal y state
+                    fsm_t.d = fsm_t.S12; // move onto check goal y state
                 }
             
             fsm_t.S12: // check goal y state
@@ -175,10 +181,10 @@ module cu_test (
                 // const RANDOM = 5hA; 
 
                 if (cu.ra != 5hD || cu.rb != 5hA || cu.rc != 5hB || cu.asel != 4b0 || cu.bsel != 4b0111 || cu.alufn != 6b110011 || cu.we != 1 || cu.wdsel != 3b0) { 
-                    fsm_t.d = fsm_t.FAIL
+                    fsm_t.d = fsm_t.FAIL;
                 }
                 else {
-                    fsm_t.d = fsm_t.S13 // move onto check goal x state
+                    fsm_t.d = fsm_t.S13; // move onto check goal x state
                 }
             
             fsm_t.S13: // check goal xy state
@@ -190,18 +196,18 @@ module cu_test (
                 // const RANDOM = 5hA; 
 
                 if (cu.ra != 5hB || cu.rb != 5hC || cu.rc != 5h10 || cu.asel != 4b0 || cu.bsel != 4b0 || cu.alufn != 6b011000 || cu.we != 1 || cu.wdsel != 3b0) { 
-                    fsm_t.d = fsm_t.FAIL
+                    fsm_t.d = fsm_t.FAIL;
                 }
                 else {
-                    fsm_t.d = fsm_t.S14 // move onto check goal xy move state
+                    fsm_t.d = fsm_t.S14; // move onto check goal xy move state
                 }
             
             fsm_t.S14: // check goal xy move state
                 progress = 16hE;
                 reg_index.d = {4h0,4h0,4h1,4h5};
 
-                cu.z = 1 // input z = 1 into cu
-                fsm_t.d = fsm_t.S15 // move to CHECK_BORDER_XRIGHT 
+                cu.z = 1; // input z = 1 into cu
+                fsm_t.d = fsm_t.S15; // move to CHECK_BORDER_XRIGHT 
 
             fsm_t.S15: // check border xright state
                 progress = 16hF;
@@ -212,10 +218,10 @@ module cu_test (
                 // const RANDOM = 5hA; 
 
                 if (cu.ra != 5hE || cu.rb != 5hA || cu.rc != 5h10 || cu.asel != 4b0 || cu.bsel != 4b0111 || cu.alufn != 6b110011 || cu.we != 1 || cu.wdsel != 3b0) { 
-                    fsm_t.d = fsm_t.FAIL
+                    fsm_t.d = fsm_t.FAIL;
                 }
                 else {
-                    fsm_t.d = fsm_t.S16 // move onto check border xleft state
+                    fsm_t.d = fsm_t.S16; // move onto check border xleft state
                 }
 
             fsm_t.S16: // check border xleft state
@@ -227,10 +233,10 @@ module cu_test (
                 // const RANDOM = 5hA; 
 
                 if (cu.ra != 5hE || cu.rb != 5hA || cu.rc != 5h11 || cu.asel != 4b0 || cu.bsel != 4b1010 || cu.alufn != 6b110101 || cu.we != 1 || cu.wdsel != 3b0) { 
-                    fsm_t.d = fsm_t.FAIL
+                    fsm_t.d = fsm_t.FAIL;
                 }
                 else {
-                    fsm_t.d = fsm_t.S17 // move onto check border yright state
+                    fsm_t.d = fsm_t.S17; // move onto check border yright state
                 }
             
             fsm_t.S17: // check border yright state
@@ -242,10 +248,10 @@ module cu_test (
                 // const RANDOM = 5hA; 
 
                 if (cu.ra != 5hD || cu.rb != 5hA || cu.rc != 5h12 || cu.asel != 4b0 || cu.bsel != 4b0111 || cu.alufn != 6b110111 || cu.we != 1 || cu.wdsel != 3b0) { 
-                    fsm_t.d = fsm_t.FAIL
+                    fsm_t.d = fsm_t.FAIL;
                 }
                 else {
-                    fsm_t.d = fsm_t.S18 // move onto check border yleft state
+                    fsm_t.d = fsm_t.S18; // move onto check border yleft state
                 }
 
             fsm_t.S18: // check border yleft state
@@ -257,10 +263,10 @@ module cu_test (
                 // const RANDOM = 5hA; 
 
                 if (cu.ra != 5hD || cu.rb != 5hA || cu.rc != 5h13 || cu.asel != 4b0 || cu.bsel != 4b1010 || cu.alufn != 6b110101 || cu.we != 1 || cu.wdsel != 3b0) { 
-                    fsm_t.d = fsm_t.FAIL
+                    fsm_t.d = fsm_t.FAIL;
                 }
                 else {
-                    fsm_t.d = fsm_t.S19 // move onto check border zero state
+                    fsm_t.d = fsm_t.S19; // move onto check border zero state
                 }
             
             fsm_t.S19: // check border zero state
@@ -270,14 +276,14 @@ module cu_test (
                 cu.z = 0; // input z = 0 into cu
 
                 if (cu.ra != 5h10 || cu.rb != 5h12 || cu.rc != 5h10 || cu.asel != 4b0 || cu.bsel != 4b0 || cu.alufn != 6b010001 || cu.we != 0 || cu.wdsel != 3b0) { 
-                    fsm_t.d = fsm_t.FAIL
+                    fsm_t.d = fsm_t.FAIL;
                 }
                 else {
-                    fsm_t.d = fsm_t.PASS // move onto idle state / pass state done with test (did not check further on updating process of CU)
+                    fsm_t.d = fsm_t.PASS; // move onto idle state / pass state done with test (did not check further on updating process of CU)
                 }
             
             fsm_t.PASS: // pass state
-                status = b11
+                status = b11;
                 progress = 16h14;
                 reg_index.d = {4h0,4h0,4h2,4h1};
 
@@ -289,7 +295,7 @@ module cu_test (
                 }
             
             fsm_t.FAIL:
-                progress=a;
+                progress=6h15;
                 status = b10;
                 if (switch[0]){ // if io_dip[2][6] is high, then reset the auto_tester by going back to the START state
                     fsm_t.d = fsm_t.START; // go back to the START state
