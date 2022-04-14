@@ -1,0 +1,409 @@
+module control_unit (
+//this version uses ALU 
+    //add in debug signal for testing
+    input clk,  // clock
+    input rst,  // reset
+    input z, // alu z
+    input level_in[16],//level_in
+    output level_out[16],
+    input direction[4], //up down LEFT RIGHT,
+    input start[1], //START button
+    input reset[1], //RESET button
+    input timer[16],
+    output alufn[6],
+    output asel[4],
+    output bsel[4],
+    output we[1],
+    output wdsel[2],
+    output ra[5],
+    output rb[5],
+    output rc[5],
+    output game_start[1],
+    output seg_index[4][4] //debug seven_seg
+    
+
+    
+  ) {
+      // 5hD: temp[2] y temp always
+      // 5hE: temp[3] x temp always
+      const X_TEMP = 5hE;
+      const Y_TEMP = 5hD;
+      const RANDOM = 5hA; 
+      
+    fsm ctrl(.clk(clk),.rst(rst))={
+        START, //wait for start button
+        GENERATE_MAP,GENERATE_MAP_ROW1,GENERATE_MAP_ROW2,GENERATE_MAP_ROW3,GENERATE_MAP_ROW4,GENERATE_MAP_ROW5,GENERATE_MAP_ROW6,GENERATE_MAP_ROW7,GENERATE_MAP_ROW8, //map -> idle
+        IDLE,
+        CHECK_BORDER_XLEFT,CHECK_BORDER_XRIGHT,CHECK_BORDER_YLEFT,CHECK_BORDER_YRIGHT,BORDER_CHECK_ZERO,BORDER_CHECK_ONE,
+        CHECK_GOAL_X, CHECK_GOAL_Y,CHECK_GOAL_XY,CHECK_GOAL_XY_MOVE, //check whether reached goal
+        CHECK_COLL,CHECK_COLL_INDEX, //check obstacle
+        UPDATE_XPOS,UPDATE_YPOS,
+        CHECK_WIN_UPPERBOUND,CHECK_WIN_LOWERBOUND,CHECK_WIN_AND,CHECK_WIN_LEVELUP,CHECK_WIN_LEVELUP_CHECK,
+        GAMEOVER,RESET_LEVEL};
+  
+
+  always {
+
+    //connection
+    alufn = 6b0; //add
+    we = b0;
+    asel = 4b0;//ra
+    bsel = 4b0; //rb
+    wdsel = 3b0;//alu
+    ra = 5h13; //temp7
+    rb = 5h13;
+    rc = 5h13;
+    level_out = 16b0;
+    game_start = b0;
+    seg_index = {4h0,4h0,4h0,4h0};
+
+    //check timer
+    if (timer > 16b111100){
+        ctrl.d = ctrl.GAMEOVER;
+        }//exceed time 60 sec
+
+    //fms ctrl
+    case(ctrl.q){
+
+        ctrl.START:
+            seg_index = {4h0,4h0,4h0,4h1};
+            if (start == b1){
+                ctrl.d = ctrl.GENERATE_MAP;}
+            else{
+                ctrl.d = ctrl.START;}
+     
+        //////////////////////////////
+        ctrl.GENERATE_MAP:
+          seg_index = {4h0,4h0,4h0,4h2};
+            we = b1;
+            game_start = b1;
+            //load first line
+            ctrl.d = ctrl.GENERATE_MAP_ROW1;
+
+        ctrl.GENERATE_MAP_ROW1:
+            seg_index = {4h0,4h0,4h0,4h3};
+            rc = 5h0; // row1
+            we = b1;
+            ctrl.d = ctrl.GENERATE_MAP_ROW2;
+            // ra = RANDOM; // RANDOM
+            // rb = RANDOM; // RANDOM num
+            // rc = 5h0; // row1
+            // asel = 4b1010; // choose 0
+            // bsel = 4b1010; // choose 0
+            // alufn = 6b0; // add 
+            // we = 1; // write enable
+            // wdsel = 3b100; //choose rom data
+
+        ctrl.GENERATE_MAP_ROW2:
+            seg_index = {4h0,4h0,4h0,4h4};
+            we = b1;
+            rc = 5h1; // row2
+            ctrl.d = ctrl.GENERATE_MAP_ROW3;
+        
+        ctrl.GENERATE_MAP_ROW3:
+            seg_index = {4h0,4h0,4h0,4h5};
+            we = b1;
+            rc = 5h2; // row3
+            ctrl.d = ctrl.GENERATE_MAP_ROW4;
+
+        ctrl.GENERATE_MAP_ROW4:
+      seg_index = {4h0,4h0,4h0,4h6};
+            we = b1;
+            rc = 5h3; // row4
+            ctrl.d = ctrl.GENERATE_MAP_ROW5;
+
+        ctrl.GENERATE_MAP_ROW5:
+      seg_index = {4h0,4h0,4h0,4h7};
+            we = b1;
+            rc = 5h4; // row5
+            ctrl.d = ctrl.GENERATE_MAP_ROW6;
+
+        ctrl.GENERATE_MAP_ROW6:
+      seg_index = {4h0,4h0,4h0,4h8};
+            we = b1;
+            rc = 5h5; // row6
+            ctrl.d = ctrl.GENERATE_MAP_ROW7;
+
+        ctrl.GENERATE_MAP_ROW7:
+      seg_index = {4h0,4h0,4h0,4h9};
+            we = b1;
+            rc = 5h6; // row7
+            ctrl.d = ctrl.GENERATE_MAP_ROW8;
+
+        ctrl.GENERATE_MAP_ROW8:
+      seg_index = {4h0,4h0,4h1,4h0};
+            we = b1;
+            rc = 5h7; // row8
+            ctrl.d = ctrl.IDLE;
+        //////////////////////////////
+        ctrl.IDLE:
+      seg_index = {4h8,4h8,4h8,4h8};
+            if (direction[0]==b1 || direction[1]==b1 || direction[2]==b1 || direction[3]==b1){
+                //change position temp
+                case(direction){
+                    b1000: 
+                        //Y_TEMP.d = Y_TEMP.q + 1;//up
+                        ra = Y_TEMP; // Y_TEMP reg
+                        rb = RANDOM; // RANDOM num
+                        rc = Y_TEMP; // y temp
+                        asel = 4b0; // choose ra data
+                        bsel = 4b1; // choose 1
+                        alufn = 6b0; // add 
+                        we = b1; // write enable
+                        wdsel = 3b0; //take alu output
+                    b0100: 
+                        // Y_TEMP.d = Y_TEMP.q - 1;//down
+                        ra = Y_TEMP; // Y_TEMP reg
+                        rb = RANDOM; // RANDOM num
+                        rc = Y_TEMP; // y temp
+                        asel = 4b0; // choose ra data
+                        bsel = 4b1; // choose 1
+                        alufn = 6b1; // subc
+                        we = b1; // write enable
+                        wdsel = 3b0; //take alu output
+                    b0010: 
+                        // X_TEMP.d = X_TEMP.q + 1;//RIGHT
+                        ra = X_TEMP; // x temp reg
+                        rb = RANDOM; // RANDOM num
+                        rc = X_TEMP; // x temp
+                        asel = 4b0; // choose ra data
+                        bsel = 4b1; // choose 1
+                        alufn = 6b0; // add 
+                        we = b1; // write enable
+                        wdsel = 3b0; //take alu output
+                    b0001: 
+                        //X_TEMP.d = X_TEMP.q - 1;//LEFT
+                        ra = X_TEMP; // x temp reg
+                        rb = RANDOM; // RANDOM num
+                        rc = X_TEMP; // x temp
+                        asel = 4b0; // choose ra data
+                        bsel = 4b1; // choose 1
+                        alufn = 6b1; // subc
+                        we = b1; // write enable
+                        wdsel = 3b0; //take alu output
+                }
+                ctrl.d = ctrl.CHECK_GOAL_X;
+            }
+            else{ctrl.d = ctrl.IDLE;}
+        //////////////////////////////
+        ctrl.CHECK_GOAL_X:
+      seg_index = {4h0,4h0,4h1,4h1};
+            //if X_TEMP.q == b111: check Y_TEMP
+                ra = X_TEMP; // x temp reg
+                rb = RANDOM; // RANDOM num
+                rc = 5hC; // result 1/0
+                asel = 4b0; // choose ra data
+                bsel = 4b0111; // choose 7
+                alufn = 6b110011; // equal
+                we = b1; // write enable
+                wdsel = 3b0; //take alu output
+                ctrl.d = ctrl.CHECK_GOAL_Y;
+        ctrl.CHECK_GOAL_Y:
+      seg_index = {4h0,4h0,4h1,4h2};
+            //if Y_TEMP.q == b111)
+                ra = Y_TEMP; // y temp reg
+                rb = RANDOM; // RANDOM num
+                rc = 5hB; // result 1/0
+                asel = 4b0; // choose ra data
+                bsel = 4b0111; // choose 7
+                alufn = 6b110011; // equal
+                we = b1; // write enable
+                wdsel = 3b0; //take alu output
+                ctrl.d = ctrl.CHECK_GOAL_XY;
+        ctrl.CHECK_GOAL_XY:
+            //if x && y
+        seg_index = {4h0,4h0,4h1,4h3};
+                ra = 5hB; // x=7
+                rb = 5hC; // y=7
+                rc = 5h10; // result 1/0
+                asel = 4b0; // choose ra data
+                bsel = 4b0; // choose rb data
+                alufn = 6b011000; // and
+                we = b1; // write enable
+                wdsel = 3b0; //take alu output
+                ctrl.d = ctrl.CHECK_GOAL_XY_MOVE;
+        ctrl.CHECK_GOAL_XY_MOVE:
+      seg_index = {4h0,4h0,4h1,4h4};
+            if (z == 0){ //res = 1, satisfy both
+                ctrl.d = ctrl.CHECK_WIN_UPPERBOUND; // both x and y == 7
+            }
+            else {ctrl.d = ctrl.CHECK_BORDER_XRIGHT;}
+
+        //////////////////////////////
+        // ctrl.CHECK_BORDER:
+        //     if (X_TEMP.q>b111 || X_TEMP.q <b00 || Y_TEMP.q>b111 || Y_TEMP.q<b000){
+        //         ctrl.d = ctrl.IDLE;
+        //     }
+        //     else{ctrl.d = ctrl.CHECK_COLL;}
+        ctrl.CHECK_BORDER_XRIGHT:
+      seg_index = {4h0,4h0,4h1,4h5};
+            //X_TEMP.q>b111
+            ra = X_TEMP; // x temp
+            rb = RANDOM; // ran
+            rc = 5h10; // result 1/0
+            asel = 4b0; // choose ra data
+            bsel = b0111; // 7
+            alufn = 6b110111; // cmple
+            we = b1; // write enable
+            wdsel = 3b0; //take alu output
+            ctrl.d = ctrl.CHECK_BORDER_XLEFT;
+
+        ctrl.CHECK_BORDER_XLEFT:
+      seg_index = {4h0,4h0,4h1,4h6};
+            //X_TEMP.q <b00
+            ra = X_TEMP; // x temp
+            rb = RANDOM; // ran
+            rc = 5h11; // result 1/0
+            asel = 4b0; // choose ra data
+            bsel = b1010; // 0
+            alufn = 6b110101; // cmplt
+            we = b1; // write enable
+            wdsel = 3b0; //take alu output
+            ctrl.d = ctrl.CHECK_BORDER_YRIGHT;
+
+        ctrl.CHECK_BORDER_YRIGHT:
+      seg_index = {4h0,4h0,4h1,4h7};
+            //Y_TEMP.q>b111
+            ra = Y_TEMP; // x temp
+            rb = RANDOM; // ran
+            rc = 5h12; // result 1/0
+            asel = 4b0; // choose ra data
+            bsel = b0111; // 7
+            alufn = 6b110111; // cmple
+            we = b1; // write enable
+            wdsel = 3b0; //take alu output
+            ctrl.d = ctrl.CHECK_BORDER_YLEFT;
+
+        ctrl.CHECK_BORDER_YLEFT:
+      seg_index = {4h0,4h0,4h1,4h8};
+            //Y_TEMP.q <b00
+            ra = Y_TEMP; // y temp
+            rb = RANDOM; // ran
+            rc = 5h13; // result 1/0
+            asel = 4b0; // choose ra data
+            bsel = b1010; // 0
+            alufn = 6b110101; // cmplt
+            we = b1; // write enable
+            wdsel = 3b0; //take alu output
+        ctrl.d = ctrl.BORDER_CHECK_ZERO;
+
+        ctrl.BORDER_CHECK_ZERO:
+      seg_index = {4h0,4h0,4h1,4h9};
+            ra = 5h10; // store compre result
+            rb = 5h12; // store compre result
+            rc = 5h10; // result 1/0
+            asel = 4b0; // choose ra data
+            bsel = 4b0; // choose rb data
+            alufn = 6b010001; // nand
+            we = b0; // write not enable
+            wdsel = 3b0; //take alu output
+            if (z==0){
+                ctrl.d = ctrl.IDLE;
+            }
+            else{
+                ctrl.d = ctrl.BORDER_CHECK_ONE;
+            }
+        ctrl.BORDER_CHECK_ONE:
+      seg_index = {4h0,4h0,4h2,4h0};
+            ra = 5h11; // store compre result
+            rb = 5h13; // store compre result
+            rc = 5h10; // result 1/0
+            asel = 4b0; // choose ra data
+            bsel = 4b0; // choose rb data
+            alufn = 6b011110; // or
+            we = b0; // write not enable
+            wdsel = 3b0; //take alu output
+            if (z == b0){
+                ctrl.d = ctrl.IDLE;
+            }
+            else{
+                ctrl.d = ctrl.CHECK_COLL;
+            }
+            
+        //////////////////////////////
+        ctrl.CHECK_COLL:
+      seg_index = {4h0,4h0,4h2,4h1};
+            ra = RANDOM; // X_TEMP
+            rb = X_TEMP; // Y_TEMP
+            rc = 5hC; // shifted slicing index
+            asel = 4b1; // 1
+            bsel = 4b0; // choose rb data
+            alufn = 6b100000; // shl
+            we = b1; // write enable
+            wdsel = 3b0; //take alu output
+            ctrl.d = ctrl.CHECK_COLL_INDEX;
+        ctrl.CHECK_COLL_INDEX:
+      seg_index = {4h0,4h0,4h2,4h2};
+            ra = Y_TEMP[4:0]; // Y_TEMP
+            rb = 5hC; // shifted one hot
+            rc = 5hD; // shifted slicing index
+            asel = 4b0; // choose ra data
+            bsel = 4b0; // choose rb data
+            alufn = 6b0; // and
+            we = b0; // write not enable
+            wdsel = 3b0; //take alu output
+            if (z==b0){
+                ctrl.d = ctrl.IDLE;
+            }
+            else{
+                //write position from temp dff
+                // x_pos_out = X_TEMP.q;
+                // y_pos_out = Y_TEMP.q;
+                // ctrl.d = ctrl.IDLE; 
+                ctrl.d = ctrl.UPDATE_XPOS; 
+        }
+        ctrl.UPDATE_XPOS:
+      seg_index = {4h0,4h0,4h2,4h3};
+            // x_pos_out = X_TEMP.q;
+            ra = X_TEMP; // x temp
+            rb = RANDOM; // ran
+            rc = 5h8; // x coor
+            asel = 4b0; // choose ra data
+            bsel = b1010; // 0
+            alufn = 6b0; // add
+            we = b1; // write enable
+            wdsel = 3b0; //take alu output
+            ctrl.d = ctrl.UPDATE_YPOS; 
+        ctrl.UPDATE_YPOS:
+      seg_index = {4h0,4h0,4h2,4h4};
+            // y_pos_out = Y_TEMP.q;
+            ra = Y_TEMP; // y temp
+            rb = RANDOM; // ran
+            rc = 5h9; // y coor
+            asel = 4b0; // choose ra data
+            bsel = b1010; // 0
+            alufn = 6b0; // add
+            we = b1; // write enable
+            wdsel = 3b0; //take alu output
+            ctrl.d = ctrl.IDLE; 
+        //////////////////////////////
+        ctrl.CHECK_WIN_UPPERBOUND:
+      seg_index = {4h0,4h0,4h2,4h5};
+            if (level_in < b10 && level_in >= b00){
+                 level_out = level_in + b1;
+                 ctrl.d = ctrl.START;
+             }
+             else {ctrl.d = ctrl.GAMEOVER;}
+        //////////////////////////////
+        ctrl.GAMEOVER:
+      seg_index = {4h7,4h7,4h7,4h7};
+        if (reset == b1){
+            ctrl.d = ctrl.RESET_LEVEL;}
+        else{
+            //show 7-seg msg
+            ctrl.d = ctrl.GAMEOVER;}
+        //////////////////////////////
+        ctrl.RESET_LEVEL:
+      seg_index = {4h6,4h6,4h6,4h6};
+            level_out = 16b0;
+            ctrl.d = ctrl.START;
+
+    }
+  }
+}
+
+
+
+
+
+
