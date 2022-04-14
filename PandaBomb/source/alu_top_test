@@ -42,7 +42,6 @@ module au_top (
          ///
     // module initializtaion//
     alu alu;
-    maps rom;
     regfile regfile(.clk(clk), .rst(rst));
     wdselmux wdselmux;
     abselmux aselmux;
@@ -51,12 +50,12 @@ module au_top (
     joystick_input joystick_input;
     orientation_unit orientation_unit; 
     control_unit control_unit(.clk(clk),.rst(rst));
-    counter slowclock(#SIZE(1),#DIV(26),.clk(clk),.rst(rst));
+    
     always { 
         seg.values = control_unit.seg_index;
         reset_cond.in = ~rst_n; // input raw inverted reset signal
         rst = reset_cond.out;   // conditioned reset
-        control_unit.timer = slowclock.value;
+
         // TODO: turn everything off: LEDs/seven segments
         io_led = 3x{{8h00}};
         usb_tx = usb_rx;        // loop serial port
@@ -87,7 +86,7 @@ module au_top (
          control_unit.start = io_button[4]; //start_button
         
          control_unit.direction = orientation_unit.direction; //orientation_unit -> control_unit
-   ///     control_unit.timer = slowclock.value;
+        control_unit.timer =0;
          control_unit.z = alu.z;
          control_unit.reset = 0;
     
@@ -105,23 +104,23 @@ module au_top (
 
         control_unit.level_in = regfile.level_out;
         regfile.level_in = control_unit.level_out;
-        regfile.level_in = 16b0;
-        regfile.orientation_in = orientation_unit.direction;
+        //regfile.level_in = 16b0;
+        regfile.orientation_in =  orientation_unit.direction;
+    orientation_unit.orientation_state =regfile.orientation_out;
         
         //regffile -> abselmux -> alu
         aselmux.rdata = regfile.ra_data;
         bselmux.rdata = regfile.rb_data;
         alu.a = aselmux.out;
         alu.b = bselmux.out;
-    
-        
+
         // alu -> wdselmux&rom -> regfile
         wdselmux.alu = alu.out;
-        rom.address = alu.out;
-        wdselmux.mrd = rom.out_row;
+        //rom.address = alu.out;
+        //wdselmux.mrd = rom.out_row;
         wdselmux.mrd = 16b0;
         regfile.write_data = wdselmux.out;
-        rom.level_input = regfile.level_out;
+        //rom.level_input = regfile.level_out;
     
         //regfile connection
         regfile.in_time = 0;
@@ -156,7 +155,7 @@ module au_top (
         io_led[1]=regfile.maprow8;
         }
     
-        io_led[regfile.ypos][regfile.xpos] = 1;
+        io_led[regfile.xpos][regfile.ypos] = 1;
         
         
    

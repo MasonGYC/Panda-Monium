@@ -29,8 +29,10 @@ module control_unit (
       const X_TEMP = 5hE;
       const Y_TEMP = 5hD;
       const RANDOM = 5hA; 
-      
-    fsm ctrl(.clk(clk),.rst(rst))={
+      const X_POS = 5h8;
+      const Y_POS = 5h9;
+    counter slowclock(#SIZE(1),#DIV(26),.clk(clk),.rst(rst));
+    fsm ctrl(.clk(slowclock.value),.rst(rst))={
         START, //wait for start button
         GENERATE_MAP,GENERATE_MAP_ROW1,GENERATE_MAP_ROW2,GENERATE_MAP_ROW3,GENERATE_MAP_ROW4,GENERATE_MAP_ROW5,GENERATE_MAP_ROW6,GENERATE_MAP_ROW7,GENERATE_MAP_ROW8, //map -> idle
         IDLE,
@@ -143,7 +145,7 @@ module control_unit (
                 case(direction){
                     b1000: 
                         //Y_TEMP.d = Y_TEMP.q + 1;//up
-                        ra = Y_TEMP; // Y_TEMP reg
+                        ra = Y_POS; // Y_TEMP reg
                         rb = RANDOM; // RANDOM num
                         rc = Y_TEMP; // y temp
                         asel = 4b0; // choose ra data
@@ -153,7 +155,7 @@ module control_unit (
                         wdsel = 3b0; //take alu output
                     b0100: 
                         // Y_TEMP.d = Y_TEMP.q - 1;//down
-                        ra = Y_TEMP; // Y_TEMP reg
+                        ra = Y_POS; // Y_TEMP reg
                         rb = RANDOM; // RANDOM num
                         rc = Y_TEMP; // y temp
                         asel = 4b0; // choose ra data
@@ -163,7 +165,7 @@ module control_unit (
                         wdsel = 3b0; //take alu output
                     b0010: 
                         // X_TEMP.d = X_TEMP.q + 1;//RIGHT
-                        ra = X_TEMP; // x temp reg
+                        ra = X_POS; // x temp reg
                         rb = RANDOM; // RANDOM num
                         rc = X_TEMP; // x temp
                         asel = 4b0; // choose ra data
@@ -173,7 +175,7 @@ module control_unit (
                         wdsel = 3b0; //take alu output
                     b0001: 
                         //X_TEMP.d = X_TEMP.q - 1;//LEFT
-                        ra = X_TEMP; // x temp reg
+                        ra = X_POS; // x temp reg
                         rb = RANDOM; // RANDOM num
                         rc = X_TEMP; // x temp
                         asel = 4b0; // choose ra data
@@ -357,7 +359,7 @@ module control_unit (
             // x_pos_out = X_TEMP.q;
             ra = X_TEMP; // x temp
             rb = RANDOM; // ran
-            rc = 5h8; // x coor
+            rc = X_POS; // x coor
             asel = 4b0; // choose ra data
             bsel = b1010; // 0
             alufn = 6b0; // add
@@ -369,7 +371,7 @@ module control_unit (
             // y_pos_out = Y_TEMP.q;
             ra = Y_TEMP; // y temp
             rb = RANDOM; // ran
-            rc = 5h9; // y coor
+            rc = Y_POS; // y coor
             asel = 4b0; // choose ra data
             bsel = b1010; // 0
             alufn = 6b0; // add
