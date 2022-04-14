@@ -1,0 +1,169 @@
+module au_top (
+    input clk,              // 100MHz clock
+
+    input usb_rx,           // don't know what is this
+    output usb_tx,          // don't know what is this
+    output io_seg [8],      // 7-segment LEDs on IO Shield
+    output io_sel [4],      // Digit select on IO Shield
+    output led [8], 
+    input rst_n,
+    input io_dip [3][8],
+
+    // auto_check
+    input io_button [5],
+
+    // 8x8 LED
+    output io_led[3][8]
+
+    
+    ) {
+    sig rst;                  // reset signal
+
+    // init slow clock 
+    .clk(clk) {
+
+    reset_conditioner reset_cond;
+    }
+    //counter slowclock(#SIZE(1),#DIV(26),.clk(clk),.rst(rst));
+    
+    // multi_seven_seg
+    multi_seven_seg seg(.clk(clk), .rst(rst));
+  
+    // button_conditioner
+    //button_conditioner buttoncond[5](.clk(clk));
+
+    // 8x8 led strips
+    
+
+    //button_conditioner
+    //button_conditioner buttoncond[6](.clk(clk));
+    //edge_detector buttondetector[6](#RISE(1), #FALL(0),.clk(clk)); //detect on rising edge only
+  
+         ///
+    // module initializtaion//
+    alu alu;
+    maps rom;
+    regfile regfile(.clk(clk), .rst(rst));
+    wdselmux wdselmux;
+    abselmux aselmux;
+    abselmux bselmux;
+    led_output led_out;
+    joystick_input joystick_input;
+    orientation_unit orientation_unit; 
+    control_unit control_unit(.clk(clk),.rst(rst));
+    counter slowclock(#SIZE(1),#DIV(26),.clk(clk),.rst(rst));
+    always { 
+        seg.values = control_unit.seg_index;
+        reset_cond.in = ~rst_n; // input raw inverted reset signal
+        rst = reset_cond.out;   // conditioned reset
+        control_unit.timer = slowclock.value;
+        // TODO: turn everything off: LEDs/seven segments
+        io_led = 3x{{8h00}};
+        usb_tx = usb_rx;        // loop serial port
+        led = 8h00;             // turn LEDs off
+        io_seg = 8hff;          // turn segments off
+        io_sel = 4hf;           // select no digits
+              
+        //auto_check connection//
+    
+        // initialization
+
+        //module connection//
+
+
+        //buttondetector.in = buttoncond.out;
+    
+        // receive joystick input
+        joystick_input.up_button=io_button[0];
+        joystick_input.down_button=io_button[1];
+        joystick_input.left_button=io_button[2];
+        joystick_input.right_button=io_button[3];
+    
+        // joystick -> orientation_unit
+        orientation_unit.joystick = joystick_input.joystick;
+        orientation_unit.orientation_state = regfile.level_out[1:0];
+        
+        // control_unit input
+         control_unit.start = io_button[4]; //start_button
+        
+         control_unit.direction = orientation_unit.direction; //orientation_unit -> control_unit
+   ///     control_unit.timer = slowclock.value;
+         control_unit.z = alu.z;
+         control_unit.reset = 0;
+    
+        //control_unit output
+        regfile.we = control_unit.we;
+        regfile.ra = control_unit.ra;
+        regfile.rb = control_unit.rb;
+        regfile.rc = control_unit.rc;
+        aselmux.sel = control_unit.asel;
+        bselmux.sel = control_unit.bsel;
+        wdselmux.wdsel = control_unit.wdsel;
+        alu.alufn = control_unit.alufn;
+    
+        regfile.we = control_unit.we;
+
+        control_unit.level_in = regfile.level_out;
+        regfile.level_in = control_unit.level_out;
+        regfile.level_in = 16b0;
+        regfile.orientation_in = orientation_unit.direction;
+        
+        //regffile -> abselmux -> alu
+        aselmux.rdata = regfile.ra_data;
+        bselmux.rdata = regfile.rb_data;
+        alu.a = aselmux.out;
+        alu.b = bselmux.out;
+    
+        
+        // alu -> wdselmux&rom -> regfile
+        wdselmux.alu = alu.out;
+        rom.address = alu.out;
+        wdselmux.mrd = rom.out_row;
+        wdselmux.mrd = 16b0;
+        regfile.write_data = wdselmux.out;
+        rom.level_input = regfile.level_out;
+    
+        //regfile connection
+        regfile.in_time = 0;
+        
+        
+        led_out.x = regfile.xpos;
+        led_out.y = regfile.ypos;
+        led_out.map[0] = regfile.maprow1;
+        led_out.map[1] = regfile.maprow2;
+        led_out.map[2] = regfile.maprow3;
+        led_out.map[3] = regfile.maprow4;
+        led_out.map[4] = regfile.maprow5;
+        led_out.map[5] = regfile.maprow6;
+        led_out.map[6] = regfile.maprow7;
+        led_out.map[7] = regfile.maprow1;
+
+        led_out.game_start = io_button[4];
+        led_out.disappear = 0;
+        
+        if (io_dip[0][0]==1){
+        io_led[0]=regfile.maprow1;
+        io_led[1]=regfile.maprow2;
+        io_led[2]=regfile.maprow3;  
+        }
+        else if(io_dip[0][1]==1){
+        io_led[0]=regfile.maprow4;
+        io_led[1]=regfile.maprow5;
+        io_led[2]=regfile.maprow6;
+        }
+        else if(io_dip[0][2]==1){
+        io_led[0]=regfile.maprow7;
+        io_led[1]=regfile.maprow8;
+        }
+    
+        io_led[regfile.ypos][regfile.xpos] = 1;
+        
+        
+   
+        // 7-seg
+        io_seg = ~seg.seg;  // connect segments to the driver
+        io_sel = ~seg.sel;  // connect digit select to the driver
+
+        //io_led[0] = led_out.matrix[0][0][7:0];
+      }
+} 
