@@ -75,7 +75,7 @@ module regfile (
     r8.address=5b00111;
     
     
-    if (we) {
+    if (we==b1) {
       
       case (rc) {
         // tell ROM that level is _?_ stored in dff reg_level.q ROM should have case functionality that takes in level and give out the corresponding map rows of that level
@@ -104,6 +104,8 @@ module regfile (
       }
     }
     
+    else{
+ 
     case (ra) {
       5h0: ra_data[15:0] = reg_map_row1.q;
       5h1: ra_data[15:0] = reg_map_row2.q;
@@ -150,6 +152,7 @@ module regfile (
       5h12: rb_data = reg_temp.q[6];
       5h13: rb_data = reg_temp.q[7];
       5h14: rb_data = reg_orientation.q;
+      }
     }
     reg_time.d = in_time;
     out_time = reg_time.q;
@@ -165,5 +168,6 @@ module regfile (
     maprow8=r8.out_row[7:0];
     level_out = reg_level.q; // put level input into dff reg
     orientation_out = reg_orientation.q;
+    
   }
 }
