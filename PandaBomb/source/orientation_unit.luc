@@ -6,6 +6,9 @@ module orientation_unit (
 
   always {  //machine behaviour
     //fsm orientation_unit={00,01,10,11},
+    
+    direction = 4b0; 
+    
     if (joystick == b100){
       direction=4b0;//invalid
       }
@@ -42,7 +45,10 @@ module orientation_unit (
           b10: direction=b0010;
           b11: direction=b0001;
           }
+       
     }
+      
+      
     }
 
   }
