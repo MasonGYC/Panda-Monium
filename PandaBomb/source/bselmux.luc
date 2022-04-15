@@ -1,4 +1,4 @@
-module abselmux (
+module bselmux (
     input sel[4],  // 4 bit asel or bsel
     input rdata[16],  // reading data ra or rb
     output out[16] // output after mux
