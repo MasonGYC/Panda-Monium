@@ -111,9 +111,23 @@ module control_unit (
         asel = 4b0; // choose ra data
         bsel = 4b0111; // choose 7
         alufn = 6b110011; // equal
+        we = b1; // write enable
+        wdsel = 3b0; //take alu output
+        ctrl.d = ctrl.CHECKUPBORDER_CMP;
+    //    
+    ctrl.CHECKUPBORDER_CMP:
+        //if 5hB == 1, when add 0, res = 1, z=0, means equal, means idle
+        seg_index = {4h1,4h0,4h0,4h1};
+        ra = 5hB; // compare result
+        rb = RANDOM; // RANDOM num
+        rc = 5hC; // random
+        asel = 4b0; // choose ra data
+        bsel = 4b1010; // choose 0
+        alufn = 6b0; // add
         we = b0; // write not enable
         wdsel = 3b0; //take alu output
-        if (z==0){//res = 1
+
+        if (z==0){
             ctrl.d = ctrl.IDLE;}
         else{ctrl.d = ctrl.GOUP;}
 
