@@ -56,7 +56,7 @@ module regfile (
   dff reg_map_row7[16](.clk(clk), .rst(rst));    // 16-bit binary number to represent row 7 of the map
   dff reg_map_row8[16](.clk(clk), .rst(rst));    // 16-bit binary number to represent row 8 of the map
   dff reg_xpos[16](#INIT(0),.clk(clk), .rst(rst));        // 3-bit binary number to represent value of x coordinate from 0 - 7
-  dff reg_ypos[16](#INIT(1),.clk(clk), .rst(rst));        // 3-bit binary number to represent value of y coordinate from 0 - 7
+  dff reg_ypos[16](#INIT(0),.clk(clk), .rst(rst));        // 3-bit binary number to represent value of y coordinate from 0 - 7
   dff reg_time[16](.clk(clk), .rst(rst));       // 16-bit binary number to represent time in seconds
   dff reg_temp[8][16](.clk(clk), .rst(rst));    // 8 temporary 16-bit registers in case we need to do something with it
   dff reg_orientation[16](.clk(clk), .rst(rst)); // 16 bit orientation
