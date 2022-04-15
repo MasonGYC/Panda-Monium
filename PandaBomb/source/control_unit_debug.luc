@@ -10,6 +10,8 @@ module control_unit (
     input start[1], //START button
     input reset[1], //RESET button
     input timer[16],
+    input y_temp[16], //content of Y_TEMP reg
+    
     output alufn[6],
     output asel[4],
     output bsel[4],
@@ -19,6 +21,7 @@ module control_unit (
     output rb[5],
     output rc[5],
     output game_start[1],
+    output clear[1], //to clear all register values once new level
     output seg_index[4][4] //debug seven_seg
     
     
@@ -32,13 +35,14 @@ module control_unit (
   const X_POS = 5h8;
   const Y_POS = 5h9;
   
-  counter slowclock(#SIZE(1),#DIV(26),.clk(clk),.rst(rst));
+  counter slowclock(#SIZE(1),#DIV(23),.clk(clk),.rst(rst));
   fsm ctrl(.clk(slowclock.value),.rst(rst))={
     START, //wait for start button
     IDLE,
-    CHECKUPBORDER,GOUP,CHECKDOWNBORDER,GODOWN,CHECKLEFTBORDER,GOLEFT,CHECKRIGHTBORDER,GORIGHT,
+    CHECKUPBORDER,CHECKUPBORDER_CMP,GOUP,CHECKDOWNBORDER,CHECKDOWNBORDER_CMP,GODOWN,CHECKLEFTBORDER,CHECKLEFTBORDER_CMP,GOLEFT,CHECKRIGHTBORDER,CHECKRIGHTBORDER_CMP,GORIGHT,
+    STAY_AT_X,STAY_AT_Y,
     CHECK_GOAL_X, CHECK_GOAL_Y,CHECK_GOAL_XY,CHECK_GOAL_XY_MOVE, //check whether reached goal
-    CHECK_COLL,CHECK_COLL_INDEX, //check obstacle
+    CHECK_COLL,CHECK_COLL_INDEX,CHECK_COLL_CMP, //check obstacle
     UPDATE_XPOS,UPDATE_YPOS,
     CHECK_WIN_UPPERBOUND,CHECK_WIN_LOWERBOUND,CHECK_WIN_AND,CHECK_WIN_LEVELUP,CHECK_WIN_LEVELUP_CHECK,
     GAMEOVER,RESET_LEVEL};
@@ -58,6 +62,7 @@ module control_unit (
     level_out = 16b0;
     game_start = b0;
     seg_index = {4h0,4h0,4h0,4h0};
+    clear = 0;
     
     //check timer
     if (timer > 16b111100){
@@ -83,18 +88,22 @@ module control_unit (
             b1000:
             ctrl.d = ctrl.CHECKUPBORDER;
               //Y_TEMP.d = Y_TEMP.q + 1;//up
+              //X_TEMP.d = X_POS.q
               //if (y==b111){ctrl.d = ctrl.IDLE;}
             b0100:
             ctrl.d = ctrl.CHECKDOWNBORDER;
               // Y_TEMP.d = Y_TEMP.q - 1;//down
+              //X_TEMP.d = X_POS.q
               //if (y==b0){ctrl.d = ctrl.IDLE;}
             b0010:
             ctrl.d = ctrl.CHECKLEFTBORDER;
               //X_TEMP.d = X_TEMP.q - 1;//LEFT
+              //Y_TEMP.d = Y_POS.q
               //if (x==b0){ctrl.d = ctrl.IDLE;}
             b0001:
             ctrl.d = ctrl.CHECKRIGHTBORDER;
               // X_TEMP.d = X_TEMP.q + 1;//RIGHT
+              //Y_TEMP.d = Y_POS.q
               //if (x==b111){ctrl.d = ctrl.IDLE;}
           }
           
@@ -105,7 +114,7 @@ module control_unit (
     ctrl.CHECKUPBORDER:
     seg_index = {4h0,4h0,4h0,4h1};
         //if (y==b111){ctrl.d = ctrl.IDLE;}
-        ra = Y_POS; // x temp reg
+        ra = Y_POS; // Y_POS
         rb = RANDOM; // RANDOM num
         rc = 5hB; // result 1/0
         asel = 4b0; // choose ra data
@@ -114,7 +123,7 @@ module control_unit (
         we = b1; // write enable
         wdsel = 3b0; //take alu output
         ctrl.d = ctrl.CHECKUPBORDER_CMP;
-    //    
+    /// 
     ctrl.CHECKUPBORDER_CMP:
         //if 5hB == 1, when add 0, res = 1, z=0, means equal, means idle
         seg_index = {4h1,4h0,4h0,4h1};
@@ -130,7 +139,7 @@ module control_unit (
         if (z==0){
             ctrl.d = ctrl.IDLE;}
         else{ctrl.d = ctrl.GOUP;}
-
+    ///
     ctrl.GOUP:
     seg_index = {4h0,4h0,4h0,4h2};
      //Y_TEMP.d = Y_TEMP.q + 1;
@@ -142,25 +151,39 @@ module control_unit (
         alufn = 6b0; // add
         we = b1; // write enable
         wdsel = 3b0; //take alu output
-        ctrl.d = ctrl.CHECK_GOAL_X;
+        ctrl.d = ctrl.STAY_AT_X;
 
     //////////////////////////////
 
     ctrl.CHECKDOWNBORDER:
     seg_index = {4h0,4h0,4h0,4h3};
         //if (y==b0){ctrl.d = ctrl.IDLE;}
-        ra = Y_POS; // x temp reg
+        ra = Y_POS; // Y_POS
         rb = RANDOM; // RANDOM num
         rc = 5hB; // result 1/0
         asel = 4b0; // choose ra data
         bsel = 4b1010; // choose 0
         alufn = 6b110011; // equal
+        we = b1; // write enable
+        wdsel = 3b0; //take alu output
+        ctrl.d = ctrl.CHECKDOWNBORDER_CMP;
+    ///    
+    ctrl.CHECKDOWNBORDER_CMP:
+        //if 5hB == 1, when add 0, res = 1, z=0, means equal, means idle
+        seg_index = {4h1,4h0,4h0,4h3};
+        ra = 5hB; // compare result
+        rb = RANDOM; // RANDOM num
+        rc = 5hC; // random
+        asel = 4b0; // choose ra data
+        bsel = 4b1010; // choose 0
+        alufn = 6b0; // add
         we = b0; // write not enable
         wdsel = 3b0; //take alu output
-        if (z==0){//res = 1
+
+        if (z==0){
             ctrl.d = ctrl.IDLE;}
         else{ctrl.d = ctrl.GODOWN;}
-    
+    ///
     ctrl.GODOWN:
     seg_index = {4h0,4h0,4h0,4h4};
      //Y_TEMP.d = Y_TEMP.q - 1;
@@ -172,7 +195,7 @@ module control_unit (
         alufn = 6b1; // subc
         we = b1; // write enable
         wdsel = 3b0; //take alu output
-        ctrl.d = ctrl.CHECK_GOAL_X;
+        ctrl.d = ctrl.STAY_AT_X;
 
     //////////////////////////////
     ctrl.CHECKLEFTBORDER:
@@ -184,12 +207,25 @@ module control_unit (
         asel = 4b0; // choose ra data
         bsel = 4b1010; // choose 0
         alufn = 6b110011; // equal
+        we = b1; // write not enable
+        wdsel = 3b0; //take alu output
+        ctrl.d = ctrl.CHECKLEFTBORDER_CMP;
+    /// 
+    ctrl.CHECKLEFTBORDER_CMP:
+        //if 5hB == 1, when add 0, res = 1, z=0, means equal, means idle
+        seg_index = {4h1,4h0,4h0,4h5};
+        ra = 5hB; // compare result
+        rb = RANDOM; // RANDOM num
+        rc = 5hC; // random
+        asel = 4b0; // choose ra data
+        bsel = 4b1010; // choose 0
+        alufn = 6b0; // add
         we = b0; // write not enable
         wdsel = 3b0; //take alu output
-        if (z==0){//res = 1
+        if (z==0){
             ctrl.d = ctrl.IDLE;}
         else{ctrl.d = ctrl.GOLEFT;}
-
+    ///
     ctrl.GOLEFT:
     seg_index = {4h0,4h0,4h0,4h6};
     //X_TEMP.d = X_TEMP.q - 1;//LEFT
@@ -201,8 +237,7 @@ module control_unit (
         alufn = 6b1; // subc
         we = b1; // write enable
         wdsel = 3b0; //take alu output
-        ctrl.d = ctrl.CHECK_GOAL_X;
-
+        ctrl.d = ctrl.STAY_AT_Y;
 
     //////////////////////////////
     ctrl.CHECKRIGHTBORDER:
@@ -214,15 +249,28 @@ module control_unit (
         asel = 4b0; // choose ra data
         bsel = 4b0111; // choose 7
         alufn = 6b110011; // equal
+        we = b1; // write not enable
+        wdsel = 3b0; //take alu output
+        ctrl.d = ctrl.CHECKRIGHTBORDER_CMP;
+    /// 
+    ctrl.CHECKRIGHTBORDER_CMP:
+        //if 5hB == 1, when add 0, res = 1, z=0, means equal, means idle
+        seg_index = {4h1,4h0,4h0,4h7};
+        ra = 5hB; // compare result
+        rb = RANDOM; // RANDOM num
+        rc = 5hC; // random
+        asel = 4b0; // choose ra data
+        bsel = 4b1010; // choose 0
+        alufn = 6b0; // add
         we = b0; // write not enable
         wdsel = 3b0; //take alu output
-        if (z==0){//res = 1
+        if (z==0){
             ctrl.d = ctrl.IDLE;}
         else{ctrl.d = ctrl.GORIGHT;}
-
+    ///
     ctrl.GORIGHT:
     seg_index = {4h0,4h0,4h0,4h8};
-        // X_TEMP.d = X_TEMP.q + 1;//RIGHT
+      // X_TEMP.d = X_TEMP.q + 1;//RIGHT
       ra = X_POS; // x PSOS reg
       rb = RANDOM; // RANDOM num
       rc = X_TEMP; // x temp
@@ -231,7 +279,34 @@ module control_unit (
       alufn = 6b0; // add
       we = b1; // write enable
       wdsel = 3b0; //take alu output
+      ctrl.d = ctrl.STAY_AT_Y;
 
+      //////////////////////////////
+    ctrl.STAY_AT_X:
+    // X_TEMP.d = X_POS.q
+      seg_index = {4h4,4h4,4h4,4h4};
+      ra = X_POS; // x POS reg
+      rb = RANDOM; // RANDOM num
+      rc = X_TEMP; // x temp
+      asel = 4b0; // choose ra data
+      bsel = 4b1010; // choose 0
+      alufn = 6b0; // add
+      we = b1; // write enable
+      wdsel = 3b0; //take alu output
+      ctrl.d = ctrl.CHECK_GOAL_X;
+    ///
+    ctrl.STAY_AT_Y:
+    seg_index = {4h3,4h3,4h3,4h3};
+    // Y_TEMP.d = Y_POS.q
+      ra = Y_POS; // Y POS reg
+      rb = RANDOM; // RANDOM num
+      rc = Y_TEMP; // Y temp
+      asel = 4b0; // choose ra data
+      bsel = 4b1010; // choose 0
+      alufn = 6b0; // add
+      we = b1; // write enable
+      wdsel = 3b0; //take alu output
+      ctrl.d = ctrl.CHECK_GOAL_X;
       //////////////////////////////
       ctrl.CHECK_GOAL_X:
         seg_index = {4h0,4h0,4h0,4h9};
@@ -245,6 +320,7 @@ module control_unit (
         we = b1; // write enable
         wdsel = 3b0; //take alu output
         ctrl.d = ctrl.CHECK_GOAL_Y;
+      ///
       ctrl.CHECK_GOAL_Y:
         seg_index = {4h0,4h0,4h1,4h0};
         //if Y_TEMP.q == b111)
@@ -257,6 +333,7 @@ module control_unit (
         we = b1; // write enable
         wdsel = 3b0; //take alu output
         ctrl.d = ctrl.CHECK_GOAL_XY;
+      ///
       ctrl.CHECK_GOAL_XY:
         //if x && y
         seg_index = {4h0,4h0,4h1,4h1};
@@ -269,12 +346,21 @@ module control_unit (
         we = b1; // write enable
         wdsel = 3b0; //take alu output
         ctrl.d = ctrl.CHECK_GOAL_XY_MOVE;
+      ///
       ctrl.CHECK_GOAL_XY_MOVE:
+        //if 5h10 == 1, when add 0, res = 1, z=0, means x=y=7, means win
         seg_index = {4h0,4h0,4h1,4h2};
-        if (z == 0){ //res = 1, satisfy both
-          ctrl.d = ctrl.CHECK_WIN_UPPERBOUND; // both x and y == 7
-        }
-        else {ctrl.d = ctrl.CHECK_COLL;}
+        ra = 5h10; // cpm res
+        rb = RANDOM; // random
+        rc = RANDOM; // random
+        asel = 4b0; // choose ra data
+        bsel = 4b1010; // choose 0
+        alufn = 6b0; // add
+        we = b0; // write not enable
+        wdsel = 3b0; //take alu output
+        if (z==0){
+            ctrl.d = ctrl.CHECK_WIN_UPPERBOUND;} // both x and y == 7
+        else{ctrl.d = ctrl.CHECK_COLL;}
       
       //////////////////////////////
       ctrl.CHECK_COLL:
@@ -289,16 +375,29 @@ module control_unit (
         wdsel = 3b0; //take alu output
         ctrl.d = ctrl.CHECK_COLL_INDEX;
       ctrl.CHECK_COLL_INDEX:
-        seg_index = {4h0,4h0,4h1,4h4};
-        ra = Y_TEMP[4:0]; // Y_TEMP
+        seg_index = {4h0,4h0,4h1,4h4}; 
+        ra = y_temp[4:0];// Y_TEMP'S CONTENT
         rb = 5hC; // shifted one hot
-        rc = 5hD; // shifted slicing index
+        rc = 5h12; // shifted slicing index
         asel = 4b0; // choose ra data
         bsel = 4b0; // choose rb data
         alufn = 6b011000; // and
+        we = b1; // write enable
+        wdsel = 3b0; //take alu output
+        ctrl.d = ctrl.CHECK_COLL_CMP;
+      ctrl.CHECK_COLL_CMP:
+        //if 5h12 == 1, when add 0, res = 1, z=0, means and=1, means collide -> idle
+        seg_index = {4h1,4h0,4h1,4h4};
+        ra = 5h12; // cpm res
+        rb = RANDOM; // random
+        rc = RANDOM; // random
+        asel = 4b0; // choose ra data
+        bsel = 4b1010; // choose 0
+        alufn = 6b0; // add
         we = b0; // write not enable
         wdsel = 3b0; //take alu output
-        if (z==b0){
+
+        if (z==b0){ //AND RES =1
           ctrl.d = ctrl.IDLE;
         }
         else{
@@ -339,6 +438,7 @@ module control_unit (
         seg_index = {4h0,4h0,4h1,4h7};
         if (level_in < b10 && level_in >= b00){
           level_out = level_in + b1;
+          clear = 1;
           ctrl.d = ctrl.START;
         }
         else {ctrl.d = ctrl.GAMEOVER;}
