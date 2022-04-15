@@ -9,7 +9,18 @@ module regfile (
     input level_in[16],
     input in_time[16],
     input orientation_in[16],
+    input clear[1],
     
+    //debug
+    output x_temp[3],
+    
+    output tempC[3],
+    output temp10[3],
+    output temp11[3],
+    output temp12[3],
+    output temp13[3],
+    
+    output y_temp[16],
     output orientation_out[16],
     output level_out[16],
     output out_time[16], // output time to 7 segment 16 bits
@@ -44,8 +55,8 @@ module regfile (
   dff reg_map_row6[16](.clk(clk), .rst(rst));    // 16-bit binary number to represent row 6 of the map
   dff reg_map_row7[16](.clk(clk), .rst(rst));    // 16-bit binary number to represent row 7 of the map
   dff reg_map_row8[16](.clk(clk), .rst(rst));    // 16-bit binary number to represent row 8 of the map
-  dff reg_xpos[16](.clk(clk), .rst(rst));        // 3-bit binary number to represent value of x coordinate from 0 - 7
-  dff reg_ypos[16](.clk(clk), .rst(rst));        // 3-bit binary number to represent value of y coordinate from 0 - 7
+  dff reg_xpos[16](#INIT(0),.clk(clk), .rst(rst));        // 3-bit binary number to represent value of x coordinate from 0 - 7
+  dff reg_ypos[16](#INIT(1),.clk(clk), .rst(rst));        // 3-bit binary number to represent value of y coordinate from 0 - 7
   dff reg_time[16](.clk(clk), .rst(rst));       // 16-bit binary number to represent time in seconds
   dff reg_temp[8][16](.clk(clk), .rst(rst));    // 8 temporary 16-bit registers in case we need to do something with it
   dff reg_orientation[16](.clk(clk), .rst(rst)); // 16 bit orientation
@@ -73,6 +84,33 @@ module regfile (
     r7.address=5b00110;
     r8.level_input=reg_level.q;
     r8.address=5b00111;
+    
+    y_temp = reg_temp.q[2];//Y_TEMP
+    reg_time.d = in_time;
+    out_time = reg_time.q;
+    xpos = reg_xpos.q;
+    ypos = reg_ypos.q;
+    maprow1=r1.out_row[7:0];
+    maprow2=r2.out_row[7:0];
+    maprow3=r3.out_row[7:0];
+    maprow4=r4.out_row[7:0];
+    maprow5=r5.out_row[7:0];
+    maprow6=r6.out_row[7:0];
+    maprow7=r7.out_row[7:0];
+    maprow8=r8.out_row[7:0];
+    level_out = reg_level.q; // put level input into dff reg
+    orientation_out = reg_orientation.q;
+    
+    //clear all values
+    if (clear == 1){
+    
+      reg_xpos.d = 0;
+      reg_ypos.d = 0;
+      reg_time.d = 0;
+      reg_temp.d = 8x{{16b0}};
+      reg_orientation.d = 0;
+      
+    }
     
     
     if (we==b1) {
@@ -104,7 +142,7 @@ module regfile (
       }
     }
     
- 
+
     case (ra) {
       5h0: ra_data[15:0] = reg_map_row1.q;
       5h1: ra_data[15:0] = reg_map_row2.q;
@@ -151,22 +189,18 @@ module regfile (
       5h12: rb_data = reg_temp.q[6];
       5h13: rb_data = reg_temp.q[7];
       5h14: rb_data = reg_orientation.q;
-      }
+      
+    }
     
-    reg_time.d = in_time;
-    out_time = reg_time.q;
-    xpos = reg_xpos.q;
-    ypos = reg_ypos.q;
-    maprow1=r1.out_row[7:0];
-    maprow2=r2.out_row[7:0];
-    maprow3=r3.out_row[7:0];
-    maprow4=r4.out_row[7:0];
-    maprow5=r5.out_row[7:0];
-    maprow6=r6.out_row[7:0];
-    maprow7=r7.out_row[7:0];
-    maprow8=r8.out_row[7:0];
-    level_out = reg_level.q; // put level input into dff reg
-    orientation_out = reg_orientation.q;
+    
+    //debug
+    tempC = reg_temp.q[1][2:0];
+    x_temp = reg_temp.q[3][2:0];//X_TEMP
+    
+    temp10 = reg_temp.q[4][2:0];
+    temp11 = reg_temp.q[5][2:0];
+    temp12 = reg_temp.q[6][2:0];
+    temp13 = reg_temp.q[7][2:0];
     
   }
 }
