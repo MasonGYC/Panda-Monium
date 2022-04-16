@@ -1,0 +1,73 @@
+module orientation_unit (
+    //FINAL PROJECT IS THIS
+    //version 1.3 debug with slowclock & w/o edge_detector
+    //all 1.2 probelms solved
+    //this version uses ALU, and added in debug signal for testing
+    
+    //not commented out everything
+    //external button not connected and declared yet
+    
+    input button[4],  // input direction
+    input orientation_state[2],  // current orientation_state
+    output up_display[4], //for led output
+    output direction[4] //actual direction
+  ) {
+  
+  always {  //machine behaviour
+    //fsm orientation_unit={00,01,10,11},
+    
+    direction = 4b0;
+    up_display = b0000;
+    
+    case(orientation_state){
+      b00:up_display = b0001;
+      b01:up_display = b1000;
+      b10:up_display = b0010;
+      b11:up_display = b0100;
+    }
+    
+    if (button == b100){
+      direction=4b0;//invalid
+    }
+    else{
+      case(orientation_state){  //different orientation_states
+        
+        //different direction output
+        b00://orientation_state 1
+          case(button){
+            b0001: direction=b0001;
+            b0010: direction=b0010;
+            b0100: direction=b0100;
+            b1000: direction=b1000;
+            
+          }
+        
+        b01: //orientation_state2
+          case(button){
+            b0001: direction=b0100;
+            b0010: direction=b1000;
+            b0100: direction=b0010;
+            b1000: direction=b0001;
+          }
+        b10: //orientation_state3
+          case(button){
+            b0001: direction=b0010;
+            b0010: direction=b0001;
+            b0100: direction=b1000;
+            b1000: direction=b0100;
+          }
+        b11: //orientation_state4
+          case(button){
+            b0001: direction=b1000;
+            b0010: direction=b0100;
+            b0100: direction=b0001;
+            b1000: direction=b0010;
+          }
+        
+      }
+      
+      
+    }
+    
+  }
+}
