@@ -19,31 +19,33 @@ module orientation_unit (
       b00://orientation_state 1
       case(button){
           b0001: direction=b0001;
-          b1000: direction=b1000;
-          b0100: direction=b0100;
           b0010: direction=b0010;
+          b0100: direction=b0100
+          b1000: direction=b1000;
+          ;
+          
           }
       
       b01: //orientation_state2
       case(button){
-          b00: direction=b0010;//TODO: TO CHANGE INP TO 4BIT
-          b01: direction=b0001;
-          b10: direction=b1000;
-          b11: direction=b0100;
+          b0001: direction=b0100;
+          b0010: direction=b1000;
+          b0100: direction=b0010;
+          b1000: direction=b0001;
           }
       b10: //orientation_state3
       case(button){
-          b00: direction=b0100;
-          b01: direction=b0010;
-          b10: direction=b0001;
-          b11: direction=b1000;
+          b0001: direction=b0010;
+          b0010: direction=b0001;
+          b0100: direction=b1000;
+          b1000: direction=b0100;
           }
       b11: //orientation_state4
       case(button){
-          b00: direction=b1000;
-          b01: direction=b0100;
-          b10: direction=b0010;
-          b11: direction=b0001;
+          b0001: direction=b1000;
+          b0010: direction=b0100;
+          b0100: direction=b0001;
+          b1000: direction=b0010;
           }
        
     }
