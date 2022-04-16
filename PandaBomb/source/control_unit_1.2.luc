@@ -1,10 +1,8 @@
 module control_unit (
-//version 1.1 
-//functional except orientation and move number got errors, -> fixing to adapt to datapath
-//level changing are not tested,
-//panda sometimes disappears when testing the led on the first row
-    //this version uses ALU
-    //add in debug signal for testing
+//version 1.2 debug with slowclock
+//all 1.1 probelms solved, need to add other states for disaplaying color to led_output
+//further improvement: add timer 60 sec 
+//this version uses ALU, and added in debug signal for testing
     input clk,  // clock
     input rst,  // reset
     input z, // alu z
@@ -49,8 +47,8 @@ module control_unit (
   const TEMP6 = 5h13;
   
   
-  //counter slowclock(#SIZE(1),#DIV(25),.clk(clk),.rst(rst));
-  fsm ctrl(.clk(clk),.rst(rst))={
+  counter slowclock(#SIZE(1),#DIV(24),.clk(clk),.rst(rst));
+  fsm ctrl(.clk(slowclock.value),.rst(rst))={
     START, //wait for start button
     GENERATE_MAP,GENERATE_MAP_ROW1,GENERATE_MAP_ROW2,GENERATE_MAP_ROW3,GENERATE_MAP_ROW4,GENERATE_MAP_ROW5,GENERATE_MAP_ROW6,GENERATE_MAP_ROW7,GENERATE_MAP_ROW8, //map -> idle
     IDLE,
@@ -59,7 +57,8 @@ module control_unit (
     CHECK_GOAL_X, CHECK_GOAL_Y,CHECK_GOAL_XY,CHECK_GOAL_XY_MOVE, //check whether reached goal
     CHECK_COLL,CHECK_COLL_INDEX,CHECK_COLL_CMP, //check obstacle
     UPDATE_XPOS,UPDATE_YPOS,
-    CHECK_MOVE,CHECK_MOVE_CMP,ADD_MOVE,RESET_MOVE,CHECK_ORIENTATION,CHECK_ORIENTATION_CMP,RESET_ORIENTATION,ADD_ORIENTATION,
+    CHECK_MOVE,CHECK_MOVE_CMP,ADD_MOVE_TEMP,ADD_MOVE,RESET_MOVE,
+    CHECK_ORIENTATION,CHECK_ORIENTATION_CMP,ADD_ORIENTATION_TEMP,RESET_ORIENTATION,ADD_ORIENTATION,
     CHECK_WIN,CHECK_WIN_ADD,CHECK_WIN_CMP,
     GAMEOVER,RESET_LEVEL};
   
@@ -175,7 +174,7 @@ module control_unit (
       
       //////////////////////////////
       ctrl.CHECKUPBORDER:
-        seg_index = {4h0,4h0,4h0,4h1};
+        seg_index = {4h0,4h0,4h1,4h1};
         //if (y==b111){ctrl.d = ctrl.IDLE;}
         ra = Y_POS; // Y_POS
         rb = RANDOM; // RANDOM num
@@ -189,7 +188,7 @@ module control_unit (
       ///
       ctrl.CHECKUPBORDER_CMP:
         //if TEMP1 == 1, when add 0, res = 1, z=0, means equal, means idle
-        seg_index = {4h1,4h0,4h0,4h1};
+        seg_index = {4h0,4h0,4h1,4h2};
         ra = TEMP1; // compare result
         rb = RANDOM; // RANDOM num
         rc = TEMP2; // random
@@ -204,7 +203,7 @@ module control_unit (
         else{ctrl.d = ctrl.GOUP;}
       ///
       ctrl.GOUP:
-        seg_index = {4h0,4h0,4h0,4h2};
+        seg_index = {4h0,4h0,4h1,4h3};
         //Y_TEMP.d = Y_TEMP.q + 1;
         ra = Y_POS; // Y_POS reg
         rb = RANDOM; // RANDOM num
@@ -219,7 +218,7 @@ module control_unit (
       //////////////////////////////
       
       ctrl.CHECKDOWNBORDER:
-        seg_index = {4h0,4h0,4h0,4h3};
+        seg_index = {4h0,4h0,4h1,4h4};
         //if (y==b0){ctrl.d = ctrl.IDLE;}
         ra = Y_POS; // Y_POS
         rb = RANDOM; // RANDOM num
@@ -233,7 +232,7 @@ module control_unit (
       ///
       ctrl.CHECKDOWNBORDER_CMP:
         //if TEMP1 == 1, when add 0, res = 1, z=0, means equal, means idle
-        seg_index = {4h1,4h0,4h0,4h3};
+        seg_index = {4h0,4h0,4h1,4h5};
         ra = TEMP1; // compare result
         rb = RANDOM; // RANDOM num
         rc = TEMP2; // random
@@ -248,7 +247,7 @@ module control_unit (
         else{ctrl.d = ctrl.GODOWN;}
       ///
       ctrl.GODOWN:
-        seg_index = {4h0,4h0,4h0,4h4};
+        seg_index = {4h0,4h0,4h1,4h6};
         //Y_TEMP.d = Y_TEMP.q - 1;
         ra = Y_POS; // Y_POS reg
         rb = RANDOM; // RANDOM num
@@ -262,7 +261,7 @@ module control_unit (
       
       //////////////////////////////
       ctrl.CHECKLEFTBORDER:
-        seg_index = {4h0,4h0,4h0,4h5};
+        seg_index = {4h0,4h0,4h1,4h7};
         //if (x==b0){ctrl.d = ctrl.IDLE;}
         ra = X_POS; // x POS reg
         rb = RANDOM; // RANDOM num
@@ -276,7 +275,7 @@ module control_unit (
       ///
       ctrl.CHECKLEFTBORDER_CMP:
         //if TEMP1 == 1, when add 0, res = 1, z=0, means equal, means idle
-        seg_index = {4h1,4h0,4h0,4h5};
+        seg_index = {4h0,4h0,4h1,4h8};
         ra = TEMP1; // compare result
         rb = RANDOM; // RANDOM num
         rc = TEMP2; // random
@@ -290,7 +289,7 @@ module control_unit (
         else{ctrl.d = ctrl.GOLEFT;}
       ///
       ctrl.GOLEFT:
-        seg_index = {4h0,4h0,4h0,4h6};
+        seg_index = {4h0,4h0,4h1,4h9};
         //X_TEMP.d = X_TEMP.q - 1;//LEFT
         ra = X_POS; // x POS reg
         rb = RANDOM; // RANDOM num
@@ -304,7 +303,7 @@ module control_unit (
       
       //////////////////////////////
       ctrl.CHECKRIGHTBORDER:
-        seg_index = {4h0,4h0,4h0,4h7};
+        seg_index = {4h0,4h0,4h2,4h0};
         //if (x==b111){ctrl.d = ctrl.IDLE;}
         ra = X_POS; // x POS reg
         rb = RANDOM; // RANDOM num
@@ -318,7 +317,7 @@ module control_unit (
       ///
       ctrl.CHECKRIGHTBORDER_CMP:
         //if TEMP1 == 1, when add 0, res = 1, z=0, means equal, means idle
-        seg_index = {4h1,4h0,4h0,4h7};
+        seg_index = {4h0,4h0,4h2,4h1};
         ra = TEMP1; // compare result
         rb = RANDOM; // RANDOM num
         rc = TEMP2; // random
@@ -332,7 +331,7 @@ module control_unit (
         else{ctrl.d = ctrl.GORIGHT;}
       ///
       ctrl.GORIGHT:
-        seg_index = {4h0,4h0,4h0,4h8};
+        seg_index = {4h0,4h0,4h2,4h2};
         // X_TEMP.d = X_TEMP.q + 1;//RIGHT
         ra = X_POS; // x PSOS reg
         rb = RANDOM; // RANDOM num
@@ -372,7 +371,7 @@ module control_unit (
         ctrl.d = ctrl.CHECK_GOAL_X;
       //////////////////////////////
       ctrl.CHECK_GOAL_X:
-        seg_index = {4h0,4h0,4h0,4h9};
+        seg_index = {4h0,4h0,4h2,4h3};
         //if X_TEMP.q == b111: check Y_TEMP
         ra = X_TEMP; // x temp reg
         rb = RANDOM; // RANDOM num
@@ -385,7 +384,7 @@ module control_unit (
         ctrl.d = ctrl.CHECK_GOAL_Y;
       ///
       ctrl.CHECK_GOAL_Y:
-        seg_index = {4h0,4h0,4h1,4h0};
+        seg_index = {4h0,4h0,4h2,4h4};
         //if Y_TEMP.q == b111)
         ra = Y_TEMP; // y temp reg
         rb = RANDOM; // RANDOM num
@@ -399,7 +398,7 @@ module control_unit (
       ///
       ctrl.CHECK_GOAL_XY:
         //if x && y
-        seg_index = {4h0,4h0,4h1,4h1};
+        seg_index = {4h0,4h0,4h2,4h5};
         ra = TEMP1; // x=7
         rb = TEMP2; // y=7
         rc = TEMP3; // result 1/0
@@ -412,7 +411,7 @@ module control_unit (
       ///
       ctrl.CHECK_GOAL_XY_MOVE:
         //if TEMP3 == 1, when add 0, res = 1, z=0, means x=y=7, means win
-        seg_index = {4h0,4h0,4h1,4h2};
+        seg_index = {4h0,4h0,4h2,4h6};
         ra = TEMP3; // cpm res
         rb = RANDOM; // random
         rc = RANDOM; // random
@@ -427,7 +426,7 @@ module control_unit (
       
       //////////////////////////////
       ctrl.CHECK_COLL:
-        seg_index = {4h0,4h0,4h1,4h3};
+        seg_index = {4h0,4h0,4h2,4h7};
         ra = RANDOM; // random
         rb = X_TEMP; // x_TEMP
         rc = TEMP2; // shifted slicing index
@@ -438,7 +437,7 @@ module control_unit (
         wdsel = 3b0; //take alu output
         ctrl.d = ctrl.CHECK_COLL_INDEX;
       ctrl.CHECK_COLL_INDEX:
-        seg_index = {4h0,4h0,4h1,4h4};
+        seg_index = {4h0,4h0,4h2,4h8};
         ra = y_temp[4:0];// Y_TEMP'S CONTENT
         rb = TEMP2; // shifted one hot
         rc = TEMP5; // and res
@@ -450,7 +449,7 @@ module control_unit (
         ctrl.d = ctrl.CHECK_COLL_CMP;
       ctrl.CHECK_COLL_CMP:
         //if TEMP5 == 1, when add 0, res = 1, z=0, means and=1, means collide -> idle
-        seg_index = {4h1,4h0,4h1,4h4};
+        seg_index = {4h0,4h0,4h2,4h9};
         ra = TEMP5; // and res
         rb = RANDOM; // random
         rc = RANDOM; // random
@@ -472,11 +471,11 @@ module control_unit (
         }
       //////////////////////////////
       ctrl.UPDATE_XPOS:
-        seg_index = {4h0,4h0,4h1,4h5};
+        seg_index = {4h0,4h0,4h3,4h0};
         // x_pos_out = X_TEMP.q;
         ra = X_TEMP; // x temp
         rb = RANDOM; // ran
-        rc = 5h8; // x coor
+        rc = X_POS; // x coor
         asel = 4b0; // choose ra data
         bsel = b1010; // 0
         alufn = 6b0; // add
@@ -485,11 +484,11 @@ module control_unit (
         ctrl.d = ctrl.UPDATE_YPOS;
       //////////////////////////////
       ctrl.UPDATE_YPOS:
-        seg_index = {4h0,4h0,4h1,4h6};
+        seg_index = {4h0,4h0,4h3,4h1};
         // y_pos_out = Y_TEMP.q;
         ra = Y_TEMP; // y temp
         rb = RANDOM; // ran
-        rc = 5h9; // y coor
+        rc = Y_POS; // y coor
         asel = 4b0; // choose ra data
         bsel = b1010; // 0
         alufn = 6b0; // add
@@ -502,7 +501,7 @@ module control_unit (
         //if (move_num_in==b101){
           //ctrl.d = ctrl.RESET_MOVE;}
         //else{ctrl.d = ctrl.ADD_MOVE;}
-        seg_index = {4h1,4h0,4h1,4h6};
+        seg_index = {4h0,4h0,4h3,4h2};
         ra = MOVE; // move_reg
         rb = RANDOM; // random
         rc = TEMP1; // result 1/0
@@ -515,7 +514,7 @@ module control_unit (
       ///
       ctrl.CHECK_MOVE_CMP:
       //if TEMP1 == 1, when add 0, res = 1, z=0, means equal, means idle
-        seg_index = {4h1,4h1,4h1,4h6};
+        seg_index = {4h0,4h0,4h3,4h3};
         ra = TEMP1; // compare result
         rb = RANDOM; // RANDOM num
         rc = RANDOM; // random
@@ -527,11 +526,24 @@ module control_unit (
         
         if (z==0){
           ctrl.d = ctrl.RESET_MOVE;}
-        else{ctrl.d = ctrl.ADD_MOVE;}
+        else{ctrl.d = ctrl.ADD_MOVE_TEMP;}
         
+      ctrl.ADD_MOVE_TEMP:
+        //add move to move_temp(4)
+        seg_index = {4h0,4h0,4h3,4h4};
+        ra = MOVE; // move
+        rb = RANDOM; // random
+        rc = TEMP4; // move move temp
+        asel = 4b0; // choose ra data
+        bsel = 4b1010; // choose 0
+        alufn = 6b0; // add
+        we = b1; // write enable
+        wdsel = 3b0; //take alu output
+        ctrl.d = ctrl.ADD_MOVE;
        ///
       ctrl.ADD_MOVE:
-        ra = MOVE; // random
+        seg_index = {4h0,4h0,4h3,4h5};
+        ra = TEMP4; // MOVE TEMP
         rb = RANDOM; // random
         rc = MOVE; // move reg
         asel = 4b0; // choose ra data
@@ -544,7 +556,7 @@ module control_unit (
       ////
       ctrl.RESET_MOVE:
         //write in zero
-        seg_index = {4h2,4h1,4h1,4h6};
+        seg_index = {4h0,4h0,4h3,4h5};
         ra = RANDOM; // random
         rb = RANDOM; // random
         rc = MOVE; // move reg
@@ -559,7 +571,7 @@ module control_unit (
         //if(orientation_in==b11){
           //ctrl.d = ctrl.RESET_ORIENTATION;}
         //else{ctrl.d = ctrl.ADD_ORIENTATION;}
-        seg_index = {4h2,4h2,4h1,4h6};
+        seg_index = {4h0,4h0,4h3,4h6};
         ra = ORI; // move_reg
         rb = RANDOM; // random
         rc = TEMP1; // result 1/0
@@ -572,7 +584,7 @@ module control_unit (
       ///
       ctrl.CHECK_ORIENTATION_CMP:
       //if TEMP1 == 1, when add 0, res = 1, z=0, means equal
-        seg_index = {4h2,4h2,4h1,4h6};
+        seg_index = {4h0,4h0,4h3,4h7};
         ra = TEMP1; // compare result
         rb = RANDOM; // RANDOM num
         rc = RANDOM; // random
@@ -584,10 +596,26 @@ module control_unit (
         
         if (z==0){
           ctrl.d = ctrl.RESET_ORIENTATION;}
-        else{ctrl.d = ctrl.ADD_ORIENTATION;}
+        else{ctrl.d = ctrl.ADD_ORIENTATION_TEMP;}
+        
+        ///
+       ctrl.ADD_ORIENTATION_TEMP:
+        //add orien to orien_temp(4)
+        seg_index = {4h0,4h0,4h3,4h4};
+        ra = ORI; // ori
+        rb = RANDOM; // random
+        rc = TEMP4; // ori temp
+        asel = 4b0; // choose ra data
+        bsel = 4b1010; // choose 0
+        alufn = 6b0; // add
+        we = b1; // write enable
+        wdsel = 3b0; //take alu output
+        ctrl.d = ctrl.ADD_ORIENTATION;
+       
       ///
       ctrl.ADD_ORIENTATION:
-        ra = ORI; // random
+        seg_index = {4h0,4h0,4h3,4h8};
+        ra = TEMP4; // random
         rb = RANDOM; // random
         rc = ORI; // move reg
         asel = 4b0; // choose ra data
@@ -599,13 +627,13 @@ module control_unit (
       
       //////////////////////////////
       ctrl.CHECK_WIN:
-        seg_index = {4h0,4h0,4h1,4h7};
+        seg_index = {4h0,4h0,4h3,4h9};
         //if (level_in < b10){
           //level_out = level_in + b1;
           //clear = 1;
           //ctrl.d = ctrl.START;}
         //else {ctrl.d = ctrl.GAMEOVER;}
-        seg_index = {4h2,4h2,4h1,4h6};
+        
         ra = LEVEL; // level reg
         rb = RANDOM; // random
         rc = TEMP1; // result 1/0
@@ -619,7 +647,7 @@ module control_unit (
       ///
       ctrl.CHECK_WIN_CMP:
       //if TEMP1 == 1, when add 0, res = 1, z=0, means less than
-        seg_index = {4h2,4h2,4h1,4h6};
+        seg_index = {4h0,4h0,4h4,4h0};
         ra = TEMP1; // compare result
         rb = RANDOM; // RANDOM num
         rc = RANDOM; // random
@@ -635,6 +663,7 @@ module control_unit (
         
       ///
       ctrl.CHECK_WIN_ADD:
+        seg_index = {4h0,4h0,4h4,4h1};
         ra = LEVEL; // random
         rb = RANDOM; // random
         rc = LEVEL; // move reg
