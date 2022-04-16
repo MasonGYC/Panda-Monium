@@ -1,13 +1,12 @@
 module au_top (
-//FINAL PROJECT IS THIS
-//version 1.2 debug with slowclock
-//all 1.1 probelms solved, need to add other states for disaplaying color to led_output
-//further improvement: add timer 60 sec 
-//this version uses ALU, and added in debug signal for testing
+    //FINAL PROJECT IS THIS
+    //version 1.3 debug with slowclock & w/o edge_detector
+    //all 1.2 probelms solved
+    //this version uses ALU, and added in debug signal for testing
     
-//*joystick_input still got problem
-//not commented out everything
-//external button not connected and declared yet 
+    //not commented out everything
+    //external button not connected and declared yet
+    
     input clk,              // 100MHz clock
     
     input usb_rx,           // don't know what is this
@@ -21,9 +20,19 @@ module au_top (
     
     // 8x8 LED
     output io_led[3][8],
-    output br_led0, output br_led1, output br_led2, output br_led3, output br_led4, output br_led5,
-    output br_led6, output br_led7,
-    input br_button0,input br_button1,input br_button2,input br_button3
+    output br_led0,
+    output br_led1,
+    output br_led2,
+    output br_led3,
+    output br_led4,
+    output br_led5,
+    output br_led6,
+    output br_led7,
+    output br_led8, //up
+    output br_led9, //down
+    output br_ledA, //left
+    output br_ledB  //right
+    
   ) {
   sig rst;                  // reset signal
   
@@ -47,7 +56,6 @@ module au_top (
   aselmux aselmux;
   bselmux bselmux;
   led_output led_out;
-  joystick_input joystick_input;
   orientation_unit orientation_unit;
   control_unit control_unit(.clk(clk),.rst(rst));
   
@@ -88,51 +96,33 @@ module au_top (
     //buttondetector.in = buttoncond.out;
     
     ///////////////////////
-    //external input connection//TODO
+    //external input connection
+    
+    //display leds
+    //commengt is the physical location of these leds
+    br_led8 = orientation_unit.up_display[0];//up
+    br_led9 = orientation_unit.up_display[1];//down
+    br_ledA = orientation_unit.up_display[2];//left
+    br_ledB = orientation_unit.up_display[3];//right
     
     //buttons
     control_unit.start = io_dip[0][0];
-    control_unit.reset = 0;
+    control_unit.reset = io_button[4];
     led_out.game_start = io_dip[0][0];
-    //led_out.game_start = 1;
-    //led_out.disappear = 0;
-    
-    // receive joystick input
-    //joystick_input.up_button=buttondetector.out[0];
-    //joystick_input.down_button=buttondetector.out[1];
-    //joystick_input.left_button=buttondetector.out[2];
-    //joystick_input.right_button=buttondetector.out[3];
-    
-    joystick_input.up_button=io_button[0];
-    joystick_input.down_button=io_button[1];
-    joystick_input.left_button=io_button[2];
-    joystick_input.right_button=io_button[3];
     
     
     
     ///////////////////////
     //module connection//
     
-    // joystick -> orientation_unit
-    orientation_unit.joystick = joystick_input.joystick;
     
-    //regfile_orien <-> orientation_unit <-> control_unit
+    //regfile_orien <-> orientation_unit
+    orientation_unit.button = io_button[3:0];
     orientation_unit.orientation_state = regfile.orientation_out[1:0];
-    //control_unit.orientation_in = regfile.orientation_out;
-    //regfile.orientation_in = control_unit.orientation_out;
-    
-    //moves regfile_move <-> control_unit
-    //control_unit.move_num_in =regfile.out_move_num;
-    //regfile.in_move_num = control_unit.move_num_out;
-    
-    //level
-    //control_unit.level_in = regfile.level_out;
-    //regfile.level_in = control_unit.level_out;
-    
     
     // control_unit input
-    //control_unit.direction = orientation_unit.direction;
-    control_unit.direction = io_button[3:0];
+    control_unit.direction = orientation_unit.direction;
+    //control_unit.direction = io_button[3:0];
     
     
     //control_unit.direction = buttondetector.out[3:0];
