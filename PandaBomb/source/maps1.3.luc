@@ -25,7 +25,7 @@ module maps (
     16b00000100,              // level 2 map row 4
     16b01000000,              // level 2 map row 3
     16b01110000,              // level 2 map row 2
-    16b11111110
+    16b11111110,
     
     
     16b00100000,              // level 1 map row 8
@@ -35,7 +35,7 @@ module maps (
     16b01000110,              // level 1 map row 4
     16b01001100,              // level 1 map row 3
     16b00000000,              // level 1 map row 2
-    16b00100000,              // level 1 map row 1
+    16b00100000              // level 1 map row 1
   };             
   
   
