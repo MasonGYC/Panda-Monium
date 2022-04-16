@@ -1,5 +1,5 @@
 module orientation_unit (
-    input io_button[4],  // input direction
+    input button[4],  // input direction
     input orientation_state[2],  // current orientation_state
     output direction[4] //actual direction
   ) {
@@ -9,7 +9,7 @@ module orientation_unit (
     
     direction = 4b0; 
     
-    if (io_button == b100){
+    if (button == b100){
       direction=4b0;//invalid
       }
     else{
@@ -17,7 +17,7 @@ module orientation_unit (
   
       //different direction output
       b00://orientation_state 1
-      case(io_button){
+      case(button){
           b0001: direction=b0001;
           b1000: direction=b1000;
           b0100: direction=b0100;
@@ -25,21 +25,21 @@ module orientation_unit (
           }
       
       b01: //orientation_state2
-      case(io_button){
+      case(button){
           b00: direction=b0010;//TODO: TO CHANGE INP TO 4BIT
           b01: direction=b0001;
           b10: direction=b1000;
           b11: direction=b0100;
           }
       b10: //orientation_state3
-      case(io_button){
+      case(button){
           b00: direction=b0100;
           b01: direction=b0010;
           b10: direction=b0001;
           b11: direction=b1000;
           }
       b11: //orientation_state4
-      case(io_button){
+      case(button){
           b00: direction=b1000;
           b01: direction=b0100;
           b10: direction=b0010;
