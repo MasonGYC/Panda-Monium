@@ -1,8 +1,12 @@
 module regfile (
-//version 1.2 debug with slowclock
-//all 1.1 probelms solved, need to add other states for disaplaying color to led_output
-//further improvement: add timer 60 sec 
-//this version uses ALU, and added in debug signal for testing
+    //FINAL PROJECT IS THIS
+    //version 1.3 debug with slowclock & w/o edge_detector
+    //all 1.2 probelms solved
+    //this version uses ALU, and added in debug signal for testing
+    
+    //not commented out everything
+    //external button not connected and declared yet
+    
     input clk,  // clock
     input rst,  // reset
     input ra[5],
@@ -58,11 +62,11 @@ module regfile (
   dff reg_map_row6[16](.clk(clk), .rst(rst));    // 16-bit binary number to represent row 6 of the map
   dff reg_map_row7[16](.clk(clk), .rst(rst));    // 16-bit binary number to represent row 7 of the map
   dff reg_map_row8[16](.clk(clk), .rst(rst));    // 16-bit binary number to represent row 8 of the map
-  dff reg_xpos[16](#INIT(5),.clk(clk), .rst(rst));        // 3-bit binary number to represent value of x coordinate from 0 - 7
-  dff reg_ypos[16](#INIT(5),.clk(clk), .rst(rst));        // 3-bit binary number to represent value of y coordinate from 0 - 7
-  dff reg_move_num[16](#INIT(1),.clk(clk), .rst(rst));       // 16-bit binary number to represent move_num in seconds
+  dff reg_xpos[16](#INIT(0),.clk(clk), .rst(rst));        // 16-bit binary number to represent value of x coordinate from 0 - 7
+  dff reg_ypos[16](#INIT(0),.clk(clk), .rst(rst));        // 16-bit binary number to represent value of y coordinate from 0 - 7
+  dff reg_move_num[16](#INIT(0),.clk(clk), .rst(rst));       // 16-bit binary number to represent move_num in seconds
   dff reg_temp[9][16](.clk(clk), .rst(rst));    // 9 temporary 16-bit registers in case we need to do something with it
-  dff reg_orientation[16](#INIT(1),.clk(clk), .rst(rst)); // 16 bit orientation
+  dff reg_orientation[16](#INIT(0),.clk(clk), .rst(rst)); // 16 bit orientation
   dff reg_level[16](.clk(clk), .rst(rst));       // 1: level1, 2: level2, 3: level3 (2bit binary number)
   
   
