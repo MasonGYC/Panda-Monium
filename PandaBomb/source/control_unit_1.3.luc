@@ -1,8 +1,11 @@
 module control_unit (
-//version 1.2 debug with slowclock
-//all 1.1 probelms solved, need to add other states for disaplaying color to led_output
-//further improvement: add timer 60 sec 
-//this version uses ALU, and added in debug signal for testing
+    //FINAL PROJECT IS THIS
+    //version 1.3 debug with slowclock & w/o edge_detector
+    //all 1.2 probelms solved
+    //this version uses ALU, and added in debug signal for testing
+    
+    //not commented out everything
+    //external button not connected and declared yet
     input clk,  // clock
     input rst,  // reset
     input z, // alu z
@@ -495,11 +498,11 @@ module control_unit (
         we = b1; // write enable
         wdsel = 3b0; //take alu output
         ctrl.d = ctrl.CHECK_MOVE;
-        
+      
       ctrl.CHECK_MOVE:
         //update orientation_state
         //if (move_num_in==b101){
-          //ctrl.d = ctrl.RESET_MOVE;}
+        //ctrl.d = ctrl.RESET_MOVE;}
         //else{ctrl.d = ctrl.ADD_MOVE;}
         seg_index = {4h0,4h0,4h3,4h2};
         ra = MOVE; // move_reg
@@ -513,7 +516,7 @@ module control_unit (
         ctrl.d = ctrl.CHECK_MOVE_CMP;
       ///
       ctrl.CHECK_MOVE_CMP:
-      //if TEMP1 == 1, when add 0, res = 1, z=0, means equal, means idle
+        //if TEMP1 == 1, when add 0, res = 1, z=0, means equal, means idle
         seg_index = {4h0,4h0,4h3,4h3};
         ra = TEMP1; // compare result
         rb = RANDOM; // RANDOM num
@@ -527,7 +530,7 @@ module control_unit (
         if (z==0){
           ctrl.d = ctrl.RESET_MOVE;}
         else{ctrl.d = ctrl.ADD_MOVE_TEMP;}
-        
+      
       ctrl.ADD_MOVE_TEMP:
         //add move to move_temp(4)
         seg_index = {4h0,4h0,4h3,4h4};
@@ -540,7 +543,7 @@ module control_unit (
         we = b1; // write enable
         wdsel = 3b0; //take alu output
         ctrl.d = ctrl.ADD_MOVE;
-       ///
+      ///
       ctrl.ADD_MOVE:
         seg_index = {4h0,4h0,4h3,4h5};
         ra = TEMP4; // MOVE TEMP
@@ -552,7 +555,7 @@ module control_unit (
         we = b1; // write enable
         wdsel = 3b0; //take alu output
         ctrl.d = ctrl.IDLE;
-        
+      
       ////
       ctrl.RESET_MOVE:
         //write in zero
@@ -569,7 +572,7 @@ module control_unit (
       
       ctrl.CHECK_ORIENTATION:
         //if(orientation_in==b11){
-          //ctrl.d = ctrl.RESET_ORIENTATION;}
+        //ctrl.d = ctrl.RESET_ORIENTATION;}
         //else{ctrl.d = ctrl.ADD_ORIENTATION;}
         seg_index = {4h0,4h0,4h3,4h6};
         ra = ORI; // move_reg
@@ -583,7 +586,7 @@ module control_unit (
         ctrl.d = ctrl.CHECK_ORIENTATION_CMP;
       ///
       ctrl.CHECK_ORIENTATION_CMP:
-      //if TEMP1 == 1, when add 0, res = 1, z=0, means equal
+        //if TEMP1 == 1, when add 0, res = 1, z=0, means equal
         seg_index = {4h0,4h0,4h3,4h7};
         ra = TEMP1; // compare result
         rb = RANDOM; // RANDOM num
@@ -597,9 +600,23 @@ module control_unit (
         if (z==0){
           ctrl.d = ctrl.RESET_ORIENTATION;}
         else{ctrl.d = ctrl.ADD_ORIENTATION_TEMP;}
-        
-        ///
-       ctrl.ADD_ORIENTATION_TEMP:
+      
+      ///
+      ctrl.RESET_ORIENTATION:
+        //write in zero
+        seg_index = {4h0,4h0,4h3,4h5};
+        ra = RANDOM; // random
+        rb = RANDOM; // random
+        rc = ORI; // move reg
+        asel = 4b1010; // choose 0
+        bsel = 4b1010; // choose 0
+        alufn = 6b0; // add
+        we = b1; // write enable
+        wdsel = 3b0; //take alu output
+        ctrl.d = ctrl.IDLE;
+      
+      ///
+      ctrl.ADD_ORIENTATION_TEMP:
         //add orien to orien_temp(4)
         seg_index = {4h0,4h0,4h3,4h4};
         ra = ORI; // ori
@@ -611,7 +628,7 @@ module control_unit (
         we = b1; // write enable
         wdsel = 3b0; //take alu output
         ctrl.d = ctrl.ADD_ORIENTATION;
-       
+      
       ///
       ctrl.ADD_ORIENTATION:
         seg_index = {4h0,4h0,4h3,4h8};
@@ -629,9 +646,9 @@ module control_unit (
       ctrl.CHECK_WIN:
         seg_index = {4h0,4h0,4h3,4h9};
         //if (level_in < b10){
-          //level_out = level_in + b1;
-          //clear = 1;
-          //ctrl.d = ctrl.START;}
+        //level_out = level_in + b1;
+        //clear = 1;
+        //ctrl.d = ctrl.START;}
         //else {ctrl.d = ctrl.GAMEOVER;}
         
         ra = LEVEL; // level reg
@@ -643,10 +660,10 @@ module control_unit (
         we = b1; // write enable
         wdsel = 3b0; //take alu output
         ctrl.d = ctrl.CHECK_WIN_CMP;
-        
+      
       ///
       ctrl.CHECK_WIN_CMP:
-      //if TEMP1 == 1, when add 0, res = 1, z=0, means less than
+        //if TEMP1 == 1, when add 0, res = 1, z=0, means less than
         seg_index = {4h0,4h0,4h4,4h0};
         ra = TEMP1; // compare result
         rb = RANDOM; // RANDOM num
@@ -660,7 +677,7 @@ module control_unit (
         if (z==0){
           ctrl.d = ctrl.CHECK_WIN_ADD;}
         else{ctrl.d = ctrl.GAMEOVER;}
-        
+      
       ///
       ctrl.CHECK_WIN_ADD:
         seg_index = {4h0,4h0,4h4,4h1};
