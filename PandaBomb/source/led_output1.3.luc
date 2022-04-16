@@ -1,8 +1,8 @@
 module led_output (
-//version 1.2 debug with slowclock
-//all 1.1 probelms solved, need to add other states for disaplaying color to led_output
-//further improvement: add timer 60 sec 
-//remove disappearing, changed color
+    //FINAL PROJECT IS THIS
+    //version 1.3 debug with slowclock & w/o edge_detector
+    //all 1.2 probelms solved
+    
     input map[8][8],
     input x[16],
     input y[16],
@@ -19,7 +19,7 @@ module led_output (
     
   ) {
   
-  const GREEN = h0000FF;//green
+  const PATH = h0000FF;//green
   const PANDA = hFF0000; //blue
   const GOAL = hFFFF00; //yellow
   const WALL = h00FF00; //red
@@ -37,7 +37,7 @@ module led_output (
       row0[0] =  WALL;
     }
     else {
-      row0[0] = GREEN;
+      row0[0] = PATH;
     }
     
     
@@ -50,7 +50,7 @@ module led_output (
       row0[1] =  WALL;
     }
     else {
-      row0[1] = GREEN;
+      row0[1] = PATH;
     }
     
     
@@ -63,7 +63,7 @@ module led_output (
       row0[2] =  WALL;
     }
     else {
-      row0[2] = GREEN;
+      row0[2] = PATH;
     }
     
     
@@ -76,7 +76,7 @@ module led_output (
       row0[3] =  WALL;
     }
     else {
-      row0[3] = GREEN;
+      row0[3] = PATH;
     }
     
     
@@ -89,7 +89,7 @@ module led_output (
       row0[4] =  WALL;
     }
     else {
-      row0[4] = GREEN;
+      row0[4] = PATH;
     }
     
     
@@ -102,7 +102,7 @@ module led_output (
       row0[5] =  WALL;
     }
     else {
-      row0[5] = GREEN;
+      row0[5] = PATH;
     }
     
     
@@ -115,7 +115,7 @@ module led_output (
       row0[6] =  WALL;
     }
     else {
-      row0[6] = GREEN;
+      row0[6] = PATH;
     }
     
     
@@ -128,7 +128,7 @@ module led_output (
       row0[7] =  WALL;
     }
     else {
-      row0[7] = GREEN;
+      row0[7] = PATH;
     }
     
     
@@ -141,7 +141,7 @@ module led_output (
       row1[0] =  WALL;
     }
     else {
-      row1[0] = GREEN;
+      row1[0] = PATH;
     }
     
     
@@ -154,7 +154,7 @@ module led_output (
       row1[1] =  WALL;
     }
     else {
-      row1[1] = GREEN;
+      row1[1] = PATH;
     }
     
     
@@ -167,7 +167,7 @@ module led_output (
       row1[2] =  WALL;
     }
     else {
-      row1[2] = GREEN;
+      row1[2] = PATH;
     }
     
     
@@ -180,7 +180,7 @@ module led_output (
       row1[3] =  WALL;
     }
     else {
-      row1[3] = GREEN;
+      row1[3] = PATH;
     }
     
     
@@ -193,7 +193,7 @@ module led_output (
       row1[4] =  WALL;
     }
     else {
-      row1[4] = GREEN;
+      row1[4] = PATH;
     }
     
     
@@ -206,7 +206,7 @@ module led_output (
       row1[5] =  WALL;
     }
     else {
-      row1[5] = GREEN;
+      row1[5] = PATH;
     }
     
     
@@ -219,7 +219,7 @@ module led_output (
       row1[6] =  WALL;
     }
     else {
-      row1[6] = GREEN;
+      row1[6] = PATH;
     }
     
     
@@ -232,7 +232,7 @@ module led_output (
       row1[7] =  WALL;
     }
     else {
-      row1[7] = GREEN;
+      row1[7] = PATH;
     }
     
     
@@ -245,7 +245,7 @@ module led_output (
       row2[0] =  WALL;
     }
     else {
-      row2[0] = GREEN;
+      row2[0] = PATH;
     }
     
     
@@ -258,7 +258,7 @@ module led_output (
       row2[1] =  WALL;
     }
     else {
-      row2[1] = GREEN;
+      row2[1] = PATH;
     }
     
     
@@ -271,7 +271,7 @@ module led_output (
       row2[2] =  WALL;
     }
     else {
-      row2[2] = GREEN;
+      row2[2] = PATH;
     }
     
     
@@ -284,7 +284,7 @@ module led_output (
       row2[3] =  WALL;
     }
     else {
-      row2[3] = GREEN;
+      row2[3] = PATH;
     }
     
     
@@ -297,7 +297,7 @@ module led_output (
       row2[4] =  WALL;
     }
     else {
-      row2[4] = GREEN;
+      row2[4] = PATH;
     }
     
     
@@ -310,7 +310,7 @@ module led_output (
       row2[5] =  WALL;
     }
     else {
-      row2[5] = GREEN;
+      row2[5] = PATH;
     }
     
     
@@ -323,7 +323,7 @@ module led_output (
       row2[6] =  WALL;
     }
     else {
-      row2[6] = GREEN;
+      row2[6] = PATH;
     }
     
     
@@ -336,7 +336,7 @@ module led_output (
       row2[7] =  WALL;
     }
     else {
-      row2[7] = GREEN;
+      row2[7] = PATH;
     }
     
     
@@ -349,7 +349,7 @@ module led_output (
       row3[0] =  WALL;
     }
     else {
-      row3[0] = GREEN;
+      row3[0] = PATH;
     }
     
     
@@ -362,7 +362,7 @@ module led_output (
       row3[1] =  WALL;
     }
     else {
-      row3[1] = GREEN;
+      row3[1] = PATH;
     }
     
     
@@ -375,7 +375,7 @@ module led_output (
       row3[2] =  WALL;
     }
     else {
-      row3[2] = GREEN;
+      row3[2] = PATH;
     }
     
     
@@ -388,7 +388,7 @@ module led_output (
       row3[3] =  WALL;
     }
     else {
-      row3[3] = GREEN;
+      row3[3] = PATH;
     }
     
     
@@ -401,7 +401,7 @@ module led_output (
       row3[4] =  WALL;
     }
     else {
-      row3[4] = GREEN;
+      row3[4] = PATH;
     }
     
     
@@ -414,7 +414,7 @@ module led_output (
       row3[5] =  WALL;
     }
     else {
-      row3[5] = GREEN;
+      row3[5] = PATH;
     }
     
     
@@ -427,7 +427,7 @@ module led_output (
       row3[6] =  WALL;
     }
     else {
-      row3[6] = GREEN;
+      row3[6] = PATH;
     }
     
     
@@ -440,7 +440,7 @@ module led_output (
       row3[7] =  WALL;
     }
     else {
-      row3[7] = GREEN;
+      row3[7] = PATH;
     }
     
     
@@ -453,7 +453,7 @@ module led_output (
       row4[0] =  WALL;
     }
     else {
-      row4[0] = GREEN;
+      row4[0] = PATH;
     }
     
     
@@ -466,7 +466,7 @@ module led_output (
       row4[1] =  WALL;
     }
     else {
-      row4[1] = GREEN;
+      row4[1] = PATH;
     }
     
     
@@ -479,7 +479,7 @@ module led_output (
       row4[2] =  WALL;
     }
     else {
-      row4[2] = GREEN;
+      row4[2] = PATH;
     }
     
     
@@ -492,7 +492,7 @@ module led_output (
       row4[3] =  WALL;
     }
     else {
-      row4[3] = GREEN;
+      row4[3] = PATH;
     }
     
     
@@ -505,7 +505,7 @@ module led_output (
       row4[4] =  WALL;
     }
     else {
-      row4[4] = GREEN;
+      row4[4] = PATH;
     }
     
     
@@ -518,7 +518,7 @@ module led_output (
       row4[5] =  WALL;
     }
     else {
-      row4[5] = GREEN;
+      row4[5] = PATH;
     }
     
     
@@ -531,7 +531,7 @@ module led_output (
       row4[6] =  WALL;
     }
     else {
-      row4[6] = GREEN;
+      row4[6] = PATH;
     }
     
     
@@ -544,7 +544,7 @@ module led_output (
       row4[7] =  WALL;
     }
     else {
-      row4[7] = GREEN;
+      row4[7] = PATH;
     }
     
     
@@ -557,7 +557,7 @@ module led_output (
       row5[0] =  WALL;
     }
     else {
-      row5[0] = GREEN;
+      row5[0] = PATH;
     }
     
     
@@ -570,7 +570,7 @@ module led_output (
       row5[1] =  WALL;
     }
     else {
-      row5[1] = GREEN;
+      row5[1] = PATH;
     }
     
     
@@ -583,7 +583,7 @@ module led_output (
       row5[2] =  WALL;
     }
     else {
-      row5[2] = GREEN;
+      row5[2] = PATH;
     }
     
     
@@ -596,7 +596,7 @@ module led_output (
       row5[3] =  WALL;
     }
     else {
-      row5[3] = GREEN;
+      row5[3] = PATH;
     }
     
     
@@ -609,7 +609,7 @@ module led_output (
       row5[4] =  WALL;
     }
     else {
-      row5[4] = GREEN;
+      row5[4] = PATH;
     }
     
     
@@ -622,7 +622,7 @@ module led_output (
       row5[5] =  WALL;
     }
     else {
-      row5[5] = GREEN;
+      row5[5] = PATH;
     }
     
     
@@ -635,7 +635,7 @@ module led_output (
       row5[6] =  WALL;
     }
     else {
-      row5[6] = GREEN;
+      row5[6] = PATH;
     }
     
     
@@ -648,7 +648,7 @@ module led_output (
       row5[7] =  WALL;
     }
     else {
-      row5[7] = GREEN;
+      row5[7] = PATH;
     }
     
     
@@ -661,7 +661,7 @@ module led_output (
       row6[0] =  WALL;
     }
     else {
-      row6[0] = GREEN;
+      row6[0] = PATH;
     }
     
     
@@ -674,7 +674,7 @@ module led_output (
       row6[1] =  WALL;
     }
     else {
-      row6[1] = GREEN;
+      row6[1] = PATH;
     }
     
     
@@ -687,7 +687,7 @@ module led_output (
       row6[2] =  WALL;
     }
     else {
-      row6[2] = GREEN;
+      row6[2] = PATH;
     }
     
     
@@ -700,7 +700,7 @@ module led_output (
       row6[3] =  WALL;
     }
     else {
-      row6[3] = GREEN;
+      row6[3] = PATH;
     }
     
     
@@ -713,7 +713,7 @@ module led_output (
       row6[4] =  WALL;
     }
     else {
-      row6[4] = GREEN;
+      row6[4] = PATH;
     }
     
     
@@ -726,7 +726,7 @@ module led_output (
       row6[5] =  WALL;
     }
     else {
-      row6[5] = GREEN;
+      row6[5] = PATH;
     }
     
     
@@ -739,7 +739,7 @@ module led_output (
       row6[6] =  WALL;
     }
     else {
-      row6[6] = GREEN;
+      row6[6] = PATH;
     }
     
     
@@ -752,7 +752,7 @@ module led_output (
       row6[7] =  WALL;
     }
     else {
-      row6[7] = GREEN;
+      row6[7] = PATH;
     }
     
     
@@ -765,7 +765,7 @@ module led_output (
       row7[0] =  WALL;
     }
     else {
-      row7[0] = GREEN;
+      row7[0] = PATH;
     }
     
     
@@ -778,7 +778,7 @@ module led_output (
       row7[1] =  WALL;
     }
     else {
-      row7[1] = GREEN;
+      row7[1] = PATH;
     }
     
     
@@ -791,7 +791,7 @@ module led_output (
       row7[2] =  WALL;
     }
     else {
-      row7[2] = GREEN;
+      row7[2] = PATH;
     }
     
     
@@ -804,7 +804,7 @@ module led_output (
       row7[3] =  WALL;
     }
     else {
-      row7[3] = GREEN;
+      row7[3] = PATH;
     }
     
     
@@ -817,7 +817,7 @@ module led_output (
       row7[4] =  WALL;
     }
     else {
-      row7[4] = GREEN;
+      row7[4] = PATH;
     }
     
     
@@ -830,7 +830,7 @@ module led_output (
       row7[5] =  WALL;
     }
     else {
-      row7[5] = GREEN;
+      row7[5] = PATH;
     }
     
     
@@ -843,7 +843,7 @@ module led_output (
       row7[6] =  WALL;
     }
     else {
-      row7[6] = GREEN;
+      row7[6] = PATH;
     }
     
     
@@ -853,13 +853,7 @@ module led_output (
       row7[7] = GOAL;
     }
     else{
-      row7[7] = GREEN;
+      row7[7] = PATH;
     } 
     
 }
-
-
-
-
-
-
