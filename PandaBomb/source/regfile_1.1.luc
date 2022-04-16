@@ -1,9 +1,8 @@
 module regfile (
-//version 1.0 
-//functional except orientation and move number got errors, 
+//version 1.1 
+//functional except orientation and move number got errors, -> fixing to adapt to datapath
 //level changing are not tested,
-//panda sometimes disappears when testing the led on the first maprow1
-// level and orientation_in and in_move_num not changed to be directly out 
+//panda sometimes disappears when testing the led on the first row
     input clk,  // clock
     input rst,  // reset
     input ra[5],
@@ -11,9 +10,9 @@ module regfile (
     input rc[5],
     input we,
     input write_data[16],
-    input level_in[16],
-    input in_move_num[16],//number of moves calculated from cu
-    input orientation_in[16],
+    //input level_in[16],
+    //input in_move_num[16],//number of moves calculated from cu
+    //input orientation_in[16],
     input clear[1],
     
     //debug
@@ -27,7 +26,7 @@ module regfile (
     output y_temp[16],
     output orientation_out[16],
     output level_out[16],
-    output out_move_num[16], // output number of move to control_unit
+    //output out_move_num[16], // output number of move to control_unit
     output xpos[16],
     output ypos[16], // 3bit binary number to represent value of y coordinate from 0 - 7
     output ra_data[16],
@@ -91,7 +90,7 @@ module regfile (
     
     y_temp = reg_temp.q[2];//Y_TEMP
     //reg_move_num.d = in_move_num;
-    out_move_num = reg_move_num.q;
+    //out_move_num = reg_move_num.q;
     xpos = reg_xpos.q;
     ypos = reg_ypos.q;
     maprow1=r1.out_row[7:0];
@@ -132,20 +131,20 @@ module regfile (
         5h7: reg_map_row8.d = r8.out_row;
         5h8: reg_xpos.d = write_data; // 5h8 is the address of rc. thus when rc is 4h00, that particular line will be overwritten with a new write_data
         5h9: reg_ypos.d = write_data;
-        //5hA: reg_move_num.d = write_data[15:0];
-        5hA: reg_move_num.d = in_move_num;
+        5hA: reg_move_num.d = write_data[15:0];
+        //5hA: reg_move_num.d = in_move_num;
         5hB: reg_temp.d[0] = write_data[15:0];
         5hC: reg_temp.d[1] = write_data[15:0];
         5hD: reg_temp.d[2] = write_data[15:0];
         5hE: reg_temp.d[3] = write_data[15:0];
-        //5hF: reg_level.d = write_data[15:0];
-        5hF: reg_level.d = level_in;
+        5hF: reg_level.d = write_data[15:0];
+        //5hF: reg_level.d = level_in;
         5h10: reg_temp.d[4] = write_data[15:0];
         5h11: reg_temp.d[5] = write_data[15:0];
         5h12: reg_temp.d[6] = write_data[15:0];
         5h13: reg_temp.d[7] = write_data[15:0];
-        //5h14: reg_orientation.d = write_data[15:0];
-        5h14: reg_orientation.d = orientation_in;
+        5h14: reg_orientation.d = write_data[15:0];
+        //5h14: reg_orientation.d = orientation_in;
         5h15: reg_temp.d[8] = write_data[15:0];
       }
     }

@@ -1,0 +1,226 @@
+module au_top (
+//version 1.1 
+//functional except orientation and move number got errors, -> fixing to adapt to datapath
+//level changing are not tested,
+//panda sometimes disappears when testing the led on the first row
+
+    //this is the version that i changed
+    input clk,              // 100MHz clock
+    
+    input usb_rx,           // don't know what is this
+    output usb_tx,          // don't know what is this
+    output io_seg [8],      // 7-segment LEDs on IO Shield
+    output io_sel [4],      // Digit select on IO Shield
+    output led [8],
+    input rst_n,
+    input io_dip [3][8],
+    
+    // auto_check
+    input io_button [5],
+    
+    // 8x8 LED
+    output io_led[3][8],
+    output br_led0, output br_led1, output br_led2, output br_led3, output br_led4, output br_led5,
+     output br_led6, output br_led7,
+    input br_button0,
+    input br_button1,
+    input br_button2,
+    input br_button3
+  ) {
+  sig rst;                  // reset signal
+  
+  .clk(clk) {
+    
+    reset_conditioner reset_cond;
+  }
+  //counter slowclock(#SIZE(1),#DIV(26),.clk(clk),.rst(rst));
+  
+  // multi_seven_seg
+  multi_seven_seg seg(.clk(clk), .rst(rst));
+  
+  //button_conditioner
+  button_conditioner buttoncond[4](.clk(clk));
+  edge_detector buttondetector[4](#RISE(1), #FALL(0),.clk(clk)); //detect on rising edge only
+  
+  // module initializtaion//
+  alu alu;
+  regfile regfile(.clk(clk), .rst(rst));
+  wdselmux wdselmux;
+  aselmux aselmux;
+  bselmux bselmux;
+  led_output led_out;
+  joystick_input joystick_input;
+  orientation_unit orientation_unit;
+  control_unit control_unit(.clk(clk),.rst(rst));
+ 
+  
+  
+  ledstrip ledstrip0(#PIXEL_COUNT(8), .clk(clk), .rst(rst));
+  ledstrip ledstrip1(#PIXEL_COUNT(8), .clk(clk), .rst(rst));
+  ledstrip ledstrip2(#PIXEL_COUNT(8), .clk(clk), .rst(rst));
+  ledstrip ledstrip3(#PIXEL_COUNT(8), .clk(clk), .rst(rst));
+  ledstrip ledstrip4(#PIXEL_COUNT(8), .clk(clk), .rst(rst));
+  ledstrip ledstrip5(#PIXEL_COUNT(8), .clk(clk), .rst(rst));
+  ledstrip ledstrip6(#PIXEL_COUNT(8), .clk(clk), .rst(rst));
+  ledstrip ledstrip7(#PIXEL_COUNT(8), .clk(clk), .rst(rst));
+  
+  
+  always {
+    // seven_seg init
+    seg.values = control_unit.seg_index;
+    
+    reset_cond.in = ~rst_n; // input raw inverted reset signal
+    rst = reset_cond.out;   // conditioned reset
+    
+    io_led = 3x{{8h00}};
+    usb_tx = usb_rx;        // loop serial port
+    led = 8h00;             // turn LEDs off
+    io_seg = 8hff;          // turn segments off
+    io_sel = 4hf;           // select no digits
+    
+    //buttoncond.in = io_button[3:0];
+    buttoncond.in[0] = br_button0;
+    buttoncond.in[1] = br_button1;
+    buttoncond.in[2] = br_button2;
+    buttoncond.in[3] = br_button3;
+    buttondetector.in = buttoncond.out;
+ 
+    ///////////////////////
+    //external input connection//TODO
+    
+   
+    // receive joystick input
+    joystick_input.up_button=buttondetector.out[0];
+    joystick_input.down_button=buttondetector.out[1];
+    joystick_input.left_button=buttondetector.out[2];
+    joystick_input.right_button=buttondetector.out[3];
+    
+    //buttons
+    control_unit.start = io_dip[0][0];
+    control_unit.reset = 0;
+    
+    ///////////////////////
+    //module connection//
+    
+    // joystick -> orientation_unit
+    orientation_unit.joystick = joystick_input.joystick;
+    
+    //regfile_orien <-> orientation_unit <-> control_unit
+    orientation_unit.orientation_state = regfile.orientation_out[1:0];
+    //control_unit.orientation_in = regfile.orientation_out;
+    //regfile.orientation_in = control_unit.orientation_out;
+    
+    //moves regfile_move <-> control_unit
+    //control_unit.move_num_in =regfile.out_move_num;
+    //regfile.in_move_num = control_unit.move_num_out;
+    
+    //level
+    //control_unit.level_in = regfile.level_out;
+    //regfile.level_in = control_unit.level_out;
+    
+    
+    // control_unit input
+    control_unit.direction = orientation_unit.direction;
+    control_unit.y_temp = regfile.y_temp;//for collision check
+    control_unit.z = alu.z;
+    
+    
+    //control_unit output -> regfile, selmuxes, alu
+    regfile.we = control_unit.we;
+    regfile.ra = control_unit.ra;
+    regfile.rb = control_unit.rb;
+    regfile.rc = control_unit.rc;
+    regfile.clear = control_unit.clear;
+    aselmux.sel = control_unit.asel;
+    bselmux.sel = control_unit.bsel;
+    wdselmux.wdsel = control_unit.wdsel;
+    alu.alufn = control_unit.alufn;
+    
+    //regfile -> abselmux -> alu
+    aselmux.rdata = regfile.ra_data;
+    bselmux.rdata = regfile.rb_data;
+    alu.a = aselmux.out;
+    alu.b = bselmux.out;
+    
+    // alu -> wdselmux&rom -> regfile
+    wdselmux.alu = alu.out;
+    regfile.write_data = wdselmux.out;
+    
+    //led connection
+    led_out.x = regfile.xpos;
+    led_out.y = regfile.ypos;
+    led_out.map[0] = regfile.maprow1;
+    led_out.map[1] = regfile.maprow2;
+    led_out.map[2] = regfile.maprow3;
+    led_out.map[3] = regfile.maprow4;
+    led_out.map[4] = regfile.maprow5;
+    led_out.map[5] = regfile.maprow6;
+    led_out.map[6] = regfile.maprow7;
+    led_out.map[7] = regfile.maprow8;
+    
+    //led_out.game_start = io_dip[0][0];
+    led_out.game_start = 1;
+    led_out.disappear = 0;
+    
+    ////////////////////////
+    //external led output//
+    
+    ledstrip0.update=1;
+    ledstrip0.color=led_out.row0[ledstrip0.pixel];
+    br_led0=ledstrip0.led;
+    
+    ledstrip1.update=1;
+    ledstrip1.color=led_out.row1[ledstrip1.pixel];
+    br_led1=ledstrip1.led;
+    
+    ledstrip2.update=1;
+    ledstrip2.color=led_out.row2[ledstrip2.pixel];
+    br_led2=ledstrip2.led;
+    
+    ledstrip3.update=1;
+    ledstrip3.color=led_out.row3[ledstrip3.pixel];
+    br_led3=ledstrip3.led;
+    
+    ledstrip4.update=1;
+    ledstrip4.color=led_out.row4[ledstrip4.pixel];
+    br_led4=ledstrip4.led;
+    
+    ledstrip5.update=1;
+    ledstrip5.color=led_out.row5[ledstrip5.pixel];
+    br_led5=ledstrip5.led;
+    
+    ledstrip6.update=1;
+    ledstrip6.color=led_out.row6[ledstrip6.pixel];
+    br_led6=ledstrip6.led;
+    
+    ledstrip7.update=1;
+    ledstrip7.color=led_out.row7[ledstrip7.pixel];
+    br_led7=ledstrip7.led;
+    
+    
+    //DEBUG
+    io_led[0][2:0] = regfile.xpos[2:0];
+    io_led[0][5:3] = regfile.ypos[2:0];
+    //io_led[1][2:0] = regfile.y_temp[2:0];
+    //io_led[1][5:3] = regfile.x_temp[2:0];
+    //io_led[2][2:0] = regfile.temp10;
+    //io_led[2][5:3] = regfile.temp11;
+    //io_led[2][7:6] = regfile.temp12[1:0];
+    //io_led[1][7:6] = regfile.temp13[1:0];
+    //io_led[2][2:0] = regfile.out_move_num[2:0];
+    //io_led[2][5:3] = regfile.orientation_out[2:0];
+    //io_led[0] = led_out.row0[5][7:0];
+    io_led[1][3:0] = joystick_input.joystick;
+    io_led[1][7:4] = buttondetector.out;
+    io_led[2][0] = br_button0;
+    io_led[2][1] = br_button1;
+    io_led[2][2] = br_button2;
+    io_led[2][3] = br_button3;
+    
+    // 7-seg
+    io_seg = ~seg.seg;  // connect segments to the driver
+    io_sel = ~seg.sel;  // connect digit select to the driver
+    
+    //io_led[0] = led_out.matrix[0][0][7:0];
+  }
+}

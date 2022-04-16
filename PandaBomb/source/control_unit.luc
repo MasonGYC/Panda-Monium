@@ -1,4 +1,8 @@
 module control_unit (
+//version 1.0 
+//functional except orientation and move number got errors, 
+//level changing are not tested,
+//panda sometimes disappears when testing the led on the first row
     //this version uses ALU
     //add in debug signal for testing
     input clk,  // clock
@@ -9,9 +13,12 @@ module control_unit (
     input direction[4], //up down LEFT RIGHT,
     input start[1], //START button
     input reset[1], //RESET button
-    input timer[16],
     input y_temp[16], //content of Y_TEMP reg
+    input move_num_in[16],//number of movement to determine orientation state
+    input orientation_in[16],
     
+    output move_num_out[16],
+    output orientation_out[16],
     output alufn[6],
     output asel[4],
     output bsel[4],
@@ -20,24 +27,23 @@ module control_unit (
     output ra[5],
     output rb[5],
     output rc[5],
-    output game_start[1],
     output clear[1], //to clear all register values once new level
     output seg_index[4][4]//debug seven_seg
-    
-    
-    
     
   ) {
   // 5hD: temp[2] y temp always
   // 5hE: temp[3] x temp always
   const X_TEMP = 5hE;
   const Y_TEMP = 5hD;
-  const RANDOM = 5hA;
+  const RANDOM = 5h15;
   const X_POS = 5h8;
   const Y_POS = 5h9;
+  const LEVEL = 5hF;
+  const MOVE = 5hA;
+  const ORI = 5h14;
   
-  counter slowclock(#SIZE(1),#DIV(25),.clk(clk),.rst(rst));
-  fsm ctrl(.clk(slowclock.value),.rst(rst))={
+  //counter slowclock(#SIZE(1),#DIV(25),.clk(clk),.rst(rst));
+  fsm ctrl(.clk(clk),.rst(rst))={
     START, //wait for start button
     GENERATE_MAP,GENERATE_MAP_ROW1,GENERATE_MAP_ROW2,GENERATE_MAP_ROW3,GENERATE_MAP_ROW4,GENERATE_MAP_ROW5,GENERATE_MAP_ROW6,GENERATE_MAP_ROW7,GENERATE_MAP_ROW8, //map -> idle
     IDLE,
@@ -46,7 +52,8 @@ module control_unit (
     CHECK_GOAL_X, CHECK_GOAL_Y,CHECK_GOAL_XY,CHECK_GOAL_XY_MOVE, //check whether reached goal
     CHECK_COLL,CHECK_COLL_INDEX,CHECK_COLL_CMP, //check obstacle
     UPDATE_XPOS,UPDATE_YPOS,
-    CHECK_WIN_UPPERBOUND,CHECK_WIN_LOWERBOUND,CHECK_WIN_AND,CHECK_WIN_LEVELUP,CHECK_WIN_LEVELUP_CHECK,
+    ADD_MOVE,RESET_MOVE,CHECK_ORIENTATION,RESET_ORIENTATION,ADD_ORIENTATION,
+    CHECK_WIN_UPPERBOUND,
     GAMEOVER,RESET_LEVEL};
   
   
@@ -62,14 +69,11 @@ module control_unit (
     rb = 5h13;
     rc = 5h13;
     level_out = 16b0;
-    game_start = b0;
     seg_index = {4h0,4h0,4h0,4h0};
     clear = 0;
+    move_num_out = move_num_in;
+    orientation_out = orientation_in;
     
-    //check timer
-    if (timer > 16b111100){
-      ctrl.d = ctrl.GAMEOVER;
-    }//exceed time 60 sec
     
     //fms ctrl
     case(ctrl.q){
@@ -85,7 +89,6 @@ module control_unit (
       ctrl.GENERATE_MAP:
         seg_index = {4h0,4h0,4h0,4h2};
         we = b1;
-        game_start = b1;
         //load first line
         ctrl.d = ctrl.GENERATE_MAP_ROW1;
       
@@ -485,11 +488,57 @@ module control_unit (
         alufn = 6b0; // add
         we = b1; // write enable
         wdsel = 3b0; //take alu output
+        
+        //update orientation_state
+        if (move_num_in==b101){
+          ctrl.d = ctrl.RESET_MOVE;
+          }
+        else{
+          ctrl.d = ctrl.ADD_MOVE;
+        }
+      
+      //////////////////////////////
+      ctrl.RESET_MOVE:
+        //write in zero
+        //seg_index = {4h2,4h0,4h1,4h4};
+        //ra = 5h12; // move reg
+        //rb = RANDOM; // random
+        //rc = RANDOM; // random
+        //asel = 4b0; // choose ra data
+        //bsel = 4b1010; // choose 0
+        //alufn = 6b0; // add
+        //we = b0; // write not enable
+        //wdsel = 3b0; //take alu output
+        
+        rc=5hA;
+        we=b1;
+        move_num_out = 0;
+        ctrl.d = ctrl.CHECK_ORIENTATION;
+      
+      ctrl.CHECK_ORIENTATION:
+        if(orientation_in==b11){
+          ctrl.d = ctrl.RESET_ORIENTATION;
+        }
+        else{
+          ctrl.d = ctrl.ADD_ORIENTATION;
+        }
+      
+      ctrl.ADD_ORIENTATION:
+        rc = 5h14;
+        we = b1;
+        orientation_out = orientation_in + b1;
         ctrl.d = ctrl.IDLE;
+      
+      ctrl.ADD_MOVE:
+        rc=5hA;
+        we=b1;
+        move_num_out = move_num_in+1;
+        ctrl.d = ctrl.IDLE;
+      
       //////////////////////////////
       ctrl.CHECK_WIN_UPPERBOUND:
         seg_index = {4h0,4h0,4h1,4h7};
-        if (level_in < b10 && level_in >= b00){
+        if (level_in < b10){
           level_out = level_in + b1;
           clear = 1;
           ctrl.d = ctrl.START;

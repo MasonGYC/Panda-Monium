@@ -23,6 +23,8 @@
 
 ### Alu
 - alu.luc: for complex calculation
+- abselmux.luc: aselmux and bselmux to select ra and rb data
+
 
 ### Constraints
 - io.acf: io board specification

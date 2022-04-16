@@ -108,8 +108,7 @@ module au_top (
     control_unit.level_in = regfile.level_out;
     regfile.level_in = control_unit.level_out;
     //regfile.level_in = 16b0;
-    regfile.orientation_in =  b11;
-    //orientation_unit.orientation_state =regfile.orientation_out;
+    regfile.orientation_in = ;
     
     //regffile -> abselmux -> alu
     aselmux.rdata = regfile.ra_data;
