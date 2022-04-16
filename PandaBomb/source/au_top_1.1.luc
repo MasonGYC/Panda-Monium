@@ -1,226 +1,859 @@
-module au_top (
-//version 1.1 
-//functional except orientation and move number got errors, -> fixing to adapt to datapath
-//level changing are not tested,
-//panda sometimes disappears when testing the led on the first row
-
-    //this is the version that i changed
-    input clk,              // 100MHz clock
+module led_output (
+//version 1.2 debug with slowclock
+//all 1.1 probelms solved, need to add other states for disaplaying color to led_output
+//further improvement: add timer 60 sec 
+//remove disappearing, changed color
+    input map[8][8],
+    input x[16],
+    input y[16],
+    input game_start[1],
+    output row0[8][24],
+    output row1[8][24],
+    output row2[8][24],
+    output row3[8][24],
+    output row4[8][24],
+    output row5[8][24],
+    output row6[8][24],
+    output row7[8][24]
     
-    input usb_rx,           // don't know what is this
-    output usb_tx,          // don't know what is this
-    output io_seg [8],      // 7-segment LEDs on IO Shield
-    output io_sel [4],      // Digit select on IO Shield
-    output led [8],
-    input rst_n,
-    input io_dip [3][8],
     
-    // auto_check
-    input io_button [5],
-    
-    // 8x8 LED
-    output io_led[3][8],
-    output br_led0, output br_led1, output br_led2, output br_led3, output br_led4, output br_led5,
-     output br_led6, output br_led7,
-    input br_button0,
-    input br_button1,
-    input br_button2,
-    input br_button3
   ) {
-  sig rst;                  // reset signal
   
-  .clk(clk) {
-    
-    reset_conditioner reset_cond;
-  }
-  //counter slowclock(#SIZE(1),#DIV(26),.clk(clk),.rst(rst));
+  const GREEN = h0000FF;//green
+  const PANDA = hFF0000; //blue
+  const GOAL = hFFFF00; //yellow
+  const WALL = h00FF00; //red
   
-  // multi_seven_seg
-  multi_seven_seg seg(.clk(clk), .rst(rst));
-  
-  //button_conditioner
-  button_conditioner buttoncond[4](.clk(clk));
-  edge_detector buttondetector[4](#RISE(1), #FALL(0),.clk(clk)); //detect on rising edge only
-  
-  // module initializtaion//
-  alu alu;
-  regfile regfile(.clk(clk), .rst(rst));
-  wdselmux wdselmux;
-  aselmux aselmux;
-  bselmux bselmux;
-  led_output led_out;
-  joystick_input joystick_input;
-  orientation_unit orientation_unit;
-  control_unit control_unit(.clk(clk),.rst(rst));
- 
-  
-  
-  ledstrip ledstrip0(#PIXEL_COUNT(8), .clk(clk), .rst(rst));
-  ledstrip ledstrip1(#PIXEL_COUNT(8), .clk(clk), .rst(rst));
-  ledstrip ledstrip2(#PIXEL_COUNT(8), .clk(clk), .rst(rst));
-  ledstrip ledstrip3(#PIXEL_COUNT(8), .clk(clk), .rst(rst));
-  ledstrip ledstrip4(#PIXEL_COUNT(8), .clk(clk), .rst(rst));
-  ledstrip ledstrip5(#PIXEL_COUNT(8), .clk(clk), .rst(rst));
-  ledstrip ledstrip6(#PIXEL_COUNT(8), .clk(clk), .rst(rst));
-  ledstrip ledstrip7(#PIXEL_COUNT(8), .clk(clk), .rst(rst));
   
   
   always {
-    // seven_seg init
-    seg.values = control_unit.seg_index;
-    
-    reset_cond.in = ~rst_n; // input raw inverted reset signal
-    rst = reset_cond.out;   // conditioned reset
-    
-    io_led = 3x{{8h00}};
-    usb_tx = usb_rx;        // loop serial port
-    led = 8h00;             // turn LEDs off
-    io_seg = 8hff;          // turn segments off
-    io_sel = 4hf;           // select no digits
-    
-    //buttoncond.in = io_button[3:0];
-    buttoncond.in[0] = br_button0;
-    buttoncond.in[1] = br_button1;
-    buttoncond.in[2] = br_button2;
-    buttoncond.in[3] = br_button3;
-    buttondetector.in = buttoncond.out;
- 
-    ///////////////////////
-    //external input connection//TODO
-    
    
-    // receive joystick input
-    joystick_input.up_button=buttondetector.out[0];
-    joystick_input.down_button=buttondetector.out[1];
-    joystick_input.left_button=buttondetector.out[2];
-    joystick_input.right_button=buttondetector.out[3];
     
-    //buttons
-    control_unit.start = io_dip[0][0];
-    control_unit.reset = 0;
-    
-    ///////////////////////
-    //module connection//
-    
-    // joystick -> orientation_unit
-    orientation_unit.joystick = joystick_input.joystick;
-    
-    //regfile_orien <-> orientation_unit <-> control_unit
-    orientation_unit.orientation_state = regfile.orientation_out[1:0];
-    //control_unit.orientation_in = regfile.orientation_out;
-    //regfile.orientation_in = control_unit.orientation_out;
-    
-    //moves regfile_move <-> control_unit
-    //control_unit.move_num_in =regfile.out_move_num;
-    //regfile.in_move_num = control_unit.move_num_out;
-    
-    //level
-    //control_unit.level_in = regfile.level_out;
-    //regfile.level_in = control_unit.level_out;
+    //led[0][0]
+    if (game_start == 1 && map[0][0] == 0 && (x==0 && y==0)){
+      row0[0] = PANDA;
+    }
+    else if (game_start == 1 && map[0][0] == 1){
+      row0[0] =  WALL;
+    }
+    else {
+      row0[0] = GREEN;
+    }
     
     
-    // control_unit input
-    control_unit.direction = orientation_unit.direction;
-    control_unit.y_temp = regfile.y_temp;//for collision check
-    control_unit.z = alu.z;
+    
+    //led[0][1]
+    if (game_start == 1 && map[0][1] == 0 && (x==0 && y==1)){
+      row0[1] = PANDA;
+    }
+    else if (game_start == 1 && map[0][1] == 1){
+      row0[1] =  WALL;
+    }
+    else {
+      row0[1] = GREEN;
+    }
     
     
-    //control_unit output -> regfile, selmuxes, alu
-    regfile.we = control_unit.we;
-    regfile.ra = control_unit.ra;
-    regfile.rb = control_unit.rb;
-    regfile.rc = control_unit.rc;
-    regfile.clear = control_unit.clear;
-    aselmux.sel = control_unit.asel;
-    bselmux.sel = control_unit.bsel;
-    wdselmux.wdsel = control_unit.wdsel;
-    alu.alufn = control_unit.alufn;
     
-    //regfile -> abselmux -> alu
-    aselmux.rdata = regfile.ra_data;
-    bselmux.rdata = regfile.rb_data;
-    alu.a = aselmux.out;
-    alu.b = bselmux.out;
-    
-    // alu -> wdselmux&rom -> regfile
-    wdselmux.alu = alu.out;
-    regfile.write_data = wdselmux.out;
-    
-    //led connection
-    led_out.x = regfile.xpos;
-    led_out.y = regfile.ypos;
-    led_out.map[0] = regfile.maprow1;
-    led_out.map[1] = regfile.maprow2;
-    led_out.map[2] = regfile.maprow3;
-    led_out.map[3] = regfile.maprow4;
-    led_out.map[4] = regfile.maprow5;
-    led_out.map[5] = regfile.maprow6;
-    led_out.map[6] = regfile.maprow7;
-    led_out.map[7] = regfile.maprow8;
-    
-    //led_out.game_start = io_dip[0][0];
-    led_out.game_start = 1;
-    led_out.disappear = 0;
-    
-    ////////////////////////
-    //external led output//
-    
-    ledstrip0.update=1;
-    ledstrip0.color=led_out.row0[ledstrip0.pixel];
-    br_led0=ledstrip0.led;
-    
-    ledstrip1.update=1;
-    ledstrip1.color=led_out.row1[ledstrip1.pixel];
-    br_led1=ledstrip1.led;
-    
-    ledstrip2.update=1;
-    ledstrip2.color=led_out.row2[ledstrip2.pixel];
-    br_led2=ledstrip2.led;
-    
-    ledstrip3.update=1;
-    ledstrip3.color=led_out.row3[ledstrip3.pixel];
-    br_led3=ledstrip3.led;
-    
-    ledstrip4.update=1;
-    ledstrip4.color=led_out.row4[ledstrip4.pixel];
-    br_led4=ledstrip4.led;
-    
-    ledstrip5.update=1;
-    ledstrip5.color=led_out.row5[ledstrip5.pixel];
-    br_led5=ledstrip5.led;
-    
-    ledstrip6.update=1;
-    ledstrip6.color=led_out.row6[ledstrip6.pixel];
-    br_led6=ledstrip6.led;
-    
-    ledstrip7.update=1;
-    ledstrip7.color=led_out.row7[ledstrip7.pixel];
-    br_led7=ledstrip7.led;
+    //led[0][2]
+    if (game_start == 1 && map[0][2] == 0 && (x==0 && y==2)){
+      row0[2] = PANDA;
+    }
+    else if (game_start == 1 && map[0][2] == 1){
+      row0[2] =  WALL;
+    }
+    else {
+      row0[2] = GREEN;
+    }
     
     
-    //DEBUG
-    io_led[0][2:0] = regfile.xpos[2:0];
-    io_led[0][5:3] = regfile.ypos[2:0];
-    //io_led[1][2:0] = regfile.y_temp[2:0];
-    //io_led[1][5:3] = regfile.x_temp[2:0];
-    //io_led[2][2:0] = regfile.temp10;
-    //io_led[2][5:3] = regfile.temp11;
-    //io_led[2][7:6] = regfile.temp12[1:0];
-    //io_led[1][7:6] = regfile.temp13[1:0];
-    //io_led[2][2:0] = regfile.out_move_num[2:0];
-    //io_led[2][5:3] = regfile.orientation_out[2:0];
-    //io_led[0] = led_out.row0[5][7:0];
-    io_led[1][3:0] = joystick_input.joystick;
-    io_led[1][7:4] = buttondetector.out;
-    io_led[2][0] = br_button0;
-    io_led[2][1] = br_button1;
-    io_led[2][2] = br_button2;
-    io_led[2][3] = br_button3;
     
-    // 7-seg
-    io_seg = ~seg.seg;  // connect segments to the driver
-    io_sel = ~seg.sel;  // connect digit select to the driver
+    //led[0][3]
+    if (game_start == 1 && map[0][3] == 0 && (x==0 && y==3)){
+      row0[3] = PANDA;
+    }
+    else if (game_start == 1 && map[0][3] == 1){
+      row0[3] =  WALL;
+    }
+    else {
+      row0[3] = GREEN;
+    }
     
-    //io_led[0] = led_out.matrix[0][0][7:0];
-  }
+    
+    
+    //led[0][4]
+    if (game_start == 1 && map[0][4] == 0 && (x==0 && y==4)){
+      row0[4] = PANDA;
+    }
+    else if (game_start == 1 && map[0][4] == 1){
+      row0[4] =  WALL;
+    }
+    else {
+      row0[4] = GREEN;
+    }
+    
+    
+    
+    //led[0][5]
+    if (game_start == 1 && map[0][5] == 0 && (x==0 && y==5)){
+      row0[5] = PANDA;
+    }
+    else if (game_start == 1 && map[0][5] == 1){
+      row0[5] =  WALL;
+    }
+    else {
+      row0[5] = GREEN;
+    }
+    
+    
+    
+    //led[0][6]
+    if (game_start == 1 && map[0][6] == 0 && (x==0 && y==6)){
+      row0[6] = PANDA;
+    }
+    else if (game_start == 1 && map[0][6] == 1){
+      row0[6] =  WALL;
+    }
+    else {
+      row0[6] = GREEN;
+    }
+    
+    
+    
+    //led[0][7]
+    if (game_start == 1 && map[0][7] == 0 && (x==0 && y==7)){
+      row0[7] = PANDA;
+    }
+    else if (game_start == 1 && map[0][7] == 1){
+      row0[7] =  WALL;
+    }
+    else {
+      row0[7] = GREEN;
+    }
+    
+    
+    
+    //led[1][0]
+    if (game_start == 1 && map[1][0] == 0 && (x==1 && y==0)){
+      row1[0] = PANDA;
+    }
+    else if (game_start == 1 && map[1][0] == 1){
+      row1[0] =  WALL;
+    }
+    else {
+      row1[0] = GREEN;
+    }
+    
+    
+    
+    //led[1][1]
+    if (game_start == 1 && map[1][1] == 0 && (x==1 && y==1)){
+      row1[1] = PANDA;
+    }
+    else if (game_start == 1 && map[1][1] == 1){
+      row1[1] =  WALL;
+    }
+    else {
+      row1[1] = GREEN;
+    }
+    
+    
+    
+    //led[1][2]
+    if (game_start == 1 && map[1][2] == 0 && (x==1 && y==2)){
+      row1[2] = PANDA;
+    }
+    else if (game_start == 1 && map[1][2] == 1){
+      row1[2] =  WALL;
+    }
+    else {
+      row1[2] = GREEN;
+    }
+    
+    
+    
+    //led[1][3]
+    if (game_start == 1 && map[1][3] == 0 && (x==1 && y==3)){
+      row1[3] = PANDA;
+    }
+    else if (game_start == 1 && map[1][3] == 1){
+      row1[3] =  WALL;
+    }
+    else {
+      row1[3] = GREEN;
+    }
+    
+    
+    
+    //led[1][4]
+    if (game_start == 1 && map[1][4] == 0 && (x==1 && y==4)){
+      row1[4] = PANDA;
+    }
+    else if (game_start == 1 && map[1][4] == 1){
+      row1[4] =  WALL;
+    }
+    else {
+      row1[4] = GREEN;
+    }
+    
+    
+    
+    //led[1][5]
+    if (game_start == 1 && map[1][5] == 0 && (x==1 && y==5)){
+      row1[5] = PANDA;
+    }
+    else if (game_start == 1 && map[1][5] == 1){
+      row1[5] =  WALL;
+    }
+    else {
+      row1[5] = GREEN;
+    }
+    
+    
+    
+    //led[1][6]
+    if (game_start == 1 && map[1][6] == 0 && (x==1 && y==6)){
+      row1[6] = PANDA;
+    }
+    else if (game_start == 1 && map[1][6] == 1){
+      row1[6] =  WALL;
+    }
+    else {
+      row1[6] = GREEN;
+    }
+    
+    
+    
+    //led[1][7]
+    if (game_start == 1 && map[1][7] == 0 && (x==1 && y==7)){
+      row1[7] = PANDA;
+    }
+    else if (game_start == 1 && map[1][7] == 1){
+      row1[7] =  WALL;
+    }
+    else {
+      row1[7] = GREEN;
+    }
+    
+    
+    
+    //led[2][0]
+    if (game_start == 1 && map[2][0] == 0 && (x==2 && y==0)){
+      row2[0] = PANDA;
+    }
+    else if (game_start == 1 && map[2][0] == 1){
+      row2[0] =  WALL;
+    }
+    else {
+      row2[0] = GREEN;
+    }
+    
+    
+    
+    //led[2][1]
+    if (game_start == 1 && map[2][1] == 0 && (x==2 && y==1)){
+      row2[1] = PANDA;
+    }
+    else if (game_start == 1 && map[2][1] == 1){
+      row2[1] =  WALL;
+    }
+    else {
+      row2[1] = GREEN;
+    }
+    
+    
+    
+    //led[2][2]
+    if (game_start == 1 && map[2][2] == 0 && (x==2 && y==2)){
+      row2[2] = PANDA;
+    }
+    else if (game_start == 1 && map[2][2] == 1){
+      row2[2] =  WALL;
+    }
+    else {
+      row2[2] = GREEN;
+    }
+    
+    
+    
+    //led[2][3]
+    if (game_start == 1 && map[2][3] == 0 && (x==2 && y==3)){
+      row2[3] = PANDA;
+    }
+    else if (game_start == 1 && map[2][3] == 1){
+      row2[3] =  WALL;
+    }
+    else {
+      row2[3] = GREEN;
+    }
+    
+    
+    
+    //led[2][4]
+    if (game_start == 1 && map[2][4] == 0 && (x==2 && y==4)){
+      row2[4] = PANDA;
+    }
+    else if (game_start == 1 && map[2][4] == 1){
+      row2[4] =  WALL;
+    }
+    else {
+      row2[4] = GREEN;
+    }
+    
+    
+    
+    //led[2][5]
+    if (game_start == 1 && map[2][5] == 0 && (x==2 && y==5)){
+      row2[5] = PANDA;
+    }
+    else if (game_start == 1 && map[2][5] == 1){
+      row2[5] =  WALL;
+    }
+    else {
+      row2[5] = GREEN;
+    }
+    
+    
+    
+    //led[2][6]
+    if (game_start == 1 && map[2][6] == 0 && (x==2 && y==6)){
+      row2[6] = PANDA;
+    }
+    else if (game_start == 1 && map[2][6] == 1){
+      row2[6] =  WALL;
+    }
+    else {
+      row2[6] = GREEN;
+    }
+    
+    
+    
+    //led[2][7]
+    if (game_start == 1 && map[2][7] == 0 && (x==2 && y==7)){
+      row2[7] = PANDA;
+    }
+    else if (game_start == 1 && map[2][7] == 1){
+      row2[7] =  WALL;
+    }
+    else {
+      row2[7] = GREEN;
+    }
+    
+    
+    
+    //led[3][0]
+    if (game_start == 1 && map[3][0] == 0 && (x==3 && y==0)){
+      row3[0] = PANDA;
+    }
+    else if (game_start == 1 && map[3][0] == 1){
+      row3[0] =  WALL;
+    }
+    else {
+      row3[0] = GREEN;
+    }
+    
+    
+    
+    //led[3][1]
+    if (game_start == 1 && map[3][1] == 0 && (x==3 && y==1)){
+      row3[1] = PANDA;
+    }
+    else if (game_start == 1 && map[3][1] == 1){
+      row3[1] =  WALL;
+    }
+    else {
+      row3[1] = GREEN;
+    }
+    
+    
+    
+    //led[3][2]
+    if (game_start == 1 && map[3][2] == 0 && (x==3 && y==2)){
+      row3[2] = PANDA;
+    }
+    else if (game_start == 1 && map[3][2] == 1){
+      row3[2] =  WALL;
+    }
+    else {
+      row3[2] = GREEN;
+    }
+    
+    
+    
+    //led[3][3]
+    if (game_start == 1 && map[3][3] == 0 && (x==3 && y==3)){
+      row3[3] = PANDA;
+    }
+    else if (game_start == 1 && map[3][3] == 1){
+      row3[3] =  WALL;
+    }
+    else {
+      row3[3] = GREEN;
+    }
+    
+    
+    
+    //led[3][4]
+    if (game_start == 1 && map[3][4] == 0 && (x==3 && y==4)){
+      row3[4] = PANDA;
+    }
+    else if (game_start == 1 && map[3][4] == 1){
+      row3[4] =  WALL;
+    }
+    else {
+      row3[4] = GREEN;
+    }
+    
+    
+    
+    //led[3][5]
+    if (game_start == 1 && map[3][5] == 0 && (x==3 && y==5)){
+      row3[5] = PANDA;
+    }
+    else if (game_start == 1 && map[3][5] == 1){
+      row3[5] =  WALL;
+    }
+    else {
+      row3[5] = GREEN;
+    }
+    
+    
+    
+    //led[3][6]
+    if (game_start == 1 && map[3][6] == 0 && (x==3 && y==6)){
+      row3[6] = PANDA;
+    }
+    else if (game_start == 1 && map[3][6] == 1){
+      row3[6] =  WALL;
+    }
+    else {
+      row3[6] = GREEN;
+    }
+    
+    
+    
+    //led[3][7]
+    if (game_start == 1 && map[3][7] == 0 && (x==3 && y==7)){
+      row3[7] = PANDA;
+    }
+    else if (game_start == 1 && map[3][7] == 1){
+      row3[7] =  WALL;
+    }
+    else {
+      row3[7] = GREEN;
+    }
+    
+    
+    
+    //led[4][0]
+    if (game_start == 1 && map[4][0] == 0 && (x==4 && y==0)){
+      row4[0] = PANDA;
+    }
+    else if (game_start == 1 && map[4][0] == 1){
+      row4[0] =  WALL;
+    }
+    else {
+      row4[0] = GREEN;
+    }
+    
+    
+    
+    //led[4][1]
+    if (game_start == 1 && map[4][1] == 0 && (x==4 && y==1)){
+      row4[1] = PANDA;
+    }
+    else if (game_start == 1 && map[4][1] == 1){
+      row4[1] =  WALL;
+    }
+    else {
+      row4[1] = GREEN;
+    }
+    
+    
+    
+    //led[4][2]
+    if (game_start == 1 && map[4][2] == 0 && (x==4 && y==2)){
+      row4[2] = PANDA;
+    }
+    else if (game_start == 1 && map[4][2] == 1){
+      row4[2] =  WALL;
+    }
+    else {
+      row4[2] = GREEN;
+    }
+    
+    
+    
+    //led[4][3]
+    if (game_start == 1 && map[4][3] == 0 && (x==4 && y==3)){
+      row4[3] = PANDA;
+    }
+    else if (game_start == 1 && map[4][3] == 1){
+      row4[3] =  WALL;
+    }
+    else {
+      row4[3] = GREEN;
+    }
+    
+    
+    
+    //led[4][4]
+    if (game_start == 1 && map[4][4] == 0 && (x==4 && y==4)){
+      row4[4] = PANDA;
+    }
+    else if (game_start == 1 && map[4][4] == 1){
+      row4[4] =  WALL;
+    }
+    else {
+      row4[4] = GREEN;
+    }
+    
+    
+    
+    //led[4][5]
+    if (game_start == 1 && map[4][5] == 0 && (x==4 && y==5)){
+      row4[5] = PANDA;
+    }
+    else if (game_start == 1 && map[4][5] == 1){
+      row4[5] =  WALL;
+    }
+    else {
+      row4[5] = GREEN;
+    }
+    
+    
+    
+    //led[4][6]
+    if (game_start == 1 && map[4][6] == 0 && (x==4 && y==6)){
+      row4[6] = PANDA;
+    }
+    else if (game_start == 1 && map[4][6] == 1){
+      row4[6] =  WALL;
+    }
+    else {
+      row4[6] = GREEN;
+    }
+    
+    
+    
+    //led[4][7]
+    if (game_start == 1 && map[4][7] == 0 && (x==4 && y==7)){
+      row4[7] = PANDA;
+    }
+    else if (game_start == 1 && map[4][7] == 1){
+      row4[7] =  WALL;
+    }
+    else {
+      row4[7] = GREEN;
+    }
+    
+    
+    
+    //led[5][0]
+    if (game_start == 1 && map[5][0] == 0 && (x==5 && y==0)){
+      row5[0] = PANDA;
+    }
+    else if (game_start == 1 && map[5][0] == 1){
+      row5[0] =  WALL;
+    }
+    else {
+      row5[0] = GREEN;
+    }
+    
+    
+    
+    //led[5][1]
+    if (game_start == 1 && map[5][1] == 0 && (x==5 && y==1)){
+      row5[1] = PANDA;
+    }
+    else if (game_start == 1 && map[5][1] == 1){
+      row5[1] =  WALL;
+    }
+    else {
+      row5[1] = GREEN;
+    }
+    
+    
+    
+    //led[5][2]
+    if (game_start == 1 && map[5][2] == 0 && (x==5 && y==2)){
+      row5[2] = PANDA;
+    }
+    else if (game_start == 1 && map[5][2] == 1){
+      row5[2] =  WALL;
+    }
+    else {
+      row5[2] = GREEN;
+    }
+    
+    
+    
+    //led[5][3]
+    if (game_start == 1 && map[5][3] == 0 && (x==5 && y==3)){
+      row5[3] = PANDA;
+    }
+    else if (game_start == 1 && map[5][3] == 1){
+      row5[3] =  WALL;
+    }
+    else {
+      row5[3] = GREEN;
+    }
+    
+    
+    
+    //led[5][4]
+    if (game_start == 1 && map[5][4] == 0 && (x==5 && y==4)){
+      row5[4] = PANDA;
+    }
+    else if (game_start == 1 && map[5][4] == 1){
+      row5[4] =  WALL;
+    }
+    else {
+      row5[4] = GREEN;
+    }
+    
+    
+    
+    //led[5][5]
+    if (game_start == 1 && map[5][5] == 0 && (x==5 && y==5)){
+      row5[5] = PANDA;
+    }
+    else if (game_start == 1 && map[5][5] == 1){
+      row5[5] =  WALL;
+    }
+    else {
+      row5[5] = GREEN;
+    }
+    
+    
+    
+    //led[5][6]
+    if (game_start == 1 && map[5][6] == 0 && (x==5 && y==6)){
+      row5[6] = PANDA;
+    }
+    else if (game_start == 1 && map[5][6] == 1){
+      row5[6] =  WALL;
+    }
+    else {
+      row5[6] = GREEN;
+    }
+    
+    
+    
+    //led[5][7]
+    if (game_start == 1 && map[5][7] == 0 && (x==5 && y==7)){
+      row5[7] = PANDA;
+    }
+    else if (game_start == 1 && map[5][7] == 1){
+      row5[7] =  WALL;
+    }
+    else {
+      row5[7] = GREEN;
+    }
+    
+    
+    
+    //led[6][0]
+    if (game_start == 1 && map[6][0] == 0 && (x==6 && y==0)){
+      row6[0] = PANDA;
+    }
+    else if (game_start == 1 && map[6][0] == 1){
+      row6[0] =  WALL;
+    }
+    else {
+      row6[0] = GREEN;
+    }
+    
+    
+    
+    //led[6][1]
+    if (game_start == 1 && map[6][1] == 0 && (x==6 && y==1)){
+      row6[1] = PANDA;
+    }
+    else if (game_start == 1 && map[6][1] == 1){
+      row6[1] =  WALL;
+    }
+    else {
+      row6[1] = GREEN;
+    }
+    
+    
+    
+    //led[6][2]
+    if (game_start == 1 && map[6][2] == 0 && (x==6 && y==2)){
+      row6[2] = PANDA;
+    }
+    else if (game_start == 1 && map[6][2] == 1){
+      row6[2] =  WALL;
+    }
+    else {
+      row6[2] = GREEN;
+    }
+    
+    
+    
+    //led[6][3]
+    if (game_start == 1 && map[6][3] == 0 && (x==6 && y==3)){
+      row6[3] = PANDA;
+    }
+    else if (game_start == 1 && map[6][3] == 1){
+      row6[3] =  WALL;
+    }
+    else {
+      row6[3] = GREEN;
+    }
+    
+    
+    
+    //led[6][4]
+    if (game_start == 1 && map[6][4] == 0 && (x==6 && y==4)){
+      row6[4] = PANDA;
+    }
+    else if (game_start == 1 && map[6][4] == 1){
+      row6[4] =  WALL;
+    }
+    else {
+      row6[4] = GREEN;
+    }
+    
+    
+    
+    //led[6][5]
+    if (game_start == 1 && map[6][5] == 0 && (x==6 && y==5)){
+      row6[5] = PANDA;
+    }
+    else if (game_start == 1 && map[6][5] == 1){
+      row6[5] =  WALL;
+    }
+    else {
+      row6[5] = GREEN;
+    }
+    
+    
+    
+    //led[6][6]
+    if (game_start == 1 && map[6][6] == 0 && (x==6 && y==6)){
+      row6[6] = PANDA;
+    }
+    else if (game_start == 1 && map[6][6] == 1){
+      row6[6] =  WALL;
+    }
+    else {
+      row6[6] = GREEN;
+    }
+    
+    
+    
+    //led[6][7]
+    if (game_start == 1 && map[6][7] == 0 && (x==6 && y==7)){
+      row6[7] = PANDA;
+    }
+    else if (game_start == 1 && map[6][7] == 1){
+      row6[7] =  WALL;
+    }
+    else {
+      row6[7] = GREEN;
+    }
+    
+    
+    
+    //led[7][0]
+    if (game_start == 1 && map[7][0] == 0 && (x==7 && y==0)){
+      row7[0] = PANDA;
+    }
+    else if (game_start == 1 && map[7][0] == 1){
+      row7[0] =  WALL;
+    }
+    else {
+      row7[0] = GREEN;
+    }
+    
+    
+    
+    //led[7][1]
+    if (game_start == 1 && map[7][1] == 0 && (x==7 && y==1)){
+      row7[1] = PANDA;
+    }
+    else if (game_start == 1 && map[7][1] == 1){
+      row7[1] =  WALL;
+    }
+    else {
+      row7[1] = GREEN;
+    }
+    
+    
+    
+    //led[7][2]
+    if (game_start == 1 && map[7][2] == 0 && (x==7 && y==2)){
+      row7[2] = PANDA;
+    }
+    else if (game_start == 1 && map[7][2] == 1){
+      row7[2] =  WALL;
+    }
+    else {
+      row7[2] = GREEN;
+    }
+    
+    
+    
+    //led[7][3]
+    if (game_start == 1 && map[7][3] == 0 && (x==7 && y==3)){
+      row7[3] = PANDA;
+    }
+    else if (game_start == 1 && map[7][3] == 1){
+      row7[3] =  WALL;
+    }
+    else {
+      row7[3] = GREEN;
+    }
+    
+    
+    
+    //led[7][4]
+    if (game_start == 1 && map[7][4] == 0 && (x==7 && y==4)){
+      row7[4] = PANDA;
+    }
+    else if (game_start == 1 && map[7][4] == 1){
+      row7[4] =  WALL;
+    }
+    else {
+      row7[4] = GREEN;
+    }
+    
+    
+    
+    //led[7][5]
+    if (game_start == 1 && map[7][5] == 0 && (x==7 && y==5)){
+      row7[5] = PANDA;
+    }
+    else if (game_start == 1 && map[7][5] == 1){
+      row7[5] =  WALL;
+    }
+    else {
+      row7[5] = GREEN;
+    }
+    
+    
+    
+    //led[7][6]
+    if (game_start == 1 && map[7][6] == 0 && (x==7 && y==6)){
+      row7[6] = PANDA;
+    }
+    else if (game_start == 1 && map[7][6] == 1){
+      row7[6] =  WALL;
+    }
+    else {
+      row7[6] = GREEN;
+    }
+    
+    
+    
+    //led[7][7]
+    if (game_start == 1){
+      row7[7] = GOAL;
+    }
+    else{
+      row7[7] = GREEN;
+    } 
+    
 }
