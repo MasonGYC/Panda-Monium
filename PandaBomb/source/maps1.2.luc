@@ -1,4 +1,5 @@
 module maps (
+//version 1.2 debug
     input address[16],  // ROM address
     input level_input[16],    // ROM level input from regfile
     output out_row[16]
@@ -32,7 +33,7 @@ module maps (
     16b00000100,              // level 1 map row 4
     16b00001000,              // level 1 map row 3
     16b01110000,              // level 1 map row 2
-    16b00000000};              // level 1 map row 1
+    16b11111110};              // level 1 map row 1
   
   
   
