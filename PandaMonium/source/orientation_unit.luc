@@ -53,10 +53,7 @@ module orientation_unit (
           b0100: direction=b0001;
           b1000: direction=b0010;
         }
-      
-      
-      
-      
+
     }
     
   }
