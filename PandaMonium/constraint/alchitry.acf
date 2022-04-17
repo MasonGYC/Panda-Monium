@@ -31,6 +31,11 @@ pin br_led9 C6;
 pin br_ledA C9;
 pin br_ledB C12;
 
+pin upButton A39 pulldown;
+pin downButton A42 pulldown;
+pin leftButton A45 pulldown;
+pin rightButton A48 pulldown;
+pin resetButton A36 pulldown;
 
 //io 
 pin io_led[0][0] B21;
