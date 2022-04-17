@@ -12,7 +12,7 @@ module regfile (
     input write_data[16],
     input clear[1],
    
-    
+    output x_temp[16],
     output y_temp[16],
     output orientation_out[16],
     output level_out[16],
@@ -81,6 +81,7 @@ module regfile (
     
     // direct output to other modules 
     y_temp = reg_temp.q[2];//Y_TEMP
+    x_temp = reg_temp.q[3];//X_TEMP
     out_move_num = reg_move_num.q;
     level_out = reg_level.q; 
     orientation_out = reg_orientation.q;
