@@ -1,5 +1,5 @@
 module control_unit (
-    //version 1.4 final release
+    //version 1.5 final release
     //to change button ports, change alchitry.acf to declare new pins(currently using io_button)
     //normal clock with edge_detector. external button connnected
     
@@ -704,7 +704,7 @@ module control_unit (
       ctrl.GAMEOVER:
         seg_index = {4h9,4h9,4h9,4h9};
         game_over = 1;
-        if (reset == b1 || start == b1){
+        if (reset == b1){
           ctrl.d = ctrl.RESET_LEVEL;}
         else{
           game_over = 1;//show msg
@@ -713,7 +713,7 @@ module control_unit (
       //////////////////////////////
       ctrl.RESET_LEVEL:
         seg_index = {4h6,4h6,4h6,4h6};
-        level_out = 16b0;
+        clear = 1;
         ctrl.d = ctrl.START;
       
     }
