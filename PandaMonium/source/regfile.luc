@@ -106,6 +106,7 @@ module regfile (
       reg_move_num.d = 0;
       reg_temp.d = 9x{{16b0}};
       reg_orientation.d = 0;
+      reg_level.d = 0;
       
     }
     
