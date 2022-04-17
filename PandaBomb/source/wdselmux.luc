@@ -1,7 +1,6 @@
 module wdselmux (
     input wdsel[2],  // 2 bit wdsel
     input alu[16],  // alu at 000
-    input mrd[16], //16 bit rd from rom
     output out[16] // output from wdsel mux
   ) {
 
@@ -11,6 +10,6 @@ module wdselmux (
     2b01: out=16hffff;
     2b10: out=16h000f;
     2b11: out=16h0;
-    default: out=mrd; //100 is more than 2 bit
+    default: out=alu; //100 is more than 2 bit
   }
 }
