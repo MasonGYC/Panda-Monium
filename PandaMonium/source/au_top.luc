@@ -1,5 +1,5 @@
 module au_top (
-  //version 1.4 final release
+  //version 1.5 final release
   //to change button ports, change alchitry.acf to declare new pins(currently using io_button)
   //normal clock with edge_detector. external button connnected
     
@@ -13,6 +13,12 @@ module au_top (
     input rst_n,
     input io_dip [3][8],
     input io_button [5],
+    input upButton,
+    input rightButton,
+    input downButton,
+    input leftButton,
+    input resetButton,
+    
     
     // 8x8 LED
     output io_led[3][8],
@@ -94,9 +100,17 @@ module au_top (
     br_ledB = orientation_unit.up_display[3];//right
     
     //buttons 
-    buttoncond.in = io_button[4:0];
+    buttoncond.in[0] = rightButton;
+    buttoncond.in[1] = upButton;
+    buttoncond.in[2] = leftButton;
+    buttoncond.in[3] = downButton;
+    buttoncond.in[4] = resetButton;
     buttondetector.in = buttoncond.out;
     orientation_unit.button = buttondetector.out[3:0];
+    //orientation_unit.button[0] = rightButton;
+    //orientation_unit.button[1] = upButton;
+    //orientation_unit.button[2] = leftButton;
+    //orientation_unit.button[3] = downButton;
     control_unit.reset = buttondetector.out[4];
     
     //start switch
