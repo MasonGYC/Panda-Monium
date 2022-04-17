@@ -704,7 +704,7 @@ module control_unit (
       ctrl.GAMEOVER:
         seg_index = {4h9,4h9,4h9,4h9};
         game_over = 1;
-        if (reset == b1){
+        if (reset == b1 || start == b1){
           ctrl.d = ctrl.RESET_LEVEL;}
         else{
           game_over = 1;//show msg
