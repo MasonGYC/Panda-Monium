@@ -1,20 +1,13 @@
 module orientation_unit (
-    //FINAL PROJECT IS THIS
-    //version 1.3 debug with slowclock & w/o edge_detector
-    //all 1.2 probelms solved
-    //this version uses ALU, and added in debug signal for testing
-    
-    //not commented out everything
-    //external button not connected and declared yet
-    
+  //version 1.4 final release
+
     input button[4],  // input direction
     input orientation_state[2],  // current orientation_state
     output up_display[4], //for led output
     output direction[4] //actual direction
   ) {
   
-  always {  //machine behaviour
-    //fsm orientation_unit={00,01,10,11},
+  always {  
     
     direction = 4b0;
     up_display = b0000;
