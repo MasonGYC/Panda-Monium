@@ -1,6 +1,6 @@
 module led_output (
-  //version 1.4 final release
-  //when game not started, show panda pixel art
+    //version 1.4 final release
+    //when game not started, show panda pixel art
     
     input map[8][8],
     input x[16],
@@ -40,837 +40,1076 @@ module led_output (
     else{
       row7[7] = BLACK;
     }
+
+    //led[0][0] 
+    if (game_start == 1) {
+      if (map[0][0] == 0 && (x==0 && y==0)) { 
+          row0[0] = PANDA;
+         }
+      else if (map[0][0] == 1)  {
+          row0[0] =  WALL;
+        }
+      else  {
+          row0[0] = PATH;
+        }
+    }
+    else  {
+        row0[0] = WHITE;
+    }
+    
+
+    //led[0][1] 
+    if (game_start == 1) {
+      if (map[0][1] == 0 && (x==0 && y==1)) { 
+          row0[1] = PANDA;
+         }
+      else if (map[0][1] == 1)  {
+          row0[1] =  WALL;
+        }
+      else  {
+          row0[1] = PATH;
+        }
+    }
+    else  {
+        row0[1] = BLACK;
+    }
+    
+
+    //led[0][2] 
+    if (game_start == 1) {
+      if (map[0][2] == 0 && (x==0 && y==2)) { 
+          row0[2] = PANDA;
+         }
+      else if (map[0][2] == 1)  {
+          row0[2] =  WALL;
+        }
+      else  {
+          row0[2] = PATH;
+        }
+    }
+    else  {
+        row0[2] = BLACK;
+    }
+    
+
+    //led[0][3] 
+    if (game_start == 1) {
+      if (map[0][3] == 0 && (x==0 && y==3)) { 
+          row0[3] = PANDA;
+         }
+      else if (map[0][3] == 1)  {
+          row0[3] =  WALL;
+        }
+      else  {
+          row0[3] = PATH;
+        }
+    }
+    else  {
+        row0[3] = GRAY;
+    }
+    
+
+    //led[0][4] 
+    if (game_start == 1) {
+      if (map[0][4] == 0 && (x==0 && y==4)) { 
+          row0[4] = PANDA;
+         }
+      else if (map[0][4] == 1)  {
+          row0[4] =  WALL;
+        }
+      else  {
+          row0[4] = PATH;
+        }
+    }
+    else  {
+        row0[4] = WHITE;
+    }
+    
+
+    //led[0][5] 
+    if (game_start == 1) {
+      if (map[0][5] == 0 && (x==0 && y==5)) { 
+          row0[5] = PANDA;
+         }
+      else if (map[0][5] == 1)  {
+          row0[5] =  WALL;
+        }
+      else  {
+          row0[5] = PATH;
+        }
+    }
+    else  {
+        row0[5] = BLACK;
+    }
     
-    
-    
-    //led[0][0]
-    if (game_start == 1 && map[0][0] == 0 && (x==0 && y==0)){
-      row0[0] = PANDA;
-    }
-    else if ( game_start == 1 && map[0][0] == 1){
-      row0[0] =  WALL;
-    }
-    else {
-      row0[0] = WHITE;
-    }
-    
-    
-    
-    //led[0][1]
-    if (game_start == 1 && map[0][1] == 0 && (x==0 && y==1)){
-      row0[1] = PANDA;
-    }
-    else if ( game_start == 1 && map[0][1] == 1){
-      row0[1] =  WALL;
-    }
-    else {
-      row0[1] = BLACK;
-    }
-    
-    
-    
-    //led[0][2]
-    if (game_start == 1 && map[0][2] == 0 && (x==0 && y==2)){
-      row0[2] = PANDA;
-    }
-    else if ( game_start == 1 && map[0][2] == 1){
-      row0[2] =  WALL;
-    }
-    else {
-      row0[2] = BLACK;
-    }
-    
-    
-    
-    //led[0][3]
-    if (game_start == 1 && map[0][3] == 0 && (x==0 && y==3)){
-      row0[3] = PANDA;
-    }
-    else if ( game_start == 1 && map[0][3] == 1){
-      row0[3] =  WALL;
-    }
-    else {
-      row0[3] = GRAY;
-    }
-    
-    
-    
-    //led[0][4]
-    if (game_start == 1 && map[0][4] == 0 && (x==0 && y==4)){
-      row0[4] = PANDA;
-    }
-    else if ( game_start == 1 && map[0][4] == 1){
-      row0[4] =  WALL;
-    }
-    else {
-      row0[4] = WHITE;
-    }
-    
-    
-    
-    //led[0][5]
-    if (game_start == 1 && map[0][5] == 0 && (x==0 && y==5)){
-      row0[5] = PANDA;
-    }
-    else if ( game_start == 1 && map[0][5] == 1){
-      row0[5] =  WALL;
-    }
-    else {
-      row0[5] = BLACK;
-    }
-    
-    
-    
-    //led[0][6]
-    if (game_start == 1 && map[0][6] == 0 && (x==0 && y==6)){
-      row0[6] = PANDA;
-    }
-    else if ( game_start == 1 && map[0][6] == 1){
-      row0[6] =  WALL;
-    }
-    else {
-      row0[6] = BLACK;
-    }
-    
-    
-    
-    //led[0][7]
-    if (game_start == 1 && map[0][7] == 0 && (x==0 && y==7)){
-      row0[7] = PANDA;
-    }
-    else if ( game_start == 1 && map[0][7] == 1){
-      row0[7] =  WALL;
-    }
-    else {
-      row0[7] = BLACK;
-    }
-    
-    
-    
-    //led[1][0]
-    if (game_start == 1 && map[1][0] == 0 && (x==1 && y==0)){
-      row1[0] = PANDA;
-    }
-    else if ( game_start == 1 && map[1][0] == 1){
-      row1[0] =  WALL;
-    }
-    else {
-      row1[0] = GRAY;
-    }
-    
-    
-    
-    //led[1][1]
-    if (game_start == 1 && map[1][1] == 0 && (x==1 && y==1)){
-      row1[1] = PANDA;
-    }
-    else if ( game_start == 1 && map[1][1] == 1){
-      row1[1] =  WALL;
-    }
-    else {
-      row1[1] = BLACK;
-    }
-    
-    
-    
-    //led[1][2]
-    if (game_start == 1 && map[1][2] == 0 && (x==1 && y==2)){
-      row1[2] = PANDA;
-    }
-    else if ( game_start == 1 && map[1][2] == 1){
-      row1[2] =  WALL;
-    }
-    else {
-      row1[2] = BLACK;
-    }
-    
-    
-    
-    //led[1][3]
-    if (game_start == 1 && map[1][3] == 0 && (x==1 && y==3)){
-      row1[3] = PANDA;
-    }
-    else if ( game_start == 1 && map[1][3] == 1){
-      row1[3] =  WALL;
-    }
-    else {
-      row1[3] = BLACK;
-    }
-    
-    
-    
-    //led[1][4]
-    if (game_start == 1 && map[1][4] == 0 && (x==1 && y==4)){
-      row1[4] = PANDA;
-    }
-    else if ( game_start == 1 && map[1][4] == 1){
-      row1[4] =  WALL;
-    }
-    else {
-      row1[4] = GRAY;
-    }
-    
-    
-    
-    //led[1][5]
-    if (game_start == 1 && map[1][5] == 0 && (x==1 && y==5)){
-      row1[5] = PANDA;
-    }
-    else if ( game_start == 1 && map[1][5] == 1){
-      row1[5] =  WALL;
-    }
-    else {
-      row1[5] = BLACK;
-    }
-    
-    
-    
-    //led[1][6]
-    if (game_start == 1 && map[1][6] == 0 && (x==1 && y==6)){
-      row1[6] = PANDA;
-    }
-    else if ( game_start == 1 && map[1][6] == 1){
-      row1[6] =  WALL;
-    }
-    else {
-      row1[6] = PINK;
-    }
-    
-    
-    
-    //led[1][7]
-    if (game_start == 1 && map[1][7] == 0 && (x==1 && y==7)){
-      row1[7] = PANDA;
-    }
-    else if ( game_start == 1 && map[1][7] == 1){
-      row1[7] =  WALL;
-    }
-    else {
-      row1[7] = BLACK;
-    }
-    
-    
-    
-    //led[2][0]
-    if (game_start == 1 && map[2][0] == 0 && (x==2 && y==0)){
-      row2[0] = PANDA;
-    }
-    else if ( game_start == 1 && map[2][0] == 1){
-      row2[0] =  WALL;
-    }
-    else {
-      row2[0] = GRAY;
-    }
-    
-    
-    
-    //led[2][1]
-    if (game_start == 1 && map[2][1] == 0 && (x==2 && y==1)){
-      row2[1] = PANDA;
-    }
-    else if ( game_start == 1 && map[2][1] == 1){
-      row2[1] =  WALL;
-    }
-    else {
-      row2[1] = BLACK;
-    }
-    
-    
-    
-    //led[2][2]
-    if (game_start == 1 && map[2][2] == 0 && (x==2 && y==2)){
-      row2[2] = PANDA;
-    }
-    else if ( game_start == 1 && map[2][2] == 1){
-      row2[2] =  WALL;
-    }
-    else {
-      row2[2] = WHITE;
-    }
-    
-    
-    
-    //led[2][3]
-    if (game_start == 1 && map[2][3] == 0 && (x==2 && y==3)){
-      row2[3] = PANDA;
-    }
-    else if ( game_start == 1 && map[2][3] == 1){
-      row2[3] =  WALL;
-    }
-    else {
-      row2[3] = BLACK;
-    }
-    
-    
-    
-    //led[2][4]
-    if (game_start == 1 && map[2][4] == 0 && (x==2 && y==4)){
-      row2[4] = PANDA;
-    }
-    else if ( game_start == 1 && map[2][4] == 1){
-      row2[4] =  WALL;
-    }
-    else {
-      row2[4] = GRAY;
-    }
-    
-    
-    
-    //led[2][5]
-    if (game_start == 1 && map[2][5] == 0 && (x==2 && y==5)){
-      row2[5] = PANDA;
-    }
-    else if ( game_start == 1 && map[2][5] == 1){
-      row2[5] =  WALL;
-    }
-    else {
-      row2[5] = BLACK;
-    }
-    
-    
-    
-    //led[2][6]
-    if (game_start == 1 && map[2][6] == 0 && (x==2 && y==6)){
-      row2[6] = PANDA;
-    }
-    else if ( game_start == 1 && map[2][6] == 1){
-      row2[6] =  WALL;
-    }
-    else {
-      row2[6] = BLACK;
-    }
-    
-    
-    
-    //led[2][7]
-    if (game_start == 1 && map[2][7] == 0 && (x==2 && y==7)){
-      row2[7] = PANDA;
-    }
-    else if ( game_start == 1 && map[2][7] == 1){
-      row2[7] =  WALL;
-    }
-    else {
-      row2[7] = BLACK;
-    }
-    
-    
-    
-    //led[3][0]
-    if (game_start == 1 && map[3][0] == 0 && (x==3 && y==0)){
-      row3[0] = PANDA;
-    }
-    else if ( game_start == 1 && map[3][0] == 1){
-      row3[0] =  WALL;
-    }
-    else {
-      row3[0] = VELVET;
-    }
-    
-    
-    
-    //led[3][1]
-    if (game_start == 1 && map[3][1] == 0 && (x==3 && y==1)){
-      row3[1] = PANDA;
-    }
-    else if ( game_start == 1 && map[3][1] == 1){
-      row3[1] =  WALL;
-    }
-    else {
-      row3[1] = GRAY;
-    }
-    
-    
-    
-    //led[3][2]
-    if (game_start == 1 && map[3][2] == 0 && (x==3 && y==2)){
-      row3[2] = PANDA;
-    }
-    else if ( game_start == 1 && map[3][2] == 1){
-      row3[2] =  WALL;
-    }
-    else {
-      row3[2] = GRAY;
-    }
-    
-    
-    
-    //led[3][3]
-    if (game_start == 1 && map[3][3] == 0 && (x==3 && y==3)){
-      row3[3] = PANDA;
-    }
-    else if ( game_start == 1 && map[3][3] == 1){
-      row3[3] =  WALL;
-    }
-    else {
-      row3[3] = GRAY;
-    }
-    
-    
-    
-    //led[3][4]
-    if (game_start == 1 && map[3][4] == 0 && (x==3 && y==4)){
-      row3[4] = PANDA;
-    }
-    else if ( game_start == 1 && map[3][4] == 1){
-      row3[4] =  WALL;
-    }
-    else {
-      row3[4] = GRAY;
-    }
-    
-    
-    
-    //led[3][5]
-    if (game_start == 1 && map[3][5] == 0 && (x==3 && y==5)){
-      row3[5] = PANDA;
-    }
-    else if ( game_start == 1 && map[3][5] == 1){
-      row3[5] =  WALL;
-    }
-    else {
-      row3[5] = GRAY;
-    }
-    
-    
-    
-    //led[3][6]
-    if (game_start == 1 && map[3][6] == 0 && (x==3 && y==6)){
-      row3[6] = PANDA;
-    }
-    else if ( game_start == 1 && map[3][6] == 1){
-      row3[6] =  WALL;
-    }
-    else {
-      row3[6] = WHITE;
-    }
-    
-    
-    
-    //led[3][7]
-    if (game_start == 1 && map[3][7] == 0 && (x==3 && y==7)){
-      row3[7] = PANDA;
-    }
-    else if ( game_start == 1 && map[3][7] == 1){
-      row3[7] =  WALL;
-    }
-    else {
-      row3[7] = WHITE;
-    }
-    
-    
-    
-    //led[4][0]
-    if (game_start == 1 && map[4][0] == 0 && (x==4 && y==0)){
-      row4[0] = PANDA;
-    }
-    else if ( game_start == 1 && map[4][0] == 1){
-      row4[0] =  WALL;
-    }
-    else {
-      row4[0] = VELVET;
-    }
-    
-    
-    
-    //led[4][1]
-    if (game_start == 1 && map[4][1] == 0 && (x==4 && y==1)){
-      row4[1] = PANDA;
-    }
-    else if ( game_start == 1 && map[4][1] == 1){
-      row4[1] =  WALL;
-    }
-    else {
-      row4[1] = GRAY;
-    }
-    
-    
-    
-    //led[4][2]
-    if (game_start == 1 && map[4][2] == 0 && (x==4 && y==2)){
-      row4[2] = PANDA;
-    }
-    else if ( game_start == 1 && map[4][2] == 1){
-      row4[2] =  WALL;
-    }
-    else {
-      row4[2] = GRAY;
-    }
-    
-    
-    
-    //led[4][3]
-    if (game_start == 1 && map[4][3] == 0 && (x==4 && y==3)){
-      row4[3] = PANDA;
-    }
-    else if ( game_start == 1 && map[4][3] == 1){
-      row4[3] =  WALL;
-    }
-    else {
-      row4[3] = GRAY;
-    }
-    
-    
-    
-    //led[4][4]
-    if (game_start == 1 && map[4][4] == 0 && (x==4 && y==4)){
-      row4[4] = PANDA;
-    }
-    else if ( game_start == 1 && map[4][4] == 1){
-      row4[4] =  WALL;
-    }
-    else {
-      row4[4] = GRAY;
-    }
-    
-    
-    
-    //led[4][5]
-    if (game_start == 1 && map[4][5] == 0 && (x==4 && y==5)){
-      row4[5] = PANDA;
-    }
-    else if ( game_start == 1 && map[4][5] == 1){
-      row4[5] =  WALL;
-    }
-    else {
-      row4[5] = GRAY;
-    }
-    
-    
-    
-    //led[4][6]
-    if (game_start == 1 && map[4][6] == 0 && (x==4 && y==6)){
-      row4[6] = PANDA;
-    }
-    else if ( game_start == 1 && map[4][6] == 1){
-      row4[6] =  WALL;
-    }
-    else {
-      row4[6] = WHITE;
-    }
-    
-    
-    
-    //led[4][7]
-    if (game_start == 1 && map[4][7] == 0 && (x==4 && y==7)){
-      row4[7] = PANDA;
-    }
-    else if ( game_start == 1 && map[4][7] == 1){
-      row4[7] =  WALL;
-    }
-    else {
-      row4[7] = WHITE;
-    }
-    
-    
-    
-    //led[5][0]
-    if (game_start == 1 && map[5][0] == 0 && (x==5 && y==0)){
-      row5[0] = PANDA;
-    }
-    else if ( game_start == 1 && map[5][0] == 1){
-      row5[0] =  WALL;
-    }
-    else {
-      row5[0] = GRAY;
-    }
-    
-    
-    
-    //led[5][1]
-    if (game_start == 1 && map[5][1] == 0 && (x==5 && y==1)){
-      row5[1] = PANDA;
-    }
-    else if ( game_start == 1 && map[5][1] == 1){
-      row5[1] =  WALL;
-    }
-    else {
-      row5[1] = BLACK;
-    }
-    
-    
-    
-    //led[5][2]
-    if (game_start == 1 && map[5][2] == 0 && (x==5 && y==2)){
-      row5[2] = PANDA;
-    }
-    else if ( game_start == 1 && map[5][2] == 1){
-      row5[2] =  WALL;
-    }
-    else {
-      row5[2] = WHITE;
-    }
-    
-    
-    
-    //led[5][3]
-    if (game_start == 1 && map[5][3] == 0 && (x==5 && y==3)){
-      row5[3] = PANDA;
-    }
-    else if ( game_start == 1 && map[5][3] == 1){
-      row5[3] =  WALL;
-    }
-    else {
-      row5[3] = BLACK;
-    }
-    
-    
-    
-    //led[5][4]
-    if (game_start == 1 && map[5][4] == 0 && (x==5 && y==4)){
-      row5[4] = PANDA;
-    }
-    else if ( game_start == 1 && map[5][4] == 1){
-      row5[4] =  WALL;
-    }
-    else {
-      row5[4] = GRAY;
-    }
-    
-    
-    
-    //led[5][5]
-    if (game_start == 1 && map[5][5] == 0 && (x==5 && y==5)){
-      row5[5] = PANDA;
-    }
-    else if ( game_start == 1 && map[5][5] == 1){
-      row5[5] =  WALL;
-    }
-    else {
-      row5[5] = BLACK;
-    }
-    
-    
-    
-    //led[5][6]
-    if (game_start == 1 && map[5][6] == 0 && (x==5 && y==6)){
-      row5[6] = PANDA;
-    }
-    else if ( game_start == 1 && map[5][6] == 1){
-      row5[6] =  WALL;
-    }
-    else {
-      row5[6] = BLACK;
-    }
-    
-    
-    
-    //led[5][7]
-    if (game_start == 1 && map[5][7] == 0 && (x==5 && y==7)){
-      row5[7] = PANDA;
-    }
-    else if ( game_start == 1 && map[5][7] == 1){
-      row5[7] =  WALL;
-    }
-    else {
-      row5[7] = BLACK;
-    }
-    
-    
-    
-    //led[6][0]
-    if (game_start == 1 && map[6][0] == 0 && (x==6 && y==0)){
-      row6[0] = PANDA;
-    }
-    else if ( game_start == 1 && map[6][0] == 1){
-      row6[0] =  WALL;
-    }
-    else {
-      row6[0] = GRAY;
-    }
-    
-    
-    
-    //led[6][1]
-    if (game_start == 1 && map[6][1] == 0 && (x==6 && y==1)){
-      row6[1] = PANDA;
-    }
-    else if ( game_start == 1 && map[6][1] == 1){
-      row6[1] =  WALL;
-    }
-    else {
-      row6[1] = BLACK;
-    }
-    
-    
-    
-    //led[6][2]
-    if (game_start == 1 && map[6][2] == 0 && (x==6 && y==2)){
-      row6[2] = PANDA;
-    }
-    else if ( game_start == 1 && map[6][2] == 1){
-      row6[2] =  WALL;
-    }
-    else {
-      row6[2] = BLACK;
-    }
-    
-    
-    
-    //led[6][3]
-    if (game_start == 1 && map[6][3] == 0 && (x==6 && y==3)){
-      row6[3] = PANDA;
-    }
-    else if ( game_start == 1 && map[6][3] == 1){
-      row6[3] =  WALL;
-    }
-    else {
-      row6[3] = BLACK;
-    }
-    
-    
-    
-    //led[6][4]
-    if (game_start == 1 && map[6][4] == 0 && (x==6 && y==4)){
-      row6[4] = PANDA;
-    }
-    else if ( game_start == 1 && map[6][4] == 1){
-      row6[4] =  WALL;
-    }
-    else {
-      row6[4] = GRAY;
-    }
-    
-    
-    
-    //led[6][5]
-    if (game_start == 1 && map[6][5] == 0 && (x==6 && y==5)){
-      row6[5] = PANDA;
-    }
-    else if ( game_start == 1 && map[6][5] == 1){
-      row6[5] =  WALL;
-    }
-    else {
-      row6[5] = BLACK;
-    }
-    
-    
-    
-    //led[6][6]
-    if (game_start == 1 && map[6][6] == 0 && (x==6 && y==6)){
-      row6[6] = PANDA;
-    }
-    else if ( game_start == 1 && map[6][6] == 1){
-      row6[6] =  WALL;
-    }
-    else {
-      row6[6] = PINK;
-    }
-    
-    
-    
-    //led[6][7]
-    if (game_start == 1 && map[6][7] == 0 && (x==6 && y==7)){
-      row6[7] = PANDA;
-    }
-    else if ( game_start == 1 && map[6][7] == 1){
-      row6[7] =  WALL;
-    }
-    else {
-      row6[7] = BLACK;
-    }
-    
-    
-    
-    //led[7][0]
-    if (game_start == 1 && map[7][0] == 0 && (x==7 && y==0)){
-      row7[0] = PANDA;
-    }
-    else if ( game_start == 1 && map[7][0] == 1){
-      row7[0] =  WALL;
-    }
-    else {
-      row7[0] = WHITE;
-    }
-    
-    
-    
-    //led[7][1]
-    if (game_start == 1 && map[7][1] == 0 && (x==7 && y==1)){
-      row7[1] = PANDA;
-    }
-    else if ( game_start == 1 && map[7][1] == 1){
-      row7[1] =  WALL;
-    }
-    else {
-      row7[1] = BLACK;
-    }
-    
-    
-    
-    //led[7][2]
-    if (game_start == 1 && map[7][2] == 0 && (x==7 && y==2)){
-      row7[2] = PANDA;
-    }
-    else if ( game_start == 1 && map[7][2] == 1){
-      row7[2] =  WALL;
-    }
-    else {
-      row7[2] = BLACK;
-    }
-    
-    
-    
-    //led[7][3]
-    if (game_start == 1 && map[7][3] == 0 && (x==7 && y==3)){
-      row7[3] = PANDA;
-    }
-    else if ( game_start == 1 && map[7][3] == 1){
-      row7[3] =  WALL;
-    }
-    else {
-      row7[3] = GRAY;
-    }
-    
-    
-    
-    //led[7][4]
-    if (game_start == 1 && map[7][4] == 0 && (x==7 && y==4)){
-      row7[4] = PANDA;
-    }
-    else if ( game_start == 1 && map[7][4] == 1){
-      row7[4] =  WALL;
-    }
-    else {
-      row7[4] = WHITE;
-    }
-    
-    
-    
-    //led[7][5]
-    if (game_start == 1 && map[7][5] == 0 && (x==7 && y==5)){
-      row7[5] = PANDA;
-    }
-    else if ( game_start == 1 && map[7][5] == 1){
-      row7[5] =  WALL;
-    }
-    else {
-      row7[5] = BLACK;
-    }
-    
-    
-    
-    //led[7][6]
-    if (game_start == 1 && map[7][6] == 0 && (x==7 && y==6)){
-      row7[6] = PANDA;
-    }
-    else if ( game_start == 1 && map[7][6] == 1){
-      row7[6] =  WALL;
-    }
-    else {
-      row7[6] = BLACK;
-    }
-    
-    
-    
-    //led[7][7]
-    if (game_start == 1 && map[7][7] == 0 && (x==7 && y==7)){
-      row7[7] = PANDA;
-    }
-    else if ( game_start == 1 && map[7][7] == 1){
-      row7[7] =  WALL;
-    }
-    else {
-      row7[7] = BLACK;
-    }
-    
-}
+
+    //led[0][6] 
+    if (game_start == 1) {
+      if (map[0][6] == 0 && (x==0 && y==6)) { 
+          row0[6] = PANDA;
+         }
+      else if (map[0][6] == 1)  {
+          row0[6] =  WALL;
+        }
+      else  {
+          row0[6] = PATH;
+        }
+    }
+    else  {
+        row0[6] = BLACK;
+    }
+    
+
+    //led[0][7] 
+    if (game_start == 1) {
+      if (map[0][7] == 0 && (x==0 && y==7)) { 
+          row0[7] = PANDA;
+         }
+      else if (map[0][7] == 1)  {
+          row0[7] =  WALL;
+        }
+      else  {
+          row0[7] = PATH;
+        }
+    }
+    else  {
+        row0[7] = BLACK;
+    }
+    
+
+    //led[1][0] 
+    if (game_start == 1) {
+      if (map[1][0] == 0 && (x==1 && y==0)) { 
+          row1[0] = PANDA;
+         }
+      else if (map[1][0] == 1)  {
+          row1[0] =  WALL;
+        }
+      else  {
+          row1[0] = PATH;
+        }
+    }
+    else  {
+        row1[0] = GRAY;
+    }
+    
+
+    //led[1][1] 
+    if (game_start == 1) {
+      if (map[1][1] == 0 && (x==1 && y==1)) { 
+          row1[1] = PANDA;
+         }
+      else if (map[1][1] == 1)  {
+          row1[1] =  WALL;
+        }
+      else  {
+          row1[1] = PATH;
+        }
+    }
+    else  {
+        row1[1] = BLACK;
+    }
+    
+
+    //led[1][2] 
+    if (game_start == 1) {
+      if (map[1][2] == 0 && (x==1 && y==2)) { 
+          row1[2] = PANDA;
+         }
+      else if (map[1][2] == 1)  {
+          row1[2] =  WALL;
+        }
+      else  {
+          row1[2] = PATH;
+        }
+    }
+    else  {
+        row1[2] = BLACK;
+    }
+    
+
+    //led[1][3] 
+    if (game_start == 1) {
+      if (map[1][3] == 0 && (x==1 && y==3)) { 
+          row1[3] = PANDA;
+         }
+      else if (map[1][3] == 1)  {
+          row1[3] =  WALL;
+        }
+      else  {
+          row1[3] = PATH;
+        }
+    }
+    else  {
+        row1[3] = BLACK;
+    }
+    
+
+    //led[1][4] 
+    if (game_start == 1) {
+      if (map[1][4] == 0 && (x==1 && y==4)) { 
+          row1[4] = PANDA;
+         }
+      else if (map[1][4] == 1)  {
+          row1[4] =  WALL;
+        }
+      else  {
+          row1[4] = PATH;
+        }
+    }
+    else  {
+        row1[4] = GRAY;
+    }
+    
+
+    //led[1][5] 
+    if (game_start == 1) {
+      if (map[1][5] == 0 && (x==1 && y==5)) { 
+          row1[5] = PANDA;
+         }
+      else if (map[1][5] == 1)  {
+          row1[5] =  WALL;
+        }
+      else  {
+          row1[5] = PATH;
+        }
+    }
+    else  {
+        row1[5] = BLACK;
+    }
+    
+
+    //led[1][6] 
+    if (game_start == 1) {
+      if (map[1][6] == 0 && (x==1 && y==6)) { 
+          row1[6] = PANDA;
+         }
+      else if (map[1][6] == 1)  {
+          row1[6] =  WALL;
+        }
+      else  {
+          row1[6] = PATH;
+        }
+    }
+    else  {
+        row1[6] = PINK;
+    }
+    
+
+    //led[1][7] 
+    if (game_start == 1) {
+      if (map[1][7] == 0 && (x==1 && y==7)) { 
+          row1[7] = PANDA;
+         }
+      else if (map[1][7] == 1)  {
+          row1[7] =  WALL;
+        }
+      else  {
+          row1[7] = PATH;
+        }
+    }
+    else  {
+        row1[7] = BLACK;
+    }
+    
+
+    //led[2][0] 
+    if (game_start == 1) {
+      if (map[2][0] == 0 && (x==2 && y==0)) { 
+          row2[0] = PANDA;
+         }
+      else if (map[2][0] == 1)  {
+          row2[0] =  WALL;
+        }
+      else  {
+          row2[0] = PATH;
+        }
+    }
+    else  {
+        row2[0] = GRAY;
+    }
+    
+
+    //led[2][1] 
+    if (game_start == 1) {
+      if (map[2][1] == 0 && (x==2 && y==1)) { 
+          row2[1] = PANDA;
+         }
+      else if (map[2][1] == 1)  {
+          row2[1] =  WALL;
+        }
+      else  {
+          row2[1] = PATH;
+        }
+    }
+    else  {
+        row2[1] = BLACK;
+    }
+    
+
+    //led[2][2] 
+    if (game_start == 1) {
+      if (map[2][2] == 0 && (x==2 && y==2)) { 
+          row2[2] = PANDA;
+         }
+      else if (map[2][2] == 1)  {
+          row2[2] =  WALL;
+        }
+      else  {
+          row2[2] = PATH;
+        }
+    }
+    else  {
+        row2[2] = WHITE;
+    }
+    
+
+    //led[2][3] 
+    if (game_start == 1) {
+      if (map[2][3] == 0 && (x==2 && y==3)) { 
+          row2[3] = PANDA;
+         }
+      else if (map[2][3] == 1)  {
+          row2[3] =  WALL;
+        }
+      else  {
+          row2[3] = PATH;
+        }
+    }
+    else  {
+        row2[3] = BLACK;
+    }
+    
+
+    //led[2][4] 
+    if (game_start == 1) {
+      if (map[2][4] == 0 && (x==2 && y==4)) { 
+          row2[4] = PANDA;
+         }
+      else if (map[2][4] == 1)  {
+          row2[4] =  WALL;
+        }
+      else  {
+          row2[4] = PATH;
+        }
+    }
+    else  {
+        row2[4] = GRAY;
+    }
+    
+
+    //led[2][5] 
+    if (game_start == 1) {
+      if (map[2][5] == 0 && (x==2 && y==5)) { 
+          row2[5] = PANDA;
+         }
+      else if (map[2][5] == 1)  {
+          row2[5] =  WALL;
+        }
+      else  {
+          row2[5] = PATH;
+        }
+    }
+    else  {
+        row2[5] = BLACK;
+    }
+    
+
+    //led[2][6] 
+    if (game_start == 1) {
+      if (map[2][6] == 0 && (x==2 && y==6)) { 
+          row2[6] = PANDA;
+         }
+      else if (map[2][6] == 1)  {
+          row2[6] =  WALL;
+        }
+      else  {
+          row2[6] = PATH;
+        }
+    }
+    else  {
+        row2[6] = BLACK;
+    }
+    
+
+    //led[2][7] 
+    if (game_start == 1) {
+      if (map[2][7] == 0 && (x==2 && y==7)) { 
+          row2[7] = PANDA;
+         }
+      else if (map[2][7] == 1)  {
+          row2[7] =  WALL;
+        }
+      else  {
+          row2[7] = PATH;
+        }
+    }
+    else  {
+        row2[7] = BLACK;
+    }
+    
+
+    //led[3][0] 
+    if (game_start == 1) {
+      if (map[3][0] == 0 && (x==3 && y==0)) { 
+          row3[0] = PANDA;
+         }
+      else if (map[3][0] == 1)  {
+          row3[0] =  WALL;
+        }
+      else  {
+          row3[0] = PATH;
+        }
+    }
+    else  {
+        row3[0] = VELVET;
+    }
+    
+
+    //led[3][1] 
+    if (game_start == 1) {
+      if (map[3][1] == 0 && (x==3 && y==1)) { 
+          row3[1] = PANDA;
+         }
+      else if (map[3][1] == 1)  {
+          row3[1] =  WALL;
+        }
+      else  {
+          row3[1] = PATH;
+        }
+    }
+    else  {
+        row3[1] = GRAY;
+    }
+    
+
+    //led[3][2] 
+    if (game_start == 1) {
+      if (map[3][2] == 0 && (x==3 && y==2)) { 
+          row3[2] = PANDA;
+         }
+      else if (map[3][2] == 1)  {
+          row3[2] =  WALL;
+        }
+      else  {
+          row3[2] = PATH;
+        }
+    }
+    else  {
+        row3[2] = GRAY;
+    }
+    
+
+    //led[3][3] 
+    if (game_start == 1) {
+      if (map[3][3] == 0 && (x==3 && y==3)) { 
+          row3[3] = PANDA;
+         }
+      else if (map[3][3] == 1)  {
+          row3[3] =  WALL;
+        }
+      else  {
+          row3[3] = PATH;
+        }
+    }
+    else  {
+        row3[3] = GRAY;
+    }
+    
+
+    //led[3][4] 
+    if (game_start == 1) {
+      if (map[3][4] == 0 && (x==3 && y==4)) { 
+          row3[4] = PANDA;
+         }
+      else if (map[3][4] == 1)  {
+          row3[4] =  WALL;
+        }
+      else  {
+          row3[4] = PATH;
+        }
+    }
+    else  {
+        row3[4] = GRAY;
+    }
+    
+
+    //led[3][5] 
+    if (game_start == 1) {
+      if (map[3][5] == 0 && (x==3 && y==5)) { 
+          row3[5] = PANDA;
+         }
+      else if (map[3][5] == 1)  {
+          row3[5] =  WALL;
+        }
+      else  {
+          row3[5] = PATH;
+        }
+    }
+    else  {
+        row3[5] = GRAY;
+    }
+    
+
+    //led[3][6] 
+    if (game_start == 1) {
+      if (map[3][6] == 0 && (x==3 && y==6)) { 
+          row3[6] = PANDA;
+         }
+      else if (map[3][6] == 1)  {
+          row3[6] =  WALL;
+        }
+      else  {
+          row3[6] = PATH;
+        }
+    }
+    else  {
+        row3[6] = WHITE;
+    }
+    
+
+    //led[3][7] 
+    if (game_start == 1) {
+      if (map[3][7] == 0 && (x==3 && y==7)) { 
+          row3[7] = PANDA;
+         }
+      else if (map[3][7] == 1)  {
+          row3[7] =  WALL;
+        }
+      else  {
+          row3[7] = PATH;
+        }
+    }
+    else  {
+        row3[7] = WHITE;
+    }
+    
+
+    //led[4][0] 
+    if (game_start == 1) {
+      if (map[4][0] == 0 && (x==4 && y==0)) { 
+          row4[0] = PANDA;
+         }
+      else if (map[4][0] == 1)  {
+          row4[0] =  WALL;
+        }
+      else  {
+          row4[0] = PATH;
+        }
+    }
+    else  {
+        row4[0] = VELVET;
+    }
+    
+
+    //led[4][1] 
+    if (game_start == 1) {
+      if (map[4][1] == 0 && (x==4 && y==1)) { 
+          row4[1] = PANDA;
+         }
+      else if (map[4][1] == 1)  {
+          row4[1] =  WALL;
+        }
+      else  {
+          row4[1] = PATH;
+        }
+    }
+    else  {
+        row4[1] = GRAY;
+    }
+    
+
+    //led[4][2] 
+    if (game_start == 1) {
+      if (map[4][2] == 0 && (x==4 && y==2)) { 
+          row4[2] = PANDA;
+         }
+      else if (map[4][2] == 1)  {
+          row4[2] =  WALL;
+        }
+      else  {
+          row4[2] = PATH;
+        }
+    }
+    else  {
+        row4[2] = GRAY;
+    }
+    
+
+    //led[4][3] 
+    if (game_start == 1) {
+      if (map[4][3] == 0 && (x==4 && y==3)) { 
+          row4[3] = PANDA;
+         }
+      else if (map[4][3] == 1)  {
+          row4[3] =  WALL;
+        }
+      else  {
+          row4[3] = PATH;
+        }
+    }
+    else  {
+        row4[3] = GRAY;
+    }
+    
+
+    //led[4][4] 
+    if (game_start == 1) {
+      if (map[4][4] == 0 && (x==4 && y==4)) { 
+          row4[4] = PANDA;
+         }
+      else if (map[4][4] == 1)  {
+          row4[4] =  WALL;
+        }
+      else  {
+          row4[4] = PATH;
+        }
+    }
+    else  {
+        row4[4] = GRAY;
+    }
+    
+
+    //led[4][5] 
+    if (game_start == 1) {
+      if (map[4][5] == 0 && (x==4 && y==5)) { 
+          row4[5] = PANDA;
+         }
+      else if (map[4][5] == 1)  {
+          row4[5] =  WALL;
+        }
+      else  {
+          row4[5] = PATH;
+        }
+    }
+    else  {
+        row4[5] = GRAY;
+    }
+    
+
+    //led[4][6] 
+    if (game_start == 1) {
+      if (map[4][6] == 0 && (x==4 && y==6)) { 
+          row4[6] = PANDA;
+         }
+      else if (map[4][6] == 1)  {
+          row4[6] =  WALL;
+        }
+      else  {
+          row4[6] = PATH;
+        }
+    }
+    else  {
+        row4[6] = WHITE;
+    }
+    
+
+    //led[4][7] 
+    if (game_start == 1) {
+      if (map[4][7] == 0 && (x==4 && y==7)) { 
+          row4[7] = PANDA;
+         }
+      else if (map[4][7] == 1)  {
+          row4[7] =  WALL;
+        }
+      else  {
+          row4[7] = PATH;
+        }
+    }
+    else  {
+        row4[7] = WHITE;
+    }
+    
+
+    //led[5][0] 
+    if (game_start == 1) {
+      if (map[5][0] == 0 && (x==5 && y==0)) { 
+          row5[0] = PANDA;
+         }
+      else if (map[5][0] == 1)  {
+          row5[0] =  WALL;
+        }
+      else  {
+          row5[0] = PATH;
+        }
+    }
+    else  {
+        row5[0] = GRAY;
+    }
+    
+
+    //led[5][1] 
+    if (game_start == 1) {
+      if (map[5][1] == 0 && (x==5 && y==1)) { 
+          row5[1] = PANDA;
+         }
+      else if (map[5][1] == 1)  {
+          row5[1] =  WALL;
+        }
+      else  {
+          row5[1] = PATH;
+        }
+    }
+    else  {
+        row5[1] = BLACK;
+    }
+    
+
+    //led[5][2] 
+    if (game_start == 1) {
+      if (map[5][2] == 0 && (x==5 && y==2)) { 
+          row5[2] = PANDA;
+         }
+      else if (map[5][2] == 1)  {
+          row5[2] =  WALL;
+        }
+      else  {
+          row5[2] = PATH;
+        }
+    }
+    else  {
+        row5[2] = WHITE;
+    }
+    
+
+    //led[5][3] 
+    if (game_start == 1) {
+      if (map[5][3] == 0 && (x==5 && y==3)) { 
+          row5[3] = PANDA;
+         }
+      else if (map[5][3] == 1)  {
+          row5[3] =  WALL;
+        }
+      else  {
+          row5[3] = PATH;
+        }
+    }
+    else  {
+        row5[3] = BLACK;
+    }
+    
+
+    //led[5][4] 
+    if (game_start == 1) {
+      if (map[5][4] == 0 && (x==5 && y==4)) { 
+          row5[4] = PANDA;
+         }
+      else if (map[5][4] == 1)  {
+          row5[4] =  WALL;
+        }
+      else  {
+          row5[4] = PATH;
+        }
+    }
+    else  {
+        row5[4] = GRAY;
+    }
+    
+
+    //led[5][5] 
+    if (game_start == 1) {
+      if (map[5][5] == 0 && (x==5 && y==5)) { 
+          row5[5] = PANDA;
+         }
+      else if (map[5][5] == 1)  {
+          row5[5] =  WALL;
+        }
+      else  {
+          row5[5] = PATH;
+        }
+    }
+    else  {
+        row5[5] = BLACK;
+    }
+    
+
+    //led[5][6] 
+    if (game_start == 1) {
+      if (map[5][6] == 0 && (x==5 && y==6)) { 
+          row5[6] = PANDA;
+         }
+      else if (map[5][6] == 1)  {
+          row5[6] =  WALL;
+        }
+      else  {
+          row5[6] = PATH;
+        }
+    }
+    else  {
+        row5[6] = BLACK;
+    }
+    
+
+    //led[5][7] 
+    if (game_start == 1) {
+      if (map[5][7] == 0 && (x==5 && y==7)) { 
+          row5[7] = PANDA;
+         }
+      else if (map[5][7] == 1)  {
+          row5[7] =  WALL;
+        }
+      else  {
+          row5[7] = PATH;
+        }
+    }
+    else  {
+        row5[7] = BLACK;
+    }
+    
+
+    //led[6][0] 
+    if (game_start == 1) {
+      if (map[6][0] == 0 && (x==6 && y==0)) { 
+          row6[0] = PANDA;
+         }
+      else if (map[6][0] == 1)  {
+          row6[0] =  WALL;
+        }
+      else  {
+          row6[0] = PATH;
+        }
+    }
+    else  {
+        row6[0] = GRAY;
+    }
+    
+
+    //led[6][1] 
+    if (game_start == 1) {
+      if (map[6][1] == 0 && (x==6 && y==1)) { 
+          row6[1] = PANDA;
+         }
+      else if (map[6][1] == 1)  {
+          row6[1] =  WALL;
+        }
+      else  {
+          row6[1] = PATH;
+        }
+    }
+    else  {
+        row6[1] = BLACK;
+    }
+    
+
+    //led[6][2] 
+    if (game_start == 1) {
+      if (map[6][2] == 0 && (x==6 && y==2)) { 
+          row6[2] = PANDA;
+         }
+      else if (map[6][2] == 1)  {
+          row6[2] =  WALL;
+        }
+      else  {
+          row6[2] = PATH;
+        }
+    }
+    else  {
+        row6[2] = BLACK;
+    }
+    
+
+    //led[6][3] 
+    if (game_start == 1) {
+      if (map[6][3] == 0 && (x==6 && y==3)) { 
+          row6[3] = PANDA;
+         }
+      else if (map[6][3] == 1)  {
+          row6[3] =  WALL;
+        }
+      else  {
+          row6[3] = PATH;
+        }
+    }
+    else  {
+        row6[3] = BLACK;
+    }
+    
+
+    //led[6][4] 
+    if (game_start == 1) {
+      if (map[6][4] == 0 && (x==6 && y==4)) { 
+          row6[4] = PANDA;
+         }
+      else if (map[6][4] == 1)  {
+          row6[4] =  WALL;
+        }
+      else  {
+          row6[4] = PATH;
+        }
+    }
+    else  {
+        row6[4] = GRAY;
+    }
+    
+
+    //led[6][5] 
+    if (game_start == 1) {
+      if (map[6][5] == 0 && (x==6 && y==5)) { 
+          row6[5] = PANDA;
+         }
+      else if (map[6][5] == 1)  {
+          row6[5] =  WALL;
+        }
+      else  {
+          row6[5] = PATH;
+        }
+    }
+    else  {
+        row6[5] = BLACK;
+    }
+    
+
+    //led[6][6] 
+    if (game_start == 1) {
+      if (map[6][6] == 0 && (x==6 && y==6)) { 
+          row6[6] = PANDA;
+         }
+      else if (map[6][6] == 1)  {
+          row6[6] =  WALL;
+        }
+      else  {
+          row6[6] = PATH;
+        }
+    }
+    else  {
+        row6[6] = PINK;
+    }
+    
+
+    //led[6][7] 
+    if (game_start == 1) {
+      if (map[6][7] == 0 && (x==6 && y==7)) { 
+          row6[7] = PANDA;
+         }
+      else if (map[6][7] == 1)  {
+          row6[7] =  WALL;
+        }
+      else  {
+          row6[7] = PATH;
+        }
+    }
+    else  {
+        row6[7] = BLACK;
+    }
+    
+
+    //led[7][0] 
+    if (game_start == 1) {
+      if (map[7][0] == 0 && (x==7 && y==0)) { 
+          row7[0] = PANDA;
+         }
+      else if (map[7][0] == 1)  {
+          row7[0] =  WALL;
+        }
+      else  {
+          row7[0] = PATH;
+        }
+    }
+    else  {
+        row7[0] = WHITE;
+    }
+    
+
+    //led[7][1] 
+    if (game_start == 1) {
+      if (map[7][1] == 0 && (x==7 && y==1)) { 
+          row7[1] = PANDA;
+         }
+      else if (map[7][1] == 1)  {
+          row7[1] =  WALL;
+        }
+      else  {
+          row7[1] = PATH;
+        }
+    }
+    else  {
+        row7[1] = BLACK;
+    }
+    
+
+    //led[7][2] 
+    if (game_start == 1) {
+      if (map[7][2] == 0 && (x==7 && y==2)) { 
+          row7[2] = PANDA;
+         }
+      else if (map[7][2] == 1)  {
+          row7[2] =  WALL;
+        }
+      else  {
+          row7[2] = PATH;
+        }
+    }
+    else  {
+        row7[2] = BLACK;
+    }
+    
+
+    //led[7][3] 
+    if (game_start == 1) {
+      if (map[7][3] == 0 && (x==7 && y==3)) { 
+          row7[3] = PANDA;
+         }
+      else if (map[7][3] == 1)  {
+          row7[3] =  WALL;
+        }
+      else  {
+          row7[3] = PATH;
+        }
+    }
+    else  {
+        row7[3] = GRAY;
+    }
+    
+
+    //led[7][4] 
+    if (game_start == 1) {
+      if (map[7][4] == 0 && (x==7 && y==4)) { 
+          row7[4] = PANDA;
+         }
+      else if (map[7][4] == 1)  {
+          row7[4] =  WALL;
+        }
+      else  {
+          row7[4] = PATH;
+        }
+    }
+    else  {
+        row7[4] = WHITE;
+    }
+    
+
+    //led[7][5] 
+    if (game_start == 1) {
+      if (map[7][5] == 0 && (x==7 && y==5)) { 
+          row7[5] = PANDA;
+         }
+      else if (map[7][5] == 1)  {
+          row7[5] =  WALL;
+        }
+      else  {
+          row7[5] = PATH;
+        }
+    }
+    else  {
+        row7[5] = BLACK;
+    }
+    
+
+    //led[7][6] 
+    if (game_start == 1) {
+      if (map[7][6] == 0 && (x==7 && y==6)) { 
+          row7[6] = PANDA;
+         }
+      else if (map[7][6] == 1)  {
+          row7[6] =  WALL;
+        }
+      else  {
+          row7[6] = PATH;
+        }
+    }
+    else  {
+        row7[6] = BLACK;
+    }
+ }
+
+   
