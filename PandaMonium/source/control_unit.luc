@@ -22,6 +22,7 @@ module control_unit (
     output ra[5],
     output rb[5],
     output rc[5],
+    output game_over[1], //for showing game_over msg
     output clear[1], //to clear all register values once new level
     output seg_index[4][4]//debug seven_seg
     
@@ -79,6 +80,7 @@ module control_unit (
     clear = 0;
     move_num_out = 0;
     orientation_out = 0;
+    game_over = 0;
     
     
     //fms ctrl
@@ -701,10 +703,11 @@ module control_unit (
       //////////////////////////////
       ctrl.GAMEOVER:
         seg_index = {4h9,4h9,4h9,4h9};
+        game_over = 1;
         if (reset == b1){
           ctrl.d = ctrl.RESET_LEVEL;}
         else{
-          //show 7-seg msg
+          game_over = 1;//show msg
           ctrl.d = ctrl.GAMEOVER;}
           
       //////////////////////////////
