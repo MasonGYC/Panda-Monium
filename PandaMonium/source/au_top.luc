@@ -140,6 +140,7 @@ module au_top (
     regfile.write_data = wdselmux.out;
     
     //led connection
+    led_out.game_over = control_unit.game_over;
     led_out.x = regfile.xpos;
     led_out.y = regfile.ypos;
     led_out.map[0] = regfile.maprow1;
