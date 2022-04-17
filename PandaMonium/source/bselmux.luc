@@ -1,0 +1,25 @@
+module bselmux (
+    input sel[4],  // 4 bit asel or bsel
+    input rdata[16],  // reading data ra or rb
+    output out[16] // output after mux
+  ) {
+
+  always {
+    
+    case(sel){
+    4b0000: out=rdata;
+    4b0001: out=16h1;
+    4b0010: out=16h2;
+    4b0011: out=16h3;
+    4b0100: out=16h4;
+    4b0101: out=16h5;
+    4b0110: out=16h6;
+    4b0111: out=16h7;
+    4b1000: out=16h8;
+    4b1001: out=16h80;
+    4b1010: out=16h0;
+    4b1011: out=16h3c;
+    default: out=16h0;
+      
+  }
+}

@@ -1,0 +1,10 @@
+module multiply (
+    input a[16],  // a
+    input b[16],  // b
+    output out[16]
+  ) {
+
+  always {
+    out[15:0] = a[15:0] * b[15:0];
+  }
+}

@@ -1,0 +1,15 @@
+module wdselmux (
+    input wdsel[2],  // 2 bit wdsel
+    input alu[16],  // alu at 000
+    output out[16] // output from wdsel mux
+  ) {
+
+  always {
+    case(wdsel){
+    2b00: out=alu;
+    2b01: out=16hffff;
+    2b10: out=16h000f;
+    2b11: out=16h0;
+    default: out=alu; //100 is more than 2 bit
+  }
+}

@@ -1,0 +1,89 @@
+module alu (
+    input alufn[6],
+    input a[16],
+    input b[16],
+    output out[16],
+    output z,
+    output v,
+    output n,
+    output ex // exception if any (in division)
+  ) 
+
+{
+  adder2 adder;
+  bool2 boolean;
+  shifter shift;
+  compare comparator;
+  multiply mul;
+  divide2 div;
+  sixteen_bit_2s_complement com;
+  
+  always {
+    
+    // ADD&SUB
+    adder.a = a;
+    adder.b = b;
+    adder.alufn = alufn;
+    z = adder.z;
+    v = adder.v;
+    n = adder.n;
+    
+    // BOOLEAN
+    boolean.a = a;
+    boolean.b = b;
+    boolean.alufn = alufn[3:0];
+    
+    // SHIFT
+    shift.a = a;
+    shift.b = b[3:0];
+    shift.alufn = alufn[1:0];
+
+    // COMPARE
+    comparator.z = adder.z;
+    comparator.v = adder.v;
+    comparator.n = adder.n;
+    comparator.alufn = alufn;
+    
+    // MUL
+    mul.a = a;
+    mul.b = b;
+    out = mul.out;
+
+    // DIV 
+    div.a = a;
+    div.b = b;
+    //exception
+    ex = 0;
+    
+    // 2s COMPLEMENT
+    com.a = a;
+    
+    out = 16b0;
+    if (alufn==b000000 | alufn==b000001){
+      out = adder.s;
+      }
+    else if (alufn==b011110 | alufn==b010110 | alufn==b011010 | alufn==b011000){
+      out = boolean.alu;
+      }
+    else if (alufn==b100000 | alufn==b100001 | alufn==b100011){
+      out = shift.shift;
+      }
+    else if (alufn==b110011 | alufn==b110101 | alufn==b110111){
+      out = comparator.out;
+      }
+    else if (alufn==b000010){
+      out = mul.out;
+      }
+    else if (alufn==b000011){
+      out = div.q;
+      ex = div.ex;
+      }
+    else if (alufn==b000100){
+      out = div.r;
+      ex = div.ex;
+      }
+    else if (alufn==b000101){
+       out = com.n;
+      }
+  }
+}

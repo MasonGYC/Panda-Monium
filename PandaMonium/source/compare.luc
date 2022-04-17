@@ -1,0 +1,21 @@
+module compare (
+    input z,
+    input v,
+    input n,
+    input alufn[6],
+    output out 
+  ) {
+  always {                           // Checking for LSB
+    out = 0;
+    case (alufn) {                   // ALUFN[2:1] are used to compare control unit
+      b110011:                       // CMPEQ
+              out = z;
+      b110101:                       // CMPLT
+              out = n ^ v;
+      b110111:                       // CMPLE
+              out = z | (n ^ v);
+      default: 
+              out = 0;
+    }
+  }
+}

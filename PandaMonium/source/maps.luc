@@ -1,0 +1,61 @@
+module maps (
+//version 1.2 debug
+    input address[16],  // ROM address
+    input level_input[16],    // ROM level input from regfile
+    output out_row[16]
+  ) {
+  
+  
+  const MAP = {
+    
+    16b00010000,              // level 3 map row 8
+    16b10110110,              // level 3 map row 7
+    16b10000000,              // level 3 map row 6
+    16b00011000,              // level 3 map row 5
+    16b01110010,              // level 3 map row 4
+    16b00000000,              // level 3 map row 3
+    16b01100100,              // level 3 map row 2
+    16b00010000,              // level 3 map row 1
+  
+    
+    16b00100001,              // level 2 map row 8
+    16b00101010,              // level 2 map row 7
+    16b10000010,              // level 2 map row 6
+    16b11110010,              // level 2 map row 5
+    16b00000100,              // level 2 map row 4
+    16b01000000,              // level 2 map row 3
+    16b01110000,              // level 2 map row 2
+    16b11111110,
+    
+    
+    16b00100000,              // level 1 map row 8
+    16b00011000,              // level 1 map row 7
+    16b10010010,              // level 1 map row 6
+    16b10000000,              // level 1 map row 5
+    16b01000110,              // level 1 map row 4
+    16b01001100,              // level 1 map row 3
+    16b00000000,              // level 1 map row 2
+    16b00100000              // level 1 map row 1
+  };             
+  
+  
+  
+  always {
+    //out_row_by_address = MAP[address]; // first way to index a map
+    
+    case(level_input) { // second way to index a map, input a level and get all the rows filled out for you
+      0:
+        out_row = MAP[address];
+      1:
+        out_row = MAP[address+8];
+      2:
+        out_row = MAP[address+16];
+      
+      default: out_row=16b0;
+      
+      
+    }
+    
+    
+  }
+}
