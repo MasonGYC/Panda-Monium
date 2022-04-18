@@ -26,12 +26,12 @@
 - `wdselmux`: to control the ouput of the alu 
 
 ### Unit Testing(inside `archive`)
-- autocheck.luc: checks thru alu functions and tests basic alu functionality
-- cu_test.luc: runs through states of control unit with hardcoded inputs to expect correct selector signals
-- test_regfile.luc: checks whether regifle stores correct content in the correct address location given some hardcoded selector signals and write data and ra, rb, rc addresses
+- `autocheck`: checks thru alu functions and tests basic alu functionality
+- `cu_test`: runs through states of control unit with hardcoded inputs to expect correct selector signals
+- `test_regfile`: checks whether regifle stores correct content in the correct address location given some hardcoded selector signals and write data and ra, rb, rc addresses
 
 ### Constraints
-- alchitry.acf: au,io,br boards specification
+- `alchitry.acf`: au,io,br boards specification
 
 ## Contributors
 1005005 Lim Sheng Xiang  
