@@ -55,10 +55,10 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row0[0] = YELLOW;
+          row0[0] =  YELLOW;
       }
     else {
-        row0[0] = WHITE;
+        row0[0] = YELLOW;
     }
     
 
@@ -75,7 +75,7 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row0[1] = YELLOW;
+          row0[1] =  YELLOW;
       }
     else {
         row0[1] = YELLOW;
@@ -95,7 +95,7 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row0[2] = YELLOW;
+          row0[2] = WALL;
       }
     else {
         row0[2] = YELLOW;
@@ -115,10 +115,10 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row0[3] = YELLOW;
+          row0[3] = WALL;
       }
     else {
-        row0[3] = GRAY;
+        row0[3] = WHITE;
     }
     
 
@@ -135,10 +135,10 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row0[4] = WALL;
+          row0[4] =  YELLOW;
       }
     else {
-        row0[4] = WHITE;
+        row0[4] = GRAY;
     }
     
 
@@ -155,7 +155,7 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row0[5] = WALL;
+          row0[5] =  YELLOW;
       }
     else {
         row0[5] = YELLOW;
@@ -175,7 +175,7 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row0[6] = YELLOW;
+          row0[6] =  YELLOW;
       }
     else {
         row0[6] = YELLOW;
@@ -195,10 +195,10 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row0[7] = YELLOW;
+          row0[7] =  YELLOW;
       }
     else {
-        row0[7] = YELLOW;
+        row0[7] = WHITE;
     }
     
 
@@ -215,10 +215,10 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row1[0] = YELLOW;
+          row1[0] =  YELLOW;
       }
     else {
-        row1[0] = GRAY;
+        row1[0] = YELLOW;
     }
     
 
@@ -235,10 +235,10 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row1[1] = YELLOW;
+          row1[1] = WALL;
       }
     else {
-        row1[1] = YELLOW;
+        row1[1] = PINK;
     }
     
 
@@ -255,7 +255,7 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row1[2] = YELLOW;
+          row1[2] = WALL;
       }
     else {
         row1[2] = YELLOW;
@@ -278,7 +278,7 @@ module led_output (
           row1[3] = WALL;
       }
     else {
-        row1[3] = YELLOW;
+        row1[3] = GRAY;
     }
     
 
@@ -298,7 +298,7 @@ module led_output (
           row1[4] = WALL;
       }
     else {
-        row1[4] = GRAY;
+        row1[4] = YELLOW;
     }
     
 
@@ -315,7 +315,7 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row1[5] = WALL;
+          row1[5] =  YELLOW;
       }
     else {
         row1[5] = YELLOW;
@@ -335,10 +335,10 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row1[6] = WALL;
+          row1[6] =  YELLOW;
       }
     else {
-        row1[6] = PINK;
+        row1[6] = YELLOW;
     }
     
 
@@ -355,10 +355,10 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row1[7] = YELLOW;
+          row1[7] =  YELLOW;
       }
     else {
-        row1[7] = YELLOW;
+        row1[7] = GRAY;
     }
     
 
@@ -375,10 +375,10 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row2[0] = YELLOW;
+          row2[0] =  YELLOW;
       }
     else {
-        row2[0] = GRAY;
+        row2[0] = YELLOW;
     }
     
 
@@ -395,7 +395,7 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row2[1] = YELLOW;
+          row2[1] = WALL;
       }
     else {
         row2[1] = YELLOW;
@@ -418,7 +418,7 @@ module led_output (
           row2[2] = WALL;
       }
     else {
-        row2[2] = WHITE;
+        row2[2] = YELLOW;
     }
     
 
@@ -438,7 +438,7 @@ module led_output (
           row2[3] = WALL;
       }
     else {
-        row2[3] = YELLOW;
+        row2[3] = GRAY;
     }
     
 
@@ -458,7 +458,7 @@ module led_output (
           row2[4] = WALL;
       }
     else {
-        row2[4] = GRAY;
+        row2[4] = YELLOW;
     }
     
 
@@ -478,7 +478,7 @@ module led_output (
           row2[5] = WALL;
       }
     else {
-        row2[5] = YELLOW;
+        row2[5] = WHITE;
     }
     
 
@@ -495,7 +495,7 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row2[6] = WALL;
+          row2[6] =  YELLOW;
       }
     else {
         row2[6] = YELLOW;
@@ -515,10 +515,10 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row2[7] = YELLOW;
+          row2[7] =  YELLOW;
       }
     else {
-        row2[7] = YELLOW;
+        row2[7] = GRAY;
     }
     
 
@@ -535,10 +535,10 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row3[0] = YELLOW;
+          row3[0] =  YELLOW;
       }
     else {
-        row3[0] = ORANGE;
+        row3[0] = WHITE;
     }
     
 
@@ -555,10 +555,10 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row3[1] = WALL;
+          row3[1] =  YELLOW;
       }
     else {
-        row3[1] = GRAY;
+        row3[1] = WHITE;
     }
     
 
@@ -655,10 +655,10 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row3[6] = YELLOW;
+          row3[6] = WALL;
       }
     else {
-        row3[6] = WHITE;
+        row3[6] = GRAY;
     }
     
 
@@ -675,10 +675,10 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row3[7] = YELLOW;
+          row3[7] =  YELLOW;
       }
     else {
-        row3[7] = WHITE;
+        row3[7] = ORANGE;
     }
     
 
@@ -695,10 +695,10 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row4[0] = YELLOW;
+          row4[0] =  YELLOW;
       }
     else {
-        row4[0] = ORANGE;
+        row4[0] = WHITE;
     }
     
 
@@ -715,10 +715,10 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row4[1] = WALL;
+          row4[1] =  YELLOW;
       }
     else {
-        row4[1] = GRAY;
+        row4[1] = WHITE;
     }
     
 
@@ -815,10 +815,10 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row4[6] = YELLOW;
+          row4[6] = WALL;
       }
     else {
-        row4[6] = WHITE;
+        row4[6] = GRAY;
     }
     
 
@@ -835,10 +835,10 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row4[7] = YELLOW;
+          row4[7] =  YELLOW;
       }
     else {
-        row4[7] = WHITE;
+        row4[7] = ORANGE;
     }
     
 
@@ -855,10 +855,10 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row5[0] = YELLOW;
+          row5[0] =  YELLOW;
       }
     else {
-        row5[0] = GRAY;
+        row5[0] = YELLOW;
     }
     
 
@@ -875,7 +875,7 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row5[1] = YELLOW;
+          row5[1] = WALL;
       }
     else {
         row5[1] = YELLOW;
@@ -898,7 +898,7 @@ module led_output (
           row5[2] = WALL;
       }
     else {
-        row5[2] = WHITE;
+        row5[2] = YELLOW;
     }
     
 
@@ -918,7 +918,7 @@ module led_output (
           row5[3] = WALL;
       }
     else {
-        row5[3] = YELLOW;
+        row5[3] = GRAY;
     }
     
 
@@ -938,7 +938,7 @@ module led_output (
           row5[4] = WALL;
       }
     else {
-        row5[4] = GRAY;
+        row5[4] = YELLOW;
     }
     
 
@@ -958,7 +958,7 @@ module led_output (
           row5[5] = WALL;
       }
     else {
-        row5[5] = YELLOW;
+        row5[5] = WHITE;
     }
     
 
@@ -975,7 +975,7 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row5[6] = WALL;
+          row5[6] =  YELLOW;
       }
     else {
         row5[6] = YELLOW;
@@ -995,10 +995,10 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row5[7] = YELLOW;
+          row5[7] =  YELLOW;
       }
     else {
-        row5[7] = YELLOW;
+        row5[7] = GRAY;
     }
     
 
@@ -1015,10 +1015,10 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row6[0] = YELLOW;
+          row6[0] =  YELLOW;
       }
     else {
-        row6[0] = GRAY;
+        row6[0] = YELLOW;
     }
     
 
@@ -1035,10 +1035,10 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row6[1] = YELLOW;
+          row6[1] = WALL;
       }
     else {
-        row6[1] = YELLOW;
+        row6[1] = PINK;
     }
     
 
@@ -1055,7 +1055,7 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row6[2] = YELLOW;
+          row6[2] = WALL;
       }
     else {
         row6[2] = YELLOW;
@@ -1078,7 +1078,7 @@ module led_output (
           row6[3] = WALL;
       }
     else {
-        row6[3] = YELLOW;
+        row6[3] = GRAY;
     }
     
 
@@ -1098,7 +1098,7 @@ module led_output (
           row6[4] = WALL;
       }
     else {
-        row6[4] = GRAY;
+        row6[4] = YELLOW;
     }
     
 
@@ -1115,7 +1115,7 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row6[5] = WALL;
+          row6[5] =  YELLOW;
       }
     else {
         row6[5] = YELLOW;
@@ -1135,10 +1135,10 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row6[6] = WALL;
+          row6[6] =  YELLOW;
       }
     else {
-        row6[6] = PINK;
+        row6[6] = YELLOW;
     }
     
 
@@ -1155,10 +1155,10 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row6[7] = YELLOW;
+          row6[7] =  YELLOW;
       }
     else {
-        row6[7] = YELLOW;
+        row6[7] = GRAY;
     }
     
 
@@ -1175,10 +1175,10 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row7[0] = YELLOW;
+          row7[0] =  YELLOW;
       }
     else {
-        row7[0] = WHITE;
+        row7[0] = YELLOW;
     }
     
 
@@ -1195,7 +1195,7 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row7[1] = YELLOW;
+          row7[1] =  YELLOW;
       }
     else {
         row7[1] = YELLOW;
@@ -1215,7 +1215,7 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row7[2] = YELLOW;
+          row7[2] = WALL;
       }
     else {
         row7[2] = YELLOW;
@@ -1235,10 +1235,10 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row7[3] = YELLOW;
+          row7[3] = WALL;
       }
     else {
-        row7[3] = GRAY;
+        row7[3] = WHITE;
     }
     
 
@@ -1255,10 +1255,10 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row7[4] = WALL;
+          row7[4] =  YELLOW;
       }
     else {
-        row7[4] = WHITE;
+        row7[4] = GRAY;
     }
     
 
@@ -1275,7 +1275,7 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row7[5] = WALL;
+          row7[5] =  YELLOW;
       }
     else {
         row7[5] = YELLOW;
@@ -1295,11 +1295,9 @@ module led_output (
         }
     }
     else if (game_over == 1){
-          row7[6] = YELLOW;
+          row7[6] =  YELLOW;
       }
     else {
         row7[6] = YELLOW;
     }
     
-
- }
