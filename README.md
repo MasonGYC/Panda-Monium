@@ -34,11 +34,11 @@
 - alchitry.acf: au,io,br boards specification
 
 ## Contributors
-1005005 Lim Sheng Xiang 
-1005548 Ng Jing Heng Jarron 
-1005031 Mun Yit Hung, Nigel 
-1005053 Jon-Taylor Lim Ming Te 
-1004885 Guo Yuchen 
-1004875 Xiang Siqi 
-1004866 Wang Yueheng 
-1005254 Visshal Natarajan 
+1005005 Lim Sheng Xiang  
+1005548 Ng Jing Heng Jarron  
+1005031 Mun Yit Hung, Nigel  
+1005053 Jon-Taylor Lim Ming Te  
+1004885 Guo Yuchen  
+1004875 Xiang Siqi  
+1004866 Wang Yueheng  
+1005254 Visshal Natarajan  
