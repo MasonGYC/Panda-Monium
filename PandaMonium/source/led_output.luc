@@ -1,5 +1,6 @@
 module led_output (
-    //version 1.5 final release
+    //version 1.6 final release
+    //change graph orientation
     //when game not started, show panda pixel art
     
     input map[8][8],
