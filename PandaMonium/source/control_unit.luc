@@ -1,5 +1,5 @@
 module control_unit (
-    //version 1.5 final release
+    //version 1.6 final release
     //to change button ports, change alchitry.acf to declare new pins(currently using io_button)
     //normal clock with edge_detector. external button connnected
     
@@ -172,7 +172,7 @@ module control_unit (
           }
           
         }
-        else if (start == 0){
+        else if (reset == 0){
           ctrl.d = ctrl.GAMEOVER;
         }
         else{ctrl.d = ctrl.IDLE;}
