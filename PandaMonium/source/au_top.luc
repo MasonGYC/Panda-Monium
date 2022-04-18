@@ -1,6 +1,5 @@
 module au_top (
-  //version 1.5 final release
-  //to change button ports, change alchitry.acf to declare new pins(currently using io_button)
+  //version 1.6 final release
   //normal clock with edge_detector. external button connnected
     
     input clk,              // 100MHz clock
