@@ -17,27 +17,32 @@ pin usb_rx USB_TX;
 pin usb_tx USB_RX;
 
 //br  
-pin br_led0 C2;
-pin br_led1 C5;
-pin br_led2 C8;
-pin br_led3 C11;
-pin br_led4 C14;
-pin br_led5 C17;
-pin br_led6 C20;
-pin br_led7 C23;
+pin br_led0 A2;
+pin br_led1 A5;
+pin br_led2 A8;
+pin br_led3 A11;
+pin br_led4 A14;
+pin br_led5 A17;
+pin br_led6 A20;
+pin br_led7 A23; 
 
-pin br_led8 C3;
-pin br_led9 C6;
-pin br_ledA C9;
-pin br_ledB C12;
+pin br_led8 C3; //up
+pin br_led9 C6; // down
+pin br_ledA C9; // left
+pin br_ledB C12; // rigth
 
-pin upButton A39 pulldown;
-pin downButton A42 pulldown;
-pin leftButton A45 pulldown;
-pin rightButton A48 pulldown;
-pin resetButton A36 pulldown;
+// push buttons
+pin leftButton B5 pulldown; // UP
+pin downButton B8 pulldown; // DOWN
+pin upButton B11 pulldown;  // LEFT
+pin rightButton B2 pulldown;  // RIGHT
+pin resetButton B14 pulldown;
 
-//io 
+
+//toggle switch
+pin toggleSW C24 pulldown;
+
+//io pins
 pin io_led[0][0] B21;
 pin io_led[0][1] B20;
 pin io_led[0][2] B18;

@@ -18,6 +18,7 @@ module au_top (
     input downButton,
     input leftButton,
     input resetButton,
+    input toggleSW,
     
     
     // 8x8 LED
@@ -114,8 +115,8 @@ module au_top (
     control_unit.reset = buttondetector.out[4];
     
     //start switch
-    control_unit.start = io_dip[0][0];
-    led_out.game_start = io_dip[0][0];
+    control_unit.start = toggleSW;
+    led_out.game_start = toggleSW;
     
     
     
