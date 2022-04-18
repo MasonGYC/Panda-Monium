@@ -1,7 +1,8 @@
+
 module led_output (
-    //version 1.8 final release
+    //version 1.9 final release
     //when game not started, show panda pixel art
-    //changed panda image again
+    //changed panda image to joker???
     input map[8][8],
     input x[16],
     input y[16],
@@ -26,12 +27,12 @@ module led_output (
   const WHITE = hFFFFFF;
   const YELLOW = h00FFFF;
   const PINK = h80FF00;
-  const GRAY = hD8D8D8;
-  const ORANGE = h80FF00;
+  //const GRAY = hD8D8D8;
+  //const ORANGE = h80FF00;
   const RED = h00FF00;
   const BLUE = hFF0000;
   const BLACK = h000000;
-  const PURPLE = h06D665;
+  
   
   
   always {
@@ -42,7 +43,7 @@ module led_output (
       row7[7] = GOAL;
     }
     else{
-      row7[7] = YELLOW;
+      row7[7] = BLACK;
     }
 
 
@@ -62,7 +63,7 @@ module led_output (
           row0[0] = BLACK;
       }
     else {
-        row0[0] = PURPLE;
+        row0[0] = PINK;
     }
     
 
@@ -82,7 +83,7 @@ module led_output (
           row0[1] = BLACK;
       }
     else {
-        row0[1] = PURPLE;
+        row0[1] = PINK;
     }
     
 
@@ -102,7 +103,7 @@ module led_output (
           row0[2] = WALL;
       }
     else {
-        row0[2] = PURPLE;
+        row0[2] = PINK;
     }
     
 
@@ -162,7 +163,7 @@ module led_output (
           row0[5] = BLACK;
       }
     else {
-        row0[5] = PURPLE;
+        row0[5] = BLACK;
     }
     
 
@@ -182,7 +183,7 @@ module led_output (
           row0[6] = BLACK;
       }
     else {
-        row0[6] = PURPLE;
+        row0[6] = BLACK;
     }
     
 
@@ -202,7 +203,7 @@ module led_output (
           row0[7] = BLACK;
       }
     else {
-        row0[7] = PURPLE;
+        row0[7] = BLACK;
     }
     
 
@@ -222,7 +223,7 @@ module led_output (
           row1[0] = BLACK;
       }
     else {
-        row1[0] = PURPLE;
+        row1[0] = PINK;
     }
     
 
@@ -242,7 +243,7 @@ module led_output (
           row1[1] = WALL;
       }
     else {
-        row1[1] = PINK;
+        row1[1] = YELLOW;
     }
     
 
@@ -262,7 +263,7 @@ module led_output (
           row1[2] = WALL;
       }
     else {
-        row1[2] = PURPLE;
+        row1[2] = PINK;
     }
     
 
@@ -282,7 +283,7 @@ module led_output (
           row1[3] = WALL;
       }
     else {
-        row1[3] = BLACK;
+        row1[3] = WHITE;
     }
     
 
@@ -302,7 +303,7 @@ module led_output (
           row1[4] = WALL;
       }
     else {
-        row1[4] = BLACK;
+        row1[4] = WHITE;
     }
     
 
@@ -322,7 +323,7 @@ module led_output (
           row1[5] = BLACK;
       }
     else {
-        row1[5] = PURPLE;
+        row1[5] = BLACK;
     }
     
 
@@ -362,7 +363,7 @@ module led_output (
           row1[7] = BLACK;
       }
     else {
-        row1[7] = PURPLE;
+        row1[7] = BLACK;
     }
     
 
@@ -382,7 +383,7 @@ module led_output (
           row2[0] = BLACK;
       }
     else {
-        row2[0] = PURPLE;
+        row2[0] = PINK;
     }
     
 
@@ -402,7 +403,7 @@ module led_output (
           row2[1] = WALL;
       }
     else {
-        row2[1] = PURPLE;
+        row2[1] = PINK;
     }
     
 
@@ -442,7 +443,7 @@ module led_output (
           row2[3] = WALL;
       }
     else {
-        row2[3] = BLACK;
+        row2[3] = WHITE;
     }
     
 
@@ -462,7 +463,7 @@ module led_output (
           row2[4] = WALL;
       }
     else {
-        row2[4] = BLACK;
+        row2[4] = WHITE;
     }
     
 
@@ -502,7 +503,7 @@ module led_output (
           row2[6] = BLACK;
       }
     else {
-        row2[6] = PURPLE;
+        row2[6] = BLACK;
     }
     
 
@@ -522,7 +523,7 @@ module led_output (
           row2[7] = BLACK;
       }
     else {
-        row2[7] = PURPLE;
+        row2[7] = PINK;
     }
     
 
@@ -562,7 +563,7 @@ module led_output (
           row3[1] = BLACK;
       }
     else {
-        row3[1] = WHITE;
+        row3[1] = BLACK;
     }
     
 
@@ -582,7 +583,7 @@ module led_output (
           row3[2] = WALL;
       }
     else {
-        row3[2] = WHITE;
+        row3[2] = BLACK;
     }
     
 
@@ -642,7 +643,7 @@ module led_output (
           row3[5] = WALL;
       }
     else {
-        row3[5] = WHITE;
+        row3[5] = YELLOW;
     }
     
 
@@ -662,7 +663,7 @@ module led_output (
           row3[6] = WALL;
       }
     else {
-        row3[6] = WHITE;
+        row3[6] = BLACK;
     }
     
 
@@ -682,7 +683,7 @@ module led_output (
           row3[7] = BLACK;
       }
     else {
-        row3[7] = BLACK;
+        row3[7] = PINK;
     }
     
 
@@ -722,7 +723,7 @@ module led_output (
           row4[1] = BLACK;
       }
     else {
-        row4[1] = WHITE;
+        row4[1] = BLACK;
     }
     
 
@@ -742,7 +743,7 @@ module led_output (
           row4[2] = WALL;
       }
     else {
-        row4[2] = WHITE;
+        row4[2] = BLACK;
     }
     
 
@@ -802,7 +803,7 @@ module led_output (
           row4[5] = WALL;
       }
     else {
-        row4[5] = WHITE;
+        row4[5] = YELLOW;
     }
     
 
@@ -822,7 +823,7 @@ module led_output (
           row4[6] = WALL;
       }
     else {
-        row4[6] = WHITE;
+        row4[6] = BLACK;
     }
     
 
@@ -842,7 +843,7 @@ module led_output (
           row4[7] = BLACK;
       }
     else {
-        row4[7] = BLACK;
+        row4[7] = PINK;
     }
     
 
@@ -862,7 +863,7 @@ module led_output (
           row5[0] = BLACK;
       }
     else {
-        row5[0] = BLACK;
+        row5[0] = PINK;
     }
     
 
@@ -882,7 +883,7 @@ module led_output (
           row5[1] = WALL;
       }
     else {
-        row5[1] = BLACK;
+        row5[1] = PINK;
     }
     
 
@@ -922,7 +923,7 @@ module led_output (
           row5[3] = WALL;
       }
     else {
-        row5[3] = PINK;
+        row5[3] = WHITE;
     }
     
 
@@ -942,7 +943,7 @@ module led_output (
           row5[4] = WALL;
       }
     else {
-        row5[4] = PINK;
+        row5[4] = WHITE;
     }
     
 
@@ -1002,7 +1003,7 @@ module led_output (
           row5[7] = BLACK;
       }
     else {
-        row5[7] = BLACK;
+        row5[7] = PINK;
     }
     
 
@@ -1022,7 +1023,7 @@ module led_output (
           row6[0] = BLACK;
       }
     else {
-        row6[0] = BLACK;
+        row6[0] = PINK;
     }
     
 
@@ -1042,7 +1043,7 @@ module led_output (
           row6[1] = WALL;
       }
     else {
-        row6[1] = PURPLE;
+        row6[1] = YELLOW;
     }
     
 
@@ -1062,7 +1063,7 @@ module led_output (
           row6[2] = WALL;
       }
     else {
-        row6[2] = BLACK;
+        row6[2] = PINK;
     }
     
 
@@ -1082,7 +1083,7 @@ module led_output (
           row6[3] = WALL;
       }
     else {
-        row6[3] = BLACK;
+        row6[3] = WHITE;
     }
     
 
@@ -1102,7 +1103,7 @@ module led_output (
           row6[4] = WALL;
       }
     else {
-        row6[4] = BLACK;
+        row6[4] = WHITE;
     }
     
 
@@ -1142,7 +1143,7 @@ module led_output (
           row6[6] = BLACK;
       }
     else {
-        row6[6] = PURPLE;
+        row6[6] = PINK;
     }
     
 
@@ -1182,7 +1183,7 @@ module led_output (
           row7[0] = BLACK;
       }
     else {
-        row7[0] = BLACK;
+        row7[0] = PINK;
     }
     
 
@@ -1202,7 +1203,7 @@ module led_output (
           row7[1] = BLACK;
       }
     else {
-        row7[1] = BLACK;
+        row7[1] = PINK;
     }
     
 
@@ -1222,7 +1223,7 @@ module led_output (
           row7[2] = WALL;
       }
     else {
-        row7[2] = PURPLE;
+        row7[2] = PINK;
     }
     
 
@@ -1242,7 +1243,7 @@ module led_output (
           row7[3] = WALL;
       }
     else {
-        row7[3] = PURPLE;
+        row7[3] = BLACK;
     }
     
 
@@ -1262,7 +1263,7 @@ module led_output (
           row7[4] = BLACK;
       }
     else {
-        row7[4] = PURPLE;
+        row7[4] = BLACK;
     }
     
 
@@ -1282,7 +1283,7 @@ module led_output (
           row7[5] = BLACK;
       }
     else {
-        row7[5] = PURPLE;
+        row7[5] = BLACK;
     }
     
 
@@ -1305,6 +1306,5 @@ module led_output (
         row7[6] = BLACK;
     }
     
-
+    }
     
-}

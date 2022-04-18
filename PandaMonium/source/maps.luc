@@ -8,24 +8,24 @@ module maps (
   
   const MAP = {
     
-    16b00010000,              // level 3 map row 8
-    16b10110110,              // level 3 map row 7
-    16b10000000,              // level 3 map row 6
-    16b00011000,              // level 3 map row 5
-    16b01110010,              // level 3 map row 4
-    16b00000000,              // level 3 map row 3
-    16b01100100,              // level 3 map row 2
-    16b00010000,              // level 3 map row 1
+    16b00001000,              // level 3 map row 8
+    16b11101001,              // level 3 map row 7
+    16b00000000,              // level 3 map row 6
+    16b00100100,              // level 3 map row 5
+    16b00011001,              // level 3 map row 4
+    16b11000010,              // level 3 map row 3
+    16b01110110,              // level 3 map row 2
+    16b00110000,              // level 3 map row 1
   
     
     16b00100001,              // level 2 map row 8
     16b00101010,              // level 2 map row 7
-    16b10000010,              // level 2 map row 6
+    16b00000010,              // level 2 map row 6
     16b11110010,              // level 2 map row 5
     16b00000100,              // level 2 map row 4
     16b01000000,              // level 2 map row 3
     16b01110000,              // level 2 map row 2
-    16b11111110,
+    16b11000110,
     
     
     16b00100000,              // level 1 map row 8
@@ -38,8 +38,7 @@ module maps (
     16b00100000              // level 1 map row 1
   };             
   
-  
-  
+    
   always {
     //out_row_by_address = MAP[address]; // first way to index a map
     
