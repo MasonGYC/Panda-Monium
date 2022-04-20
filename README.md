@@ -1,5 +1,6 @@
 # PANDA MONIUM
 50.002 Computational Structure 1D project
+demo video: https://youtu.be/bG9KT3KGwnY 
 
 ## File structure:
 
